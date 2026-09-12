@@ -22,16 +22,16 @@ If threat detected:
 1. Provide a warm, reassuring empathy acknowledgment.
 2. List 3 to 4 clear, actionable next steps.`;
 
-// In-memory chat sessions map for multi-turn chat memory
-const sessionsMap = new Map<string, any>();
+// In-memory model cache for working session models
 const activeModelMap = new Map<string, string>();
 
-// List of supported Gemini candidate models in order of priority (Gemini 2.5 series primary)
+// Candidate Gemini model names for @google/genai SDK
 const CANDIDATE_MODELS = [
   'gemini-2.5-flash',
   'gemini-2.5-pro',
   'gemini-2.0-flash',
-  'gemini-1.5-flash'
+  'gemini-1.5-flash',
+  'gemini-1.5-pro'
 ];
 
 /**
@@ -56,14 +56,12 @@ export function setGeminiApiKey(key: string): void {
   } else {
     localStorage.removeItem('cybervigil_gemini_api_key');
   }
-  // Clear cached sessions when API key is updated
-  sessionsMap.clear();
   activeModelMap.clear();
 }
 
 /**
- * Main AI Chat function using @google/genai SDK with automatic model candidate fallback,
- * ensuring live Gemini API calls succeed across all Google Gemini models.
+ * Main AI Chat function using @google/genai SDK (models.generateContent),
+ * supporting full conversation history and candidate model fallback.
  */
 export async function askGuardianAI(
   userPrompt: string,
@@ -76,7 +74,10 @@ export async function askGuardianAI(
 
   if (!apiKey) {
     console.info('Gemini API key not set. Using CyberVigil Built-in Guardian Engine.');
-    return getBuiltInGuardianResponse(userPrompt, 'Note: Configure your VITE_GEMINI_API_KEY or click API Settings to connect live Gemini AI cloud models.');
+    return getBuiltInGuardianResponse(
+      userPrompt, 
+      'Note: Configure VITE_GEMINI_API_KEY or click API Settings to connect live Gemini AI cloud models.'
+    );
   }
 
   const ai = new GoogleGenAI({ apiKey });
@@ -84,6 +85,7 @@ export async function askGuardianAI(
     ? `[User preferred language: ${language}. Please reply in ${language} while retaining supportive guardian persona.]\n${userPrompt}`
     : userPrompt;
 
+  // Format conversation history for @google/genai models.generateContent
   const sdkHistory = history
     .filter(msg => msg.sender === 'user' || msg.sender === 'assistant')
     .map(msg => ({
@@ -91,52 +93,62 @@ export async function askGuardianAI(
       parts: [{ text: msg.text }]
     }));
 
+  const contents = [
+    ...sdkHistory,
+    { role: 'user', parts: [{ text: languagePrompt }] }
+  ];
+
   let lastError: any = null;
 
-  // Determine model models to try (prioritize known working model for this session)
-  const cachedWorkingModel = activeModelMap.get(activeSessionId);
-  const modelsToTry = cachedWorkingModel 
-    ? [cachedWorkingModel, ...CANDIDATE_MODELS.filter(m => m !== cachedWorkingModel)]
+  // Determine model order (prioritize cached working model for session if available)
+  const cachedModel = activeModelMap.get(activeSessionId);
+  const modelsToTry = cachedModel 
+    ? [cachedModel, ...CANDIDATE_MODELS.filter(m => m !== cachedModel)]
     : CANDIDATE_MODELS;
 
   for (const modelName of modelsToTry) {
     try {
-      let chatSession = sessionsMap.get(activeSessionId);
-      if (!chatSession || activeModelMap.get(activeSessionId) !== modelName) {
-        chatSession = ai.chats.create({
-          model: modelName,
-          config: {
-            systemInstruction: SYSTEM_INSTRUCTION,
-            temperature: 0.7,
-          },
-          history: sdkHistory
-        });
-        sessionsMap.set(activeSessionId, chatSession);
-        activeModelMap.set(activeSessionId, modelName);
-      }
+      const response = await ai.models.generateContent({
+        model: modelName,
+        contents: contents,
+        config: {
+          systemInstruction: SYSTEM_INSTRUCTION,
+          temperature: 0.7,
+        }
+      });
 
-      const response = await chatSession.sendMessage({ message: languagePrompt });
       const rawText = response.text || '';
 
       if (rawText.trim()) {
+        activeModelMap.set(activeSessionId, modelName);
         const parsed = parseAIResponse(userPrompt, rawText);
-        // Live cloud connection succeeded! Return response directly (no error banner)
         return {
           ...parsed,
           isBuiltInEngine: false
         };
       }
     } catch (error: any) {
-      console.warn(`Gemini model ${modelName} failed, trying next candidate:`, error);
+      console.warn(`Gemini model ${modelName} call failed:`, error);
       lastError = error;
-      sessionsMap.delete(activeSessionId);
       activeModelMap.delete(activeSessionId);
     }
   }
 
-  console.error('All Gemini API models failed (falling back to built-in guardian engine):', lastError);
-  const errorDetails = lastError?.message || lastError?.error?.message || 'Invalid API Key or Quota Limit';
-  return getBuiltInGuardianResponse(userPrompt, `API Notice: Live Gemini cloud connection failed (${errorDetails}). Using CyberVigil built-in engine.`);
+  console.error('All Gemini cloud models failed:', lastError);
+
+  // Format clean human-readable error notice for UI
+  const errorMsg = lastError?.message || lastError?.error?.message || '';
+  let userFriendlyNotice = 'Cloud Connection Notice: Invalid API Key or network issue. Using CyberVigil built-in engine.';
+  
+  if (errorMsg.includes('API_KEY_INVALID') || errorMsg.includes('API key not valid')) {
+    userFriendlyNotice = 'API Notice: Your Gemini API Key appears invalid. Please check API Settings.';
+  } else if (errorMsg.includes('QUOTA_EXCEEDED')) {
+    userFriendlyNotice = 'API Notice: Gemini API rate limit / quota reached. Using CyberVigil built-in engine.';
+  } else if (errorMsg.includes('NOT_FOUND') || errorMsg.includes('404')) {
+    userFriendlyNotice = 'API Notice: Gemini cloud model standard endpoint unavailable for key. Using CyberVigil built-in engine.';
+  }
+
+  return getBuiltInGuardianResponse(userPrompt, userFriendlyNotice);
 }
 
 /**
