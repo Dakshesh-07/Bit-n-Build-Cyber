@@ -80,6 +80,72 @@ const REGIONAL_LANGUAGES = [
   { code: 'Kannada', label: 'ಕನ್ನಡ (Kannada)' }
 ];
 
+const FormattedMessageText: React.FC<{ text: string }> = ({ text }) => {
+  if (!text) return null;
+
+  const paragraphs = text.split(/\n+/);
+
+  return (
+    <div className="space-y-3 text-sm text-slate-100 leading-relaxed font-normal">
+      {paragraphs.map((para, idx) => {
+        const trimmed = para.trim();
+        if (!trimmed) return null;
+
+        if (trimmed === '---' || trimmed === '***') {
+          return <hr key={idx} className="border-t border-[#1c2d5c] my-3" />;
+        }
+
+        if (trimmed.startsWith('#')) {
+          const cleanHeading = trimmed.replace(/^#+\s*/, '');
+          return (
+            <h4 key={idx} className="text-sm sm:text-base font-extrabold text-white mt-4 mb-1.5 border-b border-[#1c2d5c]/80 pb-1">
+              {renderFormattedInlineText(cleanHeading)}
+            </h4>
+          );
+        }
+
+        if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
+          const itemText = trimmed.replace(/^[\*\-]\s*/, '');
+          return (
+            <div key={idx} className="flex items-start gap-2.5 ml-2 my-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-2 flex-shrink-0" />
+              <span className="text-slate-200">{renderFormattedInlineText(itemText)}</span>
+            </div>
+          );
+        }
+
+        if (/^\d+\.\s/.test(trimmed)) {
+          return (
+            <div key={idx} className="font-semibold text-slate-100 mt-2.5 mb-1 pl-1">
+              {renderFormattedInlineText(trimmed)}
+            </div>
+          );
+        }
+
+        return (
+          <p key={idx} className="text-slate-100">
+            {renderFormattedInlineText(trimmed)}
+          </p>
+        );
+      })}
+    </div>
+  );
+};
+
+function renderFormattedInlineText(str: string) {
+  const parts = str.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return (
+        <strong key={i} className="font-bold text-white">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+}
+
 export const AIAssistant: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -391,7 +457,7 @@ export const AIAssistant: React.FC = () => {
                       </div>
                     )}
 
-                    <p className="text-sm text-slate-100 leading-relaxed font-normal">{msg.text}</p>
+                    <FormattedMessageText text={msg.text} />
 
                     {msg.steps && msg.steps.length > 0 && (
                       <div className="space-y-2.5 pt-2 border-t border-[#1c2d5c]">
