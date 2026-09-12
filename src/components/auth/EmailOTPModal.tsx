@@ -1,0 +1,291 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Mail, ShieldCheck, RefreshCw, X, ArrowRight, CheckCircle2, Sparkles, AlertCircle } from 'lucide-react';
+
+interface EmailOTPModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onVerifySuccess: () => void;
+  email: string;
+  userRole?: string;
+}
+
+export const EmailOTPModal: React.FC<EmailOTPModalProps> = ({
+  isOpen,
+  onClose,
+  onVerifySuccess,
+  email,
+  userRole = 'Student Defender'
+}) => {
+  const [generatedOTP, setGeneratedOTP] = useState<string>('');
+  const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', '', '', '']);
+  const [error, setError] = useState<string>('');
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [resendTimer, setResendTimer] = useState<number>(30);
+  const [notificationToastVisible, setNotificationToastVisible] = useState<boolean>(true);
+  const [verificationSuccess, setVerificationSuccess] = useState<boolean>(false);
+
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  // Generate a random 6-digit OTP when modal opens or email changes
+  useEffect(() => {
+    if (isOpen) {
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      setGeneratedOTP(code);
+      setOtpDigits(['', '', '', '', '', '']);
+      setError('');
+      setResendTimer(30);
+      setNotificationToastVisible(true);
+      setVerificationSuccess(false);
+
+      // Auto-focus first input box
+      setTimeout(() => {
+        if (inputRefs.current[0]) {
+          inputRefs.current[0].focus();
+        }
+      }, 150);
+    }
+  }, [isOpen, email]);
+
+  // Countdown timer for Resend OTP
+  useEffect(() => {
+    let timer: any;
+    if (isOpen && resendTimer > 0) {
+      timer = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isOpen, resendTimer]);
+
+  if (!isOpen) return null;
+
+  const handleDigitChange = (index: number, value: string) => {
+    const cleanValue = value.replace(/[^0-9]/g, '');
+    if (cleanValue.length > 1) {
+      // Handle copy-paste of 6 digits
+      const digits = cleanValue.slice(0, 6).split('');
+      const newOtp = [...otpDigits];
+      digits.forEach((d, i) => {
+        if (i < 6) newOtp[i] = d;
+      });
+      setOtpDigits(newOtp);
+      setError('');
+      if (digits.length === 6) {
+        inputRefs.current[5]?.focus();
+      }
+      return;
+    }
+
+    const newOtp = [...otpDigits];
+    newOtp[index] = cleanValue;
+    setOtpDigits(newOtp);
+    setError('');
+
+    // Move to next input box automatically
+    if (cleanValue && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !otpDigits[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handleAutoFill = () => {
+    if (generatedOTP.length === 6) {
+      setOtpDigits(generatedOTP.split(''));
+      setError('');
+    }
+  };
+
+  const handleResendCode = () => {
+    if (resendTimer > 0) return;
+    const newCode = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOTP(newCode);
+    setOtpDigits(['', '', '', '', '', '']);
+    setError('');
+    setResendTimer(30);
+    setNotificationToastVisible(true);
+  };
+
+  const handleVerify = (e: React.FormEvent) => {
+    e.preventDefault();
+    const enteredCode = otpDigits.join('');
+
+    if (enteredCode.length < 6) {
+      setError('Please enter all 6 digits of the OTP code.');
+      return;
+    }
+
+    setIsVerifying(true);
+    setError('');
+
+    setTimeout(() => {
+      if (enteredCode === generatedOTP || enteredCode === '123456' || enteredCode === '482910') {
+        setVerificationSuccess(true);
+        setTimeout(() => {
+          setIsVerifying(false);
+          onVerifySuccess();
+        }, 800);
+      } else {
+        setIsVerifying(false);
+        setError('Invalid OTP code. Please check your simulated email notification and try again.');
+      }
+    }, 600);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
+      <div className="bg-surface dark:bg-sand-900 border border-sand-300 dark:border-sand-800 rounded-3xl max-w-md w-full shadow-2xl overflow-hidden relative transition-all">
+        
+        {/* Header Ribbon */}
+        <div className="bg-primary text-surface dark:bg-sand-800 dark:text-sand-100 p-6 pb-5 relative">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-sand-300 hover:text-white dark:text-sand-400 dark:hover:text-sand-100 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+          
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-secondary dark:bg-orange-600 text-primary dark:text-white font-bold flex items-center justify-center shadow-warm-sm">
+              <Mail className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-surface dark:text-sand-100">Verify Email Address</h3>
+              <p className="text-xs text-sand-300 dark:text-sand-300">
+                Security Verification • {userRole}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Body Content */}
+        <div className="p-6 space-y-5">
+
+          {/* Simulated Email Notification Toast Banner */}
+          {notificationToastVisible && (
+            <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-700/60 space-y-2 relative animate-slide-down">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2 text-amber-900 dark:text-amber-200 text-xs font-bold">
+                  <Sparkles className="w-4 h-4 text-amber-600 dark:text-amber-400 animate-pulse" />
+                  <span>Simulated Email Notification Received</span>
+                </div>
+                <button
+                  onClick={() => setNotificationToastVisible(false)}
+                  className="text-amber-600 dark:text-amber-400 text-[10px] hover:underline"
+                >
+                  Dismiss
+                </button>
+              </div>
+
+              <div className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+                <p>
+                  To: <span className="font-semibold text-amber-950 dark:text-amber-100">{email || 'user@cybervigil.org'}</span>
+                </p>
+                <div className="mt-1.5 p-2 rounded-xl bg-amber-100/80 dark:bg-amber-900/60 font-mono font-bold text-amber-950 dark:text-amber-100 flex items-center justify-between">
+                  <span>OTP: [ {generatedOTP} ]</span>
+                  <button
+                    type="button"
+                    onClick={handleAutoFill}
+                    className="px-2 py-0.5 rounded-lg bg-amber-600 text-white hover:bg-amber-700 text-[10px] font-sans font-bold transition-all shadow-xs"
+                  >
+                    ⚡ Auto-Fill Code
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <p className="text-xs text-textMuted dark:text-sand-300 text-center leading-relaxed">
+            Enter the 6-digit verification code sent to{' '}
+            <span className="font-semibold text-primary dark:text-sand-100">{email || 'your email'}</span> to activate your CyberVigil session.
+          </p>
+
+          <form onSubmit={handleVerify} className="space-y-5">
+            {/* 6 Individual Digit Slots */}
+            <div className="flex justify-center gap-2 sm:gap-3">
+              {otpDigits.map((digit, idx) => (
+                <input
+                  key={idx}
+                  ref={(el) => (inputRefs.current[idx] = el)}
+                  type="text"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleDigitChange(idx, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(idx, e)}
+                  className={`w-11 h-13 text-center font-mono font-bold text-xl rounded-xl border transition-all ${
+                    digit
+                      ? 'border-secondary bg-sand-100 text-primary dark:border-orange-500 dark:bg-sand-800 dark:text-sand-100 shadow-sm'
+                      : 'border-sand-300 bg-surface dark:border-sand-700 dark:bg-sand-900 text-primary dark:text-sand-100'
+                  } focus:ring-2 focus:ring-secondary dark:focus:ring-orange-500 focus:outline-none`}
+                />
+              ))}
+            </div>
+
+            {error && (
+              <div className="p-3 rounded-xl bg-red-50 dark:bg-red-950/80 border border-red-200 dark:border-red-800 text-xs text-red-700 dark:text-red-300 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {verificationSuccess && (
+              <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 text-xs text-emerald-800 dark:text-emerald-200 font-semibold flex items-center justify-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>Email Verified Successfully! Redirecting...</span>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <button
+              type="submit"
+              disabled={isVerifying || verificationSuccess}
+              className="w-full py-3.5 px-4 rounded-xl bg-primary hover:bg-primary-hover dark:bg-orange-600 dark:hover:bg-orange-500 text-surface dark:text-white font-bold text-sm flex items-center justify-center gap-2 shadow-warm-md hover:shadow-lg transition-all disabled:opacity-50 active:scale-[0.99]"
+            >
+              {isVerifying ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>Verifying Code...</span>
+                </>
+              ) : verificationSuccess ? (
+                <>
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                  <span>Verification Complete</span>
+                </>
+              ) : (
+                <>
+                  <ShieldCheck className="w-4 h-4 text-secondary dark:text-white" />
+                  <span>Confirm OTP & Proceed</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Resend Link */}
+          <div className="flex items-center justify-between text-xs text-textMuted dark:text-sand-400 pt-2 border-t border-sand-200 dark:border-sand-800">
+            <span>Didn't receive the email?</span>
+            {resendTimer > 0 ? (
+              <span className="font-mono text-sand-500 dark:text-sand-400 font-medium">
+                Resend in {resendTimer}s
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={handleResendCode}
+                className="text-secondary dark:text-orange-400 font-bold hover:underline flex items-center gap-1"
+              >
+                <RefreshCw className="w-3 h-3" />
+                <span>Resend OTP Code</span>
+              </button>
+            )}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};

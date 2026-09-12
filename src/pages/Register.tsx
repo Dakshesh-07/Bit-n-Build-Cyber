@@ -14,12 +14,14 @@ import {
   KeyRound, 
   FileCheck,
   AlertCircle,
-  EyeOff
+  EyeOff,
+  Mail
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserRole } from '../types';
 import { sendDiscordNotification } from '../lib/discord';
+import { EmailOTPModal } from '../components/auth/EmailOTPModal';
 
 const AVATARS = ['🛡️', '🎓', '⚖️', '🦁', '🦉', '⚡', '🌟', '🐬', '🌲', '🚀'];
 
@@ -34,7 +36,12 @@ export const Register: React.FC = () => {
   const [alias, setAlias] = useState('');
   const [selectedAvatar, setSelectedAvatar] = useState('🎓');
   const [password, setPassword] = useState('');
+  const [userEmail, setUserEmail] = useState('student@cybervigil.org');
   const [errorMessage, setErrorMessage] = useState('');
+
+  // Email OTP Modal state
+  const [isOTPModalOpen, setIsOTPModalOpen] = useState<boolean>(false);
+  const [pendingRegistrationCallback, setPendingRegistrationCallback] = useState<(() => void) | null>(null);
 
   // Student Verification Fields
   const [educationLevel, setEducationLevel] = useState('Class 10');
@@ -58,9 +65,20 @@ export const Register: React.FC = () => {
   const handleRoleChange = (role: UserRole) => {
     setAccountType(role);
     setErrorMessage('');
-    if (role === 'registered_youth') setSelectedAvatar('🎓');
-    else if (role === 'parent_guardian') setSelectedAvatar('🛡️');
-    else if (role === 'welfare_officer') setSelectedAvatar('⚖️');
+    if (role === 'registered_youth') {
+      setSelectedAvatar('🎓');
+      if (userEmail === 'officer@cybervigil.gov.in' || userEmail === 'guardian@cybervigil.org') {
+        setUserEmail('student@cybervigil.org');
+      }
+    } else if (role === 'parent_guardian') {
+      setSelectedAvatar('🛡️');
+      if (userEmail === 'student@cybervigil.org' || userEmail === 'officer@cybervigil.gov.in') {
+        setUserEmail('guardian@cybervigil.org');
+      }
+    } else if (role === 'welfare_officer') {
+      setSelectedAvatar('⚖️');
+      setUserEmail(govEmail || 'officer@cybervigil.gov.in');
+    }
   };
 
   const handleRegister = (e: React.FormEvent) => {
@@ -69,6 +87,12 @@ export const Register: React.FC = () => {
 
     if (!password.trim()) {
       setErrorMessage('Please create a secure password.');
+      return;
+    }
+
+    const emailToVerify = accountType === 'welfare_officer' ? govEmail : userEmail;
+    if (!emailToVerify.trim()) {
+      setErrorMessage('Please enter a valid email address for security notification.');
       return;
     }
 
@@ -82,32 +106,38 @@ export const Register: React.FC = () => {
         return;
       }
       const finalAlias = alias.trim() ? `${selectedAvatar} ${alias.trim()}` : `${selectedAvatar} StudentDefender_${studentRollId.slice(-4)}`;
-      registerUser(
-        finalAlias, 
-        'registered_youth', 
-        'Shield Level 1 (Institutional Verified)', 
-        studentRollId, 
-        {
-          isVerified: true,
-          verificationId: studentRollId,
-          verificationType: 'student_institutional_id',
-          institutionOrJurisdiction: schoolName,
-        }
-      );
       
-      // Dispatch Discord Webhook Notification for Student Defender Registration
-      sendDiscordNotification({
-        title: 'New Student Defender Institutional Verification',
-        description: `Student account activated for **${schoolName}** (${educationLevel}).`,
-        color: 0x3B82F6,
-        fields: [
-          { name: 'Student Roll ID', value: studentRollId, inline: true },
-          { name: 'Academic Level', value: educationLevel, inline: true },
-          { name: 'Camouflage Disguise', value: `Configured for ${educationLevel} (Panic Key: ESC)`, inline: false }
-        ]
-      });
+      const proceedStudentRegistration = () => {
+        registerUser(
+          finalAlias, 
+          'registered_youth', 
+          'Shield Level 1 (Institutional Verified)', 
+          studentRollId, 
+          {
+            isVerified: true,
+            verificationId: studentRollId,
+            verificationType: 'student_institutional_id',
+            institutionOrJurisdiction: schoolName,
+          }
+        );
+        
+        sendDiscordNotification({
+          title: 'New Student Defender Institutional Verification',
+          description: `Student account activated for **${schoolName}** (${educationLevel}). Email OTP verified.`,
+          color: 0x3B82F6,
+          fields: [
+            { name: 'Student Roll ID', value: studentRollId, inline: true },
+            { name: 'Verified Email', value: emailToVerify, inline: true },
+            { name: 'Camouflage Disguise', value: `Configured for ${educationLevel} (Panic Key: ESC)`, inline: false }
+          ]
+        });
 
-      navigate('/');
+        navigate('/');
+      };
+
+      setPendingRegistrationCallback(() => proceedStudentRegistration);
+      setIsOTPModalOpen(true);
+
     } else if (accountType === 'parent_guardian') {
       if (!wardPin.trim()) {
         setErrorMessage('Please provide your Ward / Child Case PIN or Student ID link.');
@@ -118,31 +148,37 @@ export const Register: React.FC = () => {
         return;
       }
       const finalAlias = alias.trim() ? `${selectedAvatar} ${alias.trim()} (${guardianRelation})` : `${selectedAvatar} Guardian (${guardianRelation})`;
-      registerUser(
-        finalAlias, 
-        'parent_guardian', 
-        'Family Safe Mode (Verified)', 
-        `Ward: ${wardPin}`, 
-        {
-          isVerified: true,
-          verificationId: wardPin,
-          verificationType: 'guardian_ward_link',
-          institutionOrJurisdiction: `Direct Ward Link (#${wardPin})`,
-        }
-      );
+      
+      const proceedGuardianRegistration = () => {
+        registerUser(
+          finalAlias, 
+          'parent_guardian', 
+          'Family Safe Mode (Verified)', 
+          `Ward: ${wardPin}`, 
+          {
+            isVerified: true,
+            verificationId: wardPin,
+            verificationType: 'guardian_ward_link',
+            institutionOrJurisdiction: `Direct Ward Link (#${wardPin})`,
+          }
+        );
 
-      // Dispatch Discord Webhook Notification
-      sendDiscordNotification({
-        title: 'New Guardian Safety Clearance Activated',
-        description: `Verified Guardian account created for Ward Case PIN **#${wardPin}**.`,
-        color: 0x8B5CF6,
-        fields: [
-          { name: 'Relationship', value: guardianRelation, inline: true },
-          { name: 'Clearance Mode', value: 'Family Safe Mode', inline: true }
-        ]
-      });
+        sendDiscordNotification({
+          title: 'New Guardian Safety Clearance Activated',
+          description: `Verified Guardian account created for Ward Case PIN **#${wardPin}**. Email OTP verified.`,
+          color: 0x8B5CF6,
+          fields: [
+            { name: 'Relationship', value: guardianRelation, inline: true },
+            { name: 'Verified Email', value: emailToVerify, inline: true }
+          ]
+        });
 
-      navigate('/');
+        navigate('/');
+      };
+
+      setPendingRegistrationCallback(() => proceedGuardianRegistration);
+      setIsOTPModalOpen(true);
+
     } else if (accountType === 'welfare_officer') {
       if (!officerBadge.trim() || !govEmail.trim() || !policeJurisdiction.trim()) {
         setErrorMessage('Please enter your official Gov Email, Badge ID, and Station Jurisdiction.');
@@ -153,31 +189,43 @@ export const Register: React.FC = () => {
         return;
       }
       const finalAlias = alias.trim() ? `${selectedAvatar} ${alias.trim()}` : `${selectedAvatar} Inspector Sharma`;
-      registerUser(
-        finalAlias, 
-        'welfare_officer', 
-        'Level 3 Clearance (POCSO Statutory Verified)', 
-        `#${officerBadge.replace('#', '')}`, 
-        {
-          isVerified: true,
-          verificationId: `#${officerBadge.replace('#', '')}`,
-          verificationType: 'inspector_pocso_nodal',
-          institutionOrJurisdiction: policeJurisdiction,
-        }
-      );
+      
+      const proceedOfficerRegistration = () => {
+        registerUser(
+          finalAlias, 
+          'welfare_officer', 
+          'Level 3 Clearance (POCSO Statutory Verified)', 
+          `#${officerBadge.replace('#', '')}`, 
+          {
+            isVerified: true,
+            verificationId: `#${officerBadge.replace('#', '')}`,
+            verificationType: 'inspector_pocso_nodal',
+            institutionOrJurisdiction: policeJurisdiction,
+          }
+        );
 
-      // Dispatch Discord Webhook Notification for Police Officer Clearance
-      sendDiscordNotification({
-        title: 'Police Officer POCSO Level 3 Clearance Activated',
-        description: `Verified Officer **#${officerBadge.replace('#', '')}** logged into **${policeJurisdiction}**.`,
-        color: 0xF59E0B,
-        fields: [
-          { name: 'Gov Email', value: govEmail, inline: true },
-          { name: 'Jurisdiction', value: policeJurisdiction, inline: true }
-        ]
-      });
+        sendDiscordNotification({
+          title: 'Police Officer POCSO Level 3 Clearance Activated',
+          description: `Verified Officer **#${officerBadge.replace('#', '')}** logged into **${policeJurisdiction}**. Email OTP verified.`,
+          color: 0xF59E0B,
+          fields: [
+            { name: 'Gov Email', value: govEmail, inline: true },
+            { name: 'Jurisdiction', value: policeJurisdiction, inline: true }
+          ]
+        });
 
-      navigate('/portal');
+        navigate('/portal');
+      };
+
+      setPendingRegistrationCallback(() => proceedOfficerRegistration);
+      setIsOTPModalOpen(true);
+    }
+  };
+
+  const handleOTPVerifySuccess = () => {
+    setIsOTPModalOpen(false);
+    if (pendingRegistrationCallback) {
+      pendingRegistrationCallback();
     }
   };
 
@@ -638,6 +686,14 @@ export const Register: React.FC = () => {
           </Link>
         </div>
       </div>
+
+      <EmailOTPModal
+        isOpen={isOTPModalOpen}
+        onClose={() => setIsOTPModalOpen(false)}
+        onVerifySuccess={handleOTPVerifySuccess}
+        email={accountType === 'welfare_officer' ? govEmail : userEmail}
+        userRole={accountType === 'registered_youth' ? 'Student Category' : accountType === 'parent_guardian' ? 'Parent / Guardian' : 'Police Inspector'}
+      />
     </div>
   );
 };

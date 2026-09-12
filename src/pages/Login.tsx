@@ -17,6 +17,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserRole } from '../types';
+import { EmailOTPModal } from '../components/auth/EmailOTPModal';
 
 // Pre-seeded Credentials for Instant Verification
 const PRESET_CREDENTIALS = [
@@ -84,6 +85,10 @@ export const Login: React.FC = () => {
   const [ticketPin, setTicketPin] = useState('CV-1042');
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Email OTP Modal State
+  const [isOTPModalOpen, setIsOTPModalOpen] = useState<boolean>(false);
+  const [pendingLoginCallback, setPendingLoginCallback] = useState<(() => void) | null>(null);
+
   const handleApplyPreset = (preset: typeof PRESET_CREDENTIALS[0]) => {
     setEmail(preset.email);
     setPassword(preset.password);
@@ -109,19 +114,24 @@ export const Login: React.FC = () => {
     }
 
     const matched = PRESET_CREDENTIALS.find(p => p.email.toLowerCase() === email.toLowerCase());
-    loginWithCredentials(
-      matched ? matched.alias : `🎓 ${email.split('@')[0]}`, 
-      'registered_youth',
-      'Shield Level 1 (Institutional Verified)',
-      studentRoll || 'STU-VERIFIED',
-      {
-        isVerified: true,
-        verificationId: studentRoll || 'STU-VERIFIED',
-        verificationType: 'student_institutional_id',
-        institutionOrJurisdiction: matched?.institution || 'Verified Educational Institution'
-      }
-    );
-    navigate('/');
+    const proceedLogin = () => {
+      loginWithCredentials(
+        matched ? matched.alias : `🎓 ${email.split('@')[0]}`, 
+        'registered_youth',
+        'Shield Level 1 (Institutional Verified)',
+        studentRoll || 'STU-VERIFIED',
+        {
+          isVerified: true,
+          verificationId: studentRoll || 'STU-VERIFIED',
+          verificationType: 'student_institutional_id',
+          institutionOrJurisdiction: matched?.institution || 'Verified Educational Institution'
+        }
+      );
+      navigate('/');
+    };
+
+    setPendingLoginCallback(() => proceedLogin);
+    setIsOTPModalOpen(true);
   };
 
   const handleGuardianLogin = (e: React.FormEvent) => {
@@ -132,19 +142,24 @@ export const Login: React.FC = () => {
     }
 
     const matched = PRESET_CREDENTIALS.find(p => p.email.toLowerCase() === email.toLowerCase());
-    loginWithCredentials(
-      matched ? matched.alias : `🛡️ Guardian (${email.split('@')[0]})`, 
-      'parent_guardian',
-      'Family Safe Mode (Verified)',
-      `Ward: ${wardPin || 'CV-1042'}`,
-      {
-        isVerified: true,
-        verificationId: wardPin || 'CV-1042',
-        verificationType: 'guardian_ward_link',
-        institutionOrJurisdiction: `Ward Link #${wardPin || 'CV-1042'}`
-      }
-    );
-    navigate('/');
+    const proceedLogin = () => {
+      loginWithCredentials(
+        matched ? matched.alias : `🛡️ Guardian (${email.split('@')[0]})`, 
+        'parent_guardian',
+        'Family Safe Mode (Verified)',
+        `Ward: ${wardPin || 'CV-1042'}`,
+        {
+          isVerified: true,
+          verificationId: wardPin || 'CV-1042',
+          verificationType: 'guardian_ward_link',
+          institutionOrJurisdiction: `Ward Link #${wardPin || 'CV-1042'}`
+        }
+      );
+      navigate('/');
+    };
+
+    setPendingLoginCallback(() => proceedLogin);
+    setIsOTPModalOpen(true);
   };
 
   const handleOfficerLogin = (e: React.FormEvent) => {
@@ -160,19 +175,31 @@ export const Login: React.FC = () => {
       ? 'Master Security Clearance' 
       : 'Level 3 Clearance (POCSO Statutory Verified)';
 
-    loginWithCredentials(
-      matched ? matched.alias : `⚖️ Inspector (${officerBadge})`, 
-      role, 
-      clearance, 
-      `#${officerBadge.replace('#', '')}`,
-      {
-        isVerified: true,
-        verificationId: `#${officerBadge.replace('#', '')}`,
-        verificationType: 'inspector_pocso_nodal',
-        institutionOrJurisdiction: matched?.institution || 'POCSO Nodal Unit DL-04, Cyber Cell'
-      }
-    );
-    navigate('/portal');
+    const proceedLogin = () => {
+      loginWithCredentials(
+        matched ? matched.alias : `⚖️ Inspector (${officerBadge})`, 
+        role, 
+        clearance, 
+        `#${officerBadge.replace('#', '')}`,
+        {
+          isVerified: true,
+          verificationId: `#${officerBadge.replace('#', '')}`,
+          verificationType: 'inspector_pocso_nodal',
+          institutionOrJurisdiction: matched?.institution || 'POCSO Nodal Unit DL-04, Cyber Cell'
+        }
+      );
+      navigate('/portal');
+    };
+
+    setPendingLoginCallback(() => proceedLogin);
+    setIsOTPModalOpen(true);
+  };
+
+  const handleOTPVerifySuccess = () => {
+    setIsOTPModalOpen(false);
+    if (pendingLoginCallback) {
+      pendingLoginCallback();
+    }
   };
 
   const handleAnonymousLogin = (e: React.FormEvent) => {
@@ -604,6 +631,14 @@ export const Login: React.FC = () => {
           </form>
         )}
       </div>
+
+      <EmailOTPModal
+        isOpen={isOTPModalOpen}
+        onClose={() => setIsOTPModalOpen(false)}
+        onVerifySuccess={handleOTPVerifySuccess}
+        email={email}
+        userRole={activeTab === 'student' ? 'Student Defender' : activeTab === 'guardian' ? 'Parent / Guardian' : 'Police Inspector'}
+      />
     </div>
   );
 };

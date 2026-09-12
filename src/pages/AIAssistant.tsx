@@ -184,6 +184,9 @@ export const AIAssistant: React.FC = () => {
         text: m.text
       }));
 
+      // Simulate natural thinking delay for human-like conversational pace
+      await new Promise(r => setTimeout(r, 850));
+
       const result = await askGuardianAI(text, history, selectedLanguage);
 
       const botMsg: ChatMessage = {

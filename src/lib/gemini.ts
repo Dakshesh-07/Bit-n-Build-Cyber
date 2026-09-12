@@ -73,8 +73,10 @@ export async function askGuardianAI(
   const isGreeting = isCasualGreeting(userQuery);
 
   const modelEndpoints = [
-    'gemini-3.6-flash',
-    'gemini-flash-latest'
+    'gemini-2.5-flash',
+    'gemini-2.0-flash',
+    'gemini-1.5-flash',
+    'gemini-flash'
   ];
 
   if (apiKey) {
@@ -133,8 +135,15 @@ export async function askGuardianAI(
 
 export function isCasualGreeting(text: string): boolean {
   const q = text.trim().toLowerCase().replace(/[^\w\s]/gi, '');
-  const greetings = ['hi', 'hello', 'hey', 'heyy', 'hola', 'namaste', 'good morning', 'good evening', 'who are you', 'what can you do', 'hlo', 'hii', 'hiii', 'help', 'hi there'];
-  return greetings.includes(q) || (q.length <= 6 && (q.startsWith('hi') || q.startsWith('hey') || q.startsWith('hlo')));
+  const generalPhrases = [
+    'hi', 'hello', 'hey', 'heyy', 'hola', 'namaste', 'good morning', 'good evening',
+    'who are you', 'what can you do', 'hlo', 'hii', 'hiii', 'help', 'hi there',
+    'wanted to ask', 'ask a question', 'can i ask', 'have a question', 'question',
+    'what is this', 'how does this work', 'tell me about yourself', 'can you help me',
+    'can we talk', 'who made you', 'what is cybervigil', 'kya kar sakte ho', 'batao',
+    'want to ask', 'can i', 'may i', 'wondering'
+  ];
+  return generalPhrases.some(phrase => q.includes(phrase)) || q.length <= 10;
 }
 
 function detectThreatCategory(text: string): { category: ThreatCategory; severity: ThreatSeverity } {
@@ -236,7 +245,7 @@ function detectThreatCategory(text: string): { category: ThreatCategory; severit
     return { category: 'Cyberbullying', severity: 'Moderate' };
   }
 
-  return { category: 'Cyberbullying', severity: 'Moderate' };
+  return { category: 'Conversational', severity: 'Advisory' };
 }
 
 function parseGeminiResponse(rawText: string, userQuery: string, isGreeting: boolean): GuardianAIResult {
@@ -304,9 +313,9 @@ function generateResilientThreatAnalysis(userQuery: string, wasSafetyTriggered: 
   const qLower = userQuery.toLowerCase();
   const isHinglishOrHindi = /pareshan|parishan|kar raaha|kar raha|hai|hoon|hu|batao|madad|paisa|paise|dhamki|mujh|mujhe|mera|meri|kya karu|kya karoon/i.test(qLower);
 
-  if (isGreeting) {
+  if (isGreeting || category === 'Conversational') {
     const textMap: Record<string, string> = {
-      Hindi: "नमस्ते! 👋 मैं साइबरविजिल गार्जियन एआई हूँ, आपकी डिजिटल सुरक्षा और बाल संरक्षण साथी। मैं आज आपकी कैसे मदद कर सकता हूँ? आप किसी भी ऑनलाइन समस्या के बारे में पूछ सकते हैं।",
+      Hindi: "नमस्ते! 👋 मैं साइबरविजिल गार्जियन एआई हूँ। आप मुझसे ऑनलाइन सुरक्षा, गोपनीयता (privacy), साइबरबुलिंग, या किसी भी संदेहास्पद संदेश के बारे में कुछ भी पूछ सकते हैं। आप क्या जानना चाहते हैं?",
       Bengali: "হ্যালো! 👋 আমি সাইবারভিজিল গার্ডিয়ান এআই, আপনার ডিজিটাল সুরক্ষা সাথী। আমি আপনাকে কীভাবে সাহায্য করতে পারি?",
       Tamil: "வணக்கம்! 👋 நான் சைபர்விஜில் கார்டியன் AI, உங்கள் டிஜிட்டல் பாதுகாப்பு நண்பன். நான் உங்களுக்கு எவ்வாறு உதவ முடியும்?",
       Telugu: "నమస్కారం! 👋 నేను సైబర్విజిల్ గార్డియన్ AI, మీ డిజిటల్ భద్రతా మిత్రుడిని. నేను మీకు ఎలా సహాయపడగలను?",
@@ -315,16 +324,18 @@ function generateResilientThreatAnalysis(userQuery: string, wasSafetyTriggered: 
       Kannada: "ನಮಸ್ಕಾರ! 👋 ನಾನು ಸೈಬರ್‌ವಿಜಿಲ್ ಗಾರ್ಡಿಯನ್ AI, ನಿಮ್ಮ ಡಿಜಿಟಲ್ ಸುರಕ್ಷತಾ ಮಿತ್ರ. ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?"
     };
 
+    const isQuestion = /question|ask|help|what|how|can i|tell me|who|kya|batao|wanted/i.test(qLower);
+
+    let defaultEn = "Hello! 👋 I am CyberVigil Guardian AI, your confidential companion for digital self-defense and child safety. How can I help you today?";
+    if (isQuestion) {
+      defaultEn = "Of course! I'm CyberVigil Guardian AI, your confidential 24/7 digital safety companion. You can ask me anything — whether it's about protecting your social media accounts, handling online harassment, understanding cyber laws like IT Act & POCSO, or filing a report. What's on your mind?";
+    }
+
     return {
-      text: textMap[language] || "Hello! 👋 I am CyberVigil Guardian AI, your confidential companion for digital self-defense and child safety. How can I help or protect you today? Feel free to describe any online situation, test a threat scenario, or ask for privacy advice.",
-      empathyNote: "CyberVigil Guardian AI Active • Safe Space Guaranteed",
-      steps: [
-        "Ask any question about cyberbullying, extortion, grooming, or phishing.",
-        "File a 100% confidential incident report with evidence hashing.",
-        "Print an official legal Cyber Evidence Docket for police/authorities.",
-        "Call Childline 1098 or Cyber Helpline 1930 anytime in crisis."
-      ],
-      actionLink: { text: "File Confidential Incident", url: "/report" },
+      text: textMap[language] && language !== 'English' ? textMap[language] : defaultEn,
+      empathyNote: "Guardian AI Companion Active • Zero-Knowledge Safe Space",
+      steps: [],
+      actionLink: { text: "Learn Cyber Safety Best Practices", url: "/learn" },
       isLiveGemini: !wasSafetyTriggered,
       safetyHelplineNote: "Emergency Helplines: Childline 1098 • Cyber Crime Helpline 1930"
     };
