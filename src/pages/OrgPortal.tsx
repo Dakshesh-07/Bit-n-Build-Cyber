@@ -201,7 +201,7 @@ export const OrgPortal: React.FC = () => {
                   <th className="py-3.5 px-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-sand-200">
+              <tbody className="divide-y divide-sand-200 dark:divide-slate-800">
                 {filteredIncidents.map((inc) => {
                   const isSelected = selectedCase?.id === inc.id;
                   return (
@@ -210,34 +210,34 @@ export const OrgPortal: React.FC = () => {
                       onClick={() => handleSelectCase(inc)}
                       className={`cursor-pointer transition-colors ${
                         isSelected
-                          ? 'bg-sand-200 font-semibold border-l-4 border-secondary'
-                          : 'hover:bg-sand-50'
+                          ? 'bg-sand-200 dark:bg-slate-800 font-semibold border-l-4 border-secondary dark:border-orange-500'
+                          : 'hover:bg-sand-100 dark:hover:bg-slate-800/80'
                       }`}
                     >
-                      <td className="py-4 px-4 font-mono font-bold text-primary">
+                      <td className="py-4 px-4 font-mono font-bold text-primary dark:text-slate-100">
                         {inc.caseNumber}
                       </td>
                       <td className="py-4 px-4">
-                        <span className="font-bold text-primary block">{inc.category}</span>
-                        <span className="text-[11px] text-textMuted">{inc.platform} • {inc.createdAt}</span>
+                        <span className="font-bold text-primary dark:text-slate-100 block">{inc.category}</span>
+                        <span className="text-[11px] text-textMuted dark:text-slate-400">{inc.platform} • {inc.createdAt}</span>
                       </td>
                       <td className="py-4 px-4">
                         <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
                           inc.severityLevel === 'High' || inc.severityLevel === 'Critical'
-                            ? 'bg-amber-100 text-amber-900 border border-secondary'
-                            : 'bg-sand-200 text-textDark'
+                            ? 'bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border border-secondary dark:border-amber-500'
+                            : 'bg-sand-200 dark:bg-slate-800 text-textDark dark:text-slate-300'
                         }`}>
                           {inc.severityLevel}
                         </span>
                       </td>
                       <td className="py-4 px-4">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-900 border border-blue-200">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 dark:bg-blue-950/70 text-blue-900 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
                           {inc.status}
                         </span>
                       </td>
                       <td className="py-4 px-4 text-right">
                         <span className={`text-xs font-bold inline-flex items-center gap-1 ${
-                          isSelected ? 'text-secondary-dark' : 'text-textMuted'
+                          isSelected ? 'text-secondary-dark dark:text-orange-400' : 'text-textMuted dark:text-slate-400'
                         }`}>
                           {isSelected ? 'Viewing' : 'Select'}
                           <ChevronRight className="w-3.5 h-3.5" />

@@ -320,48 +320,48 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
         </header>
       ) : (
         /* Secondary (Class 10 CBSE) Default Header */
-        <header className="bg-white border-b border-slate-200 px-4 sm:px-8 py-2.5 flex items-center justify-between sticky top-0 z-50 shadow-xs">
+        <header className="bg-white dark:bg-[#0f172a] border-b border-slate-200 dark:border-slate-800 px-4 sm:px-8 py-2.5 flex items-center justify-between sticky top-0 z-50 shadow-xs">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow-xs">
                 <BookOpen className="w-4 h-4" />
               </div>
-              <span className="font-extrabold text-base tracking-tight text-slate-900">
+              <span className="font-extrabold text-base tracking-tight text-slate-900 dark:text-slate-100">
                 NCERT e-Pathshala
               </span>
-              <span className="hidden sm:inline-block text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="hidden sm:inline-block text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                 CBSE Class 10
               </span>
             </div>
 
-            <div className="hidden lg:flex items-center gap-1.5 text-xs text-slate-500 pl-4 border-l border-slate-200">
+            <div className="hidden lg:flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 pl-4 border-l border-slate-200 dark:border-slate-800">
               <span>Science</span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               <span>Unit II: World of Living</span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-              <span className="font-semibold text-slate-800">Chapter 6: Life Processes</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200">Chapter 6: Life Processes</span>
             </div>
           </div>
 
           {/* Center Search */}
-          <div className="hidden md:flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 w-72">
+          <div className="hidden md:flex items-center gap-2 bg-slate-100 dark:bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 w-72">
             <Search className="w-3.5 h-3.5 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search textbook topics, formulas..."
-              className="bg-transparent text-xs text-slate-700 focus:outline-hidden w-full"
+              className="bg-transparent text-xs text-slate-700 dark:text-slate-200 focus:outline-hidden w-full placeholder:text-slate-400"
             />
           </div>
 
           {/* Right Subject Switcher & Profile Trigger */}
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs">
+            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700 text-xs">
               <button
                 onClick={() => setSecondarySubject('biology')}
                 className={`px-3 py-1 rounded-md font-semibold transition-colors ${
-                  secondarySubject === 'biology' ? 'bg-white shadow-xs text-slate-900 font-bold' : 'text-slate-600 hover:text-slate-900'
+                  secondarySubject === 'biology' ? 'bg-white dark:bg-slate-700 shadow-xs text-slate-900 dark:text-slate-100 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 Biology
@@ -369,7 +369,7 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
               <button
                 onClick={() => setSecondarySubject('physics')}
                 className={`px-3 py-1 rounded-md font-semibold transition-colors ${
-                  secondarySubject === 'physics' ? 'bg-white shadow-xs text-slate-900 font-bold' : 'text-slate-600 hover:text-slate-900'
+                  secondarySubject === 'physics' ? 'bg-white dark:bg-slate-700 shadow-xs text-slate-900 dark:text-slate-100 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 Physics
@@ -377,7 +377,7 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
               <button
                 onClick={() => setSecondarySubject('math')}
                 className={`px-3 py-1 rounded-md font-semibold transition-colors ${
-                  secondarySubject === 'math' ? 'bg-white shadow-xs text-slate-900 font-bold' : 'text-slate-600 hover:text-slate-900'
+                  secondarySubject === 'math' ? 'bg-white dark:bg-slate-700 shadow-xs text-slate-900 dark:text-slate-100 font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 Mathematics
@@ -700,12 +700,12 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 animate-in fade-in">
         {/* Left Syllabus Index */}
         <aside className="lg:col-span-3 space-y-4">
-          <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs space-y-3">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-500">
+          <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-xs space-y-3">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 {secondarySubject.toUpperCase()} Syllabus
               </span>
-              <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">CBSE 2026</span>
+              <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">CBSE 2026</span>
             </div>
 
             <nav className="space-y-1 text-xs">
@@ -715,23 +715,23 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                   onClick={() => setSecondaryTopic(topic.id)}
                   className={`w-full text-left p-2.5 rounded-lg transition-colors flex items-start justify-between cursor-pointer ${
                     secondaryTopic === topic.id || secondaryTopic.includes(topic.id.slice(0, 3))
-                      ? 'bg-emerald-100 text-emerald-900 font-bold border border-emerald-300 shadow-xs'
-                      : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
+                      ? 'bg-emerald-100 dark:bg-emerald-950/80 text-emerald-900 dark:text-emerald-300 font-bold border border-emerald-300 dark:border-emerald-800 shadow-xs'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   <span className="leading-snug pr-2">{topic.title}</span>
-                  <span className="text-[10px] text-slate-500 font-medium flex-shrink-0 mt-0.5">{topic.readTime}</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium flex-shrink-0 mt-0.5">{topic.readTime}</span>
                 </button>
               ))}
             </nav>
           </div>
 
-          <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1">
-            <p className="font-bold flex items-center gap-1 text-amber-900">
-              <Sparkles className="w-3.5 h-3.5 text-amber-700" />
+          <div className="p-4 rounded-xl bg-amber-50 dark:bg-slate-900/90 border border-amber-200 dark:border-amber-900/60 text-xs text-amber-950 dark:text-amber-200 space-y-1">
+            <p className="font-bold flex items-center gap-1 text-amber-900 dark:text-amber-300">
+              <Sparkles className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" />
               Board Exam Tip (CBSE 2026):
             </p>
-            <p className="text-amber-800 leading-relaxed">
+            <p className="text-amber-800 dark:text-amber-200/90 leading-relaxed">
               {secondarySubject === 'physics'
                 ? "3-mark numericals on calculating equivalent resistance in parallel circuit and heat energy H=I²Rt are guaranteed."
                 : secondarySubject === 'math'
@@ -742,14 +742,14 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
         </aside>
 
         {/* Main Article Canvas */}
-        <main className="lg:col-span-9 bg-white border border-slate-200 rounded-2xl p-6 sm:p-10 shadow-xs space-y-8 text-slate-900">
+        <main className="lg:col-span-9 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 sm:p-10 shadow-xs space-y-8 text-slate-900 dark:text-slate-100">
           {secondarySubject === 'biology' && (
             <article className="space-y-6">
-              <div className="space-y-1 border-b border-slate-200 pb-4">
-                <span className="text-xs font-bold text-emerald-700 uppercase tracking-wide">
+              <div className="space-y-1 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span className="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">
                   NCERT Class 10 Science • Biology Section
                 </span>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
                   {secondaryTopic.includes('6.1') 
                     ? '6.1 Autotrophic Nutrition — Photosynthesis & Chloroplasts' 
                     : secondaryTopic.includes('6.3') 
@@ -758,41 +758,41 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                     ? '6.4 Excretion — Structure & Function of Nephron' 
                     : '6.2 Respiration — Aerobic & Anaerobic Pathways'}
                 </h1>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Prescribed curriculum under NCERT Directorate • Updated for 2025–26 Academic Year
                 </p>
               </div>
 
-              <div className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-700 space-y-4">
+              <div className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-4">
                 {secondaryTopic.includes('6.1') ? (
                   <>
                     <p>
                       Autotrophic nutrition is a process where organisms prepare their own food from simple inorganic materials like carbon dioxide and water in the presence of sunlight and chlorophyll. Green plants and autotrophic bacteria carry out this process.
                     </p>
-                    <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 font-mono text-xs sm:text-sm space-y-1.5">
-                      <div className="flex items-center justify-between text-[11px] font-sans font-bold text-emerald-800 uppercase border-b border-emerald-200 pb-1">
+                    <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-900/60 font-mono text-xs sm:text-sm space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-sans font-bold text-emerald-800 dark:text-emerald-300 uppercase border-b border-emerald-200 dark:border-emerald-800 pb-1">
                         <span>Photosynthesis Biochemical Equation</span>
-                        <span className="text-emerald-700">Light Reaction Yield</span>
+                        <span className="text-emerald-700 dark:text-emerald-400">Light Reaction Yield</span>
                       </div>
-                      <p className="text-emerald-950 font-bold leading-relaxed pt-1">
+                      <p className="text-emerald-950 dark:text-emerald-200 font-bold leading-relaxed pt-1">
                         6 CO₂ + 12 H₂O ──[Chlorophyll + Sunlight]──&gt; C₆H₁₂O₆ + 6 O₂ + 6 H₂O
                       </p>
                     </div>
-                    <h3 className="text-base font-bold text-slate-900 pt-1">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 pt-1">
                       Three Main Steps of Photosynthesis:
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-                        <span className="font-bold text-slate-900 block border-b border-slate-200 pb-1">1. Light Absorption</span>
-                        <p className="text-slate-600">Absorption of light energy by chlorophyll pigment inside chloroplasts.</p>
+                      <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5">
+                        <span className="font-bold text-slate-900 dark:text-slate-100 block border-b border-slate-200 dark:border-slate-800 pb-1">1. Light Absorption</span>
+                        <p className="text-slate-600 dark:text-slate-400">Absorption of light energy by chlorophyll pigment inside chloroplasts.</p>
                       </div>
-                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
-                        <span className="font-bold text-slate-900 block border-b border-slate-200 pb-1">2. Water Splitting</span>
-                        <p className="text-slate-600">Conversion of light energy to chemical energy and splitting of H₂O into H₂ and O₂.</p>
+                      <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-1.5">
+                        <span className="font-bold text-slate-900 dark:text-slate-100 block border-b border-slate-200 dark:border-slate-800 pb-1">2. Water Splitting</span>
+                        <p className="text-slate-600 dark:text-slate-400">Conversion of light energy to chemical energy and splitting of H₂O into H₂ and O₂.</p>
                       </div>
-                      <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1.5">
-                        <span className="font-bold text-emerald-950 block border-b border-emerald-200 pb-1">3. CO₂ Reduction</span>
-                        <p className="text-emerald-900">Reduction of carbon dioxide to carbohydrates (Glucose).</p>
+                      <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 space-y-1.5">
+                        <span className="font-bold text-emerald-950 dark:text-emerald-200 block border-b border-emerald-200 dark:border-emerald-800 pb-1">3. CO₂ Reduction</span>
+                        <p className="text-emerald-900 dark:text-emerald-300">Reduction of carbon dioxide to carbohydrates (Glucose).</p>
                       </div>
                     </div>
                   </>
@@ -801,9 +801,9 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                     <p>
                       In human beings, the circulatory system consists of the heart, blood vessels (arteries, veins, capillaries), and blood. The human heart is a muscular organ with four distinct chambers preventing oxygen-rich blood from mixing with carbon dioxide-rich blood.
                     </p>
-                    <div className="p-4 bg-sky-50 rounded-xl border border-sky-200 space-y-2 text-xs">
-                      <span className="font-bold text-sky-900 text-sm block border-b border-sky-200 pb-1">Double Circulation Mechanics</span>
-                      <p className="text-sky-950 leading-relaxed">
+                    <div className="p-4 bg-sky-50 dark:bg-sky-950/40 rounded-xl border border-sky-200 dark:border-sky-900/60 space-y-2 text-xs">
+                      <span className="font-bold text-sky-900 dark:text-sky-300 text-sm block border-b border-sky-200 dark:border-sky-800 pb-1">Double Circulation Mechanics</span>
+                      <p className="text-sky-950 dark:text-sky-200 leading-relaxed">
                         Blood goes through the heart twice during each cycle in the body. Pulmonary circulation carries deoxygenated blood to lungs, while Systemic circulation pumps oxygenated blood to body tissues.
                       </p>
                     </div>
@@ -813,9 +813,9 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                     <p>
                       The excretory system of human beings includes a pair of kidneys, a pair of ureters, a urinary bladder, and a urethra. Each kidney contains basic filtration units called <strong>Nephrons</strong>.
                     </p>
-                    <div className="p-4 bg-purple-50 rounded-xl border border-purple-200 space-y-2 text-xs">
-                      <span className="font-bold text-purple-900 text-sm block border-b border-purple-200 pb-1">Selective Reabsorption in Bowman's Capsule</span>
-                      <p className="text-purple-950 leading-relaxed">
+                    <div className="p-4 bg-purple-50 dark:bg-purple-950/40 rounded-xl border border-purple-200 dark:border-purple-900/60 space-y-2 text-xs">
+                      <span className="font-bold text-purple-900 dark:text-purple-300 text-sm block border-b border-purple-200 dark:border-purple-800 pb-1">Selective Reabsorption in Bowman's Capsule</span>
+                      <p className="text-purple-950 dark:text-purple-200 leading-relaxed">
                         As the initial filtrate moves through the nephron tubule, useful substances like glucose, amino acids, salts, and major water are selectively reabsorbed back into capillaries.
                       </p>
                     </div>
@@ -827,44 +827,44 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                     </p>
 
                     {/* Biochemical Equation */}
-                    <div className="p-4 bg-slate-100 rounded-xl border border-slate-200 font-mono text-xs sm:text-sm space-y-1.5">
-                      <div className="flex items-center justify-between text-[11px] font-sans font-bold text-slate-700 uppercase border-b border-slate-200 pb-1">
+                    <div className="p-4 bg-slate-100 dark:bg-slate-900/90 rounded-xl border border-slate-200 dark:border-slate-800 font-mono text-xs sm:text-sm space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-sans font-bold text-slate-700 dark:text-slate-300 uppercase border-b border-slate-200 dark:border-slate-800 pb-1">
                         <span>Summary Biochemical Equation</span>
-                        <span className="text-emerald-700">Net ATP Yield: ~38 ATP</span>
+                        <span className="text-emerald-700 dark:text-emerald-400">Net ATP Yield: ~38 ATP</span>
                       </div>
-                      <p className="text-slate-900 font-bold leading-relaxed pt-1">
+                      <p className="text-slate-900 dark:text-slate-100 font-bold leading-relaxed pt-1">
                         C₆H₁₂O₆ (Glucose) + 6 O₂ ⟶ 6 CO₂ + 6 H₂O + Energy (Stored as ATP)
                       </p>
                     </div>
 
-                    <h3 className="text-base font-bold text-slate-900 pt-1">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 pt-1">
                       Breakdown of Glucose by Various Pathways:
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                        <span className="font-bold text-slate-900 block border-b border-slate-200 pb-1">
+                      <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
+                        <span className="font-bold text-slate-900 dark:text-slate-100 block border-b border-slate-200 dark:border-slate-800 pb-1">
                           1. Absence of Oxygen (In Yeast)
                         </span>
-                        <p className="text-slate-600 leading-relaxed">
+                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                           Ethanol + Carbon dioxide + Energy (2 ATP). Known as <strong>fermentation</strong> under anaerobic conditions.
                         </p>
                       </div>
 
-                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                        <span className="font-bold text-slate-900 block border-b border-slate-200 pb-1">
+                      <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
+                        <span className="font-bold text-slate-900 dark:text-slate-100 block border-b border-slate-200 dark:border-slate-800 pb-1">
                           2. Lack of Oxygen (In Muscle Cells)
                         </span>
-                        <p className="text-slate-600 leading-relaxed">
+                        <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                           Lactic acid + Energy. Build-up during sudden athletics causes muscle cramps.
                         </p>
                       </div>
 
-                      <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-2">
-                        <span className="font-bold text-emerald-950 block border-b border-emerald-200 pb-1">
+                      <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 space-y-2">
+                        <span className="font-bold text-emerald-950 dark:text-emerald-200 block border-b border-emerald-200 dark:border-emerald-800 pb-1">
                           3. Presence of Oxygen (Mitochondria)
                         </span>
-                        <p className="text-emerald-900 leading-relaxed">
+                        <p className="text-emerald-900 dark:text-emerald-300 leading-relaxed">
                           CO₂ + H₂O + Energy (~38 ATP). Provides baseline energy for human cellular mechanics.
                         </p>
                       </div>
@@ -873,19 +873,19 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                 )}
 
                 {/* Concept Check Accordion */}
-                <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 space-y-2 text-xs">
+                <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 space-y-2 text-xs">
                   <div 
                     onClick={() => setConceptCheckRevealed(!conceptCheckRevealed)}
-                    className="flex items-center justify-between cursor-pointer font-bold text-blue-900"
+                    className="flex items-center justify-between cursor-pointer font-bold text-blue-900 dark:text-blue-300"
                   >
                     <span className="flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                      <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       Concept Check: Why is ATP termed the energy currency of the cell?
                     </span>
                     <ChevronDown className={`w-4 h-4 transition-transform ${conceptCheckRevealed ? 'rotate-180' : ''}`} />
                   </div>
                   {conceptCheckRevealed && (
-                    <p className="leading-relaxed text-slate-700 pt-2 border-t border-blue-200 animate-in fade-in">
+                    <p className="leading-relaxed text-slate-700 dark:text-slate-300 pt-2 border-t border-blue-200 dark:border-blue-800 animate-in fade-in">
                       ATP is broken down into ADP and inorganic phosphate, releasing approximately 30.5 kJ/mol of energy to drive endothermic metabolic reactions.
                     </p>
                   )}
@@ -896,72 +896,72 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
 
           {secondarySubject === 'physics' && (
             <article className="space-y-6">
-              <div className="space-y-1 border-b border-slate-200 pb-4">
-                <span className="text-xs font-bold text-blue-700 uppercase tracking-wide">
+              <div className="space-y-1 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span className="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wide">
                   NCERT Class 10 Science • Physics Section
                 </span>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
                   Chapter 12: Electricity & Joule's Heating Effect
                 </h1>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Unit III: Effects of Current • Prescribed NCERT Curriculum
                 </p>
               </div>
 
-              <div className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-700 space-y-4">
+              <div className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-4">
                 <p>
                   Electric current is expressed by the amount of charge flowing through a particular area in unit time. It is the rate of flow of electric charges. In circuits using metallic wires, electrons constitute the flow of charges.
                 </p>
 
                 {/* Fundamental Formulas Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 bg-blue-50/70 rounded-xl border border-blue-200 font-mono space-y-1.5">
-                    <span className="text-xs font-sans font-bold text-blue-900 block border-b border-blue-200 pb-1 uppercase">
+                  <div className="p-4 bg-blue-50/70 dark:bg-blue-950/40 rounded-xl border border-blue-200 dark:border-blue-900/60 font-mono space-y-1.5">
+                    <span className="text-xs font-sans font-bold text-blue-900 dark:text-blue-300 block border-b border-blue-200 dark:border-blue-800 pb-1 uppercase">
                       Ohm's Law Equation
                     </span>
-                    <p className="text-xl font-bold text-blue-950 pt-1">V = I × R</p>
-                    <p className="text-xs font-sans text-slate-600">
+                    <p className="text-xl font-bold text-blue-950 dark:text-blue-200 pt-1">V = I × R</p>
+                    <p className="text-xs font-sans text-slate-600 dark:text-slate-400">
                       V: Potential Difference (Volts), I: Current (Amperes), R: Resistance (Ohms Ω).
                     </p>
                   </div>
 
-                  <div className="p-4 bg-purple-50/70 rounded-xl border border-purple-200 font-mono space-y-1.5">
-                    <span className="text-xs font-sans font-bold text-purple-900 block border-b border-purple-200 pb-1 uppercase">
+                  <div className="p-4 bg-purple-50/70 dark:bg-purple-950/40 rounded-xl border border-purple-200 dark:border-purple-900/60 font-mono space-y-1.5">
+                    <span className="text-xs font-sans font-bold text-purple-900 dark:text-purple-300 block border-b border-purple-200 dark:border-purple-800 pb-1 uppercase">
                       Joule's Law of Heating
                     </span>
-                    <p className="text-xl font-bold text-purple-950 pt-1">H = I² × R × t</p>
-                    <p className="text-xs font-sans text-slate-600">
+                    <p className="text-xl font-bold text-purple-950 dark:text-purple-200 pt-1">H = I² × R × t</p>
+                    <p className="text-xs font-sans text-slate-600 dark:text-slate-400">
                       H: Heat generated (Joules), t: Time duration (seconds).
                     </p>
                   </div>
                 </div>
 
-                <h3 className="text-base font-bold text-slate-900 pt-2">
+                <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 pt-2">
                   Combination of Resistors: Series vs Parallel
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                    <span className="font-bold text-slate-900 block border-b border-slate-200 pb-1">
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-2">
+                    <span className="font-bold text-slate-900 dark:text-slate-100 block border-b border-slate-200 dark:border-slate-800 pb-1">
                       Series Combination (R_s = R₁ + R₂ + R₃)
                     </span>
-                    <p className="text-slate-600 leading-relaxed">
+                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                       Current remains identical through each resistor. Overall circuit resistance increases. If one component fails, circuit breaks.
                     </p>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-2">
-                    <span className="font-bold text-emerald-950 block border-b border-emerald-200 pb-1">
+                  <div className="p-4 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 space-y-2">
+                    <span className="font-bold text-emerald-950 dark:text-emerald-200 block border-b border-emerald-200 dark:border-emerald-800 pb-1">
                       Parallel Combination (1/R_p = 1/R₁ + 1/R₂ + 1/R₃)
                     </span>
-                    <p className="text-emerald-900 leading-relaxed">
+                    <p className="text-emerald-900 dark:text-emerald-300 leading-relaxed">
                       Potential difference remains identical across all branches. Overall circuit resistance decreases. Household wiring is always parallel!
                     </p>
                   </div>
                 </div>
 
                 {/* Solved Board Exam Numerical */}
-                <div className="p-5 rounded-2xl bg-slate-900 text-slate-100 font-mono text-xs space-y-2 shadow-inner">
+                <div className="p-5 rounded-2xl bg-slate-900 text-slate-100 font-mono text-xs space-y-2 shadow-inner border border-slate-800">
                   <div className="flex items-center justify-between text-amber-400 font-sans font-bold border-b border-slate-800 pb-1 text-xs">
                     <span>NCERT Solved Board Numerical (3 Marks)</span>
                     <span>CBSE 2024 Exam Problem</span>
@@ -978,19 +978,19 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                 </div>
 
                 {/* Concept Check Accordion */}
-                <div className="p-4 rounded-xl bg-blue-50/60 border border-blue-200 space-y-2 text-xs">
+                <div className="p-4 rounded-xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 space-y-2 text-xs">
                   <div 
                     onClick={() => setConceptCheckRevealed(!conceptCheckRevealed)}
-                    className="flex items-center justify-between cursor-pointer font-bold text-blue-900"
+                    className="flex items-center justify-between cursor-pointer font-bold text-blue-900 dark:text-blue-300"
                   >
                     <span className="flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                      <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       Concept Check: Why is tungsten used almost exclusively for filaments of electric lamps?
                     </span>
                     <ChevronDown className={`w-4 h-4 transition-transform ${conceptCheckRevealed ? 'rotate-180' : ''}`} />
                   </div>
                   {conceptCheckRevealed && (
-                    <p className="leading-relaxed text-slate-700 pt-2 border-t border-blue-200/60 animate-in fade-in">
+                    <p className="leading-relaxed text-slate-700 dark:text-slate-300 pt-2 border-t border-blue-200/60 dark:border-blue-800 animate-in fade-in">
                       Tungsten has an extremely high melting point (3,380 °C) and high resistivity, allowing it to become white-hot and emit intense light without melting.
                     </p>
                   )}
@@ -1001,56 +1001,56 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
 
           {secondarySubject === 'math' && (
             <article className="space-y-6">
-              <div className="space-y-1 border-b border-slate-200 pb-4">
-                <span className="text-xs font-bold text-purple-700 uppercase tracking-wide">
+              <div className="space-y-1 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <span className="text-xs font-bold text-purple-700 dark:text-purple-400 uppercase tracking-wide">
                   NCERT Class 10 Mathematics • Algebra & Trigonometry
                 </span>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
                   Chapter 4 & 8: Quadratic Equations & Trigonometry
                 </h1>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Prescribed Curriculum under CBSE Board • Solved Formula Sheets
                 </p>
               </div>
 
-              <div className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-700 space-y-4">
+              <div className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-700 dark:text-slate-300 space-y-4">
                 <p>
                   A quadratic equation in the variable x is an equation of the form ax² + bx + c = 0, where a, b, c are real numbers and a ≠ 0. The roots of the quadratic equation are given by the Sridharacharya Quadratic Formula.
                 </p>
 
                 {/* Quadratic Formula Card */}
-                <div className="p-5 bg-purple-50/70 rounded-2xl border border-purple-200 font-mono text-center space-y-2">
-                  <span className="text-xs font-sans font-bold text-purple-900 uppercase tracking-wider block">
+                <div className="p-5 bg-purple-50/70 dark:bg-purple-950/40 rounded-2xl border border-purple-200 dark:border-purple-900/60 font-mono text-center space-y-2">
+                  <span className="text-xs font-sans font-bold text-purple-900 dark:text-purple-300 uppercase tracking-wider block">
                     Quadratic Formula & Discriminant
                   </span>
-                  <p className="text-2xl font-extrabold text-purple-950">
+                  <p className="text-2xl font-extrabold text-purple-950 dark:text-purple-200">
                     x = [ -b ± √(b² - 4ac) ] / 2a
                   </p>
-                  <div className="grid grid-cols-3 gap-2 text-xs font-sans font-bold text-slate-700 pt-2 border-t border-purple-200">
-                    <span className="p-2 bg-white rounded-lg border">D &gt; 0: 2 Real & Distinct Roots</span>
-                    <span className="p-2 bg-white rounded-lg border">D = 0: 2 Equal Real Roots</span>
-                    <span className="p-2 bg-white rounded-lg border">D &lt; 0: No Real Roots</span>
+                  <div className="grid grid-cols-3 gap-2 text-xs font-sans font-bold text-slate-700 dark:text-slate-300 pt-2 border-t border-purple-200 dark:border-purple-900/60">
+                    <span className="p-2 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">D &gt; 0: 2 Real & Distinct Roots</span>
+                    <span className="p-2 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">D = 0: 2 Equal Real Roots</span>
+                    <span className="p-2 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-800">D &lt; 0: No Real Roots</span>
                   </div>
                 </div>
 
-                <h3 className="text-base font-bold text-slate-900 pt-2">
+                <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 pt-2">
                   Chapter 8: Fundamental Trigonometric Identities
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 font-mono text-xs text-center">
-                  <div className="p-3.5 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-950 font-bold">
+                  <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 dark:border-emerald-900/60 text-emerald-950 dark:text-emerald-200 font-bold">
                     sin²θ + cos²θ = 1
                   </div>
-                  <div className="p-3.5 bg-blue-50 rounded-xl border border-blue-200 text-blue-950 font-bold">
+                  <div className="p-3.5 bg-blue-50 dark:bg-blue-950/40 rounded-xl border border-blue-200 dark:border-blue-900/60 text-blue-950 dark:text-blue-200 font-bold">
                     1 + tan²θ = sec²θ
                   </div>
-                  <div className="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-amber-950 font-bold">
+                  <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-200 dark:border-amber-900/60 text-amber-950 dark:text-amber-200 font-bold">
                     1 + cot²θ = cosec²θ
                   </div>
                 </div>
 
                 {/* Solved CBSE Board Math Question */}
-                <div className="p-5 rounded-2xl bg-slate-900 text-slate-100 font-mono text-xs space-y-2 shadow-inner">
+                <div className="p-5 rounded-2xl bg-slate-900 text-slate-100 font-mono text-xs space-y-2 shadow-inner border border-slate-800">
                   <div className="flex items-center justify-between text-purple-300 font-sans font-bold border-b border-slate-800 pb-1 text-xs">
                     <span>CBSE Board Exam Solved Proof (5 Marks)</span>
                     <span>Class 10 Standard Math</span>
@@ -1067,19 +1067,19 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                 </div>
 
                 {/* Concept Check Accordion */}
-                <div className="p-4 rounded-xl bg-blue-50/60 border border-blue-200 space-y-2 text-xs">
+                <div className="p-4 rounded-xl bg-blue-50/60 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 space-y-2 text-xs">
                   <div 
                     onClick={() => setConceptCheckRevealed(!conceptCheckRevealed)}
-                    className="flex items-center justify-between cursor-pointer font-bold text-blue-900"
+                    className="flex items-center justify-between cursor-pointer font-bold text-blue-900 dark:text-blue-300"
                   >
                     <span className="flex items-center gap-1.5">
-                      <CheckCircle2 className="w-4 h-4 text-blue-600" />
+                      <CheckCircle2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       Concept Check: What is the angle of elevation if a 10m pole casts a 10√3 m shadow?
                     </span>
                     <ChevronDown className={`w-4 h-4 transition-transform ${conceptCheckRevealed ? 'rotate-180' : ''}`} />
                   </div>
                   {conceptCheckRevealed && (
-                    <p className="leading-relaxed text-slate-700 pt-2 border-t border-blue-200/60 animate-in fade-in">
+                    <p className="leading-relaxed text-slate-700 dark:text-slate-300 pt-2 border-t border-blue-200/60 dark:border-blue-800 animate-in fade-in">
                       tan θ = Height / Shadow = 10 / (10√3) = 1/√3. Therefore, angle θ = 30°.
                     </p>
                   )}
