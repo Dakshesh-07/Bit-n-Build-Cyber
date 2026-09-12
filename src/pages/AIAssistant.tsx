@@ -524,7 +524,7 @@ export const AIAssistant: React.FC = () => {
         <div className="p-4 rounded-xl bg-[#101935] border border-[#1c2d5c] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
           <div className="flex items-center gap-2.5">
             <ShieldAlert className="w-5 h-5 text-secondary dark:text-orange-400" />
-            <span className="text-xs font-semibold text-textDark dark:text-slate-200">
+            <span className="text-xs font-semibold text-slate-200">
               Need immediate human escalation or platform takedown?
             </span>
           </div>
