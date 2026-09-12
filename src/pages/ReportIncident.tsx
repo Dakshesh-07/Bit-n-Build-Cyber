@@ -421,36 +421,42 @@ export const ReportIncident: React.FC = () => {
               <p className="text-xs text-textMuted">
                 If you are experiencing bullying or extortion, you can report completely anonymously to prevent any retaliation.
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                 <button
                   type="button"
                   onClick={() => setIsAnonymousMode(true)}
-                  className={`p-3.5 rounded-xl border text-xs font-bold text-left transition-all active:scale-95 flex items-start gap-2.5 ${
+                  className={`p-4 rounded-xl border text-xs font-bold text-left transition-all active:scale-95 flex items-start gap-3 cursor-pointer ${
                     isAnonymousMode
-                      ? 'bg-primary text-surface border-primary shadow-warm-sm'
-                      : 'bg-surface border-sand-300 hover:bg-sand-50 text-textDark'
+                      ? 'bg-primary text-white border-primary dark:bg-orange-600 dark:border-orange-500 dark:text-white shadow-md ring-2 ring-orange-500/30'
+                      : 'bg-surface dark:bg-slate-900 border-sand-300 dark:border-slate-800 hover:bg-sand-50 dark:hover:bg-slate-800 text-textDark dark:text-slate-300'
                   }`}
                 >
-                  <EyeOff className="w-4 h-4 flex-shrink-0 mt-0.5 text-secondary" />
+                  <EyeOff className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isAnonymousMode ? 'text-white' : 'text-secondary dark:text-orange-400'}`} />
                   <div>
-                    <span className="block font-bold">Anonymous Shield</span>
-                    <span className="text-[10px] font-normal opacity-90">No account linked • Zero identity logs</span>
+                    <div className="flex items-center gap-2">
+                      <span className="block font-bold text-sm">Anonymous Shield</span>
+                      {isAnonymousMode && <span className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded font-extrabold uppercase">Selected</span>}
+                    </div>
+                    <span className="text-[11px] font-normal opacity-90 block mt-0.5">No account linked • Zero identity logs</span>
                   </div>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setIsAnonymousMode(false)}
-                  className={`p-3.5 rounded-xl border text-xs font-bold text-left transition-all active:scale-95 flex items-start gap-2.5 ${
+                  className={`p-4 rounded-xl border text-xs font-bold text-left transition-all active:scale-95 flex items-start gap-3 cursor-pointer ${
                     !isAnonymousMode
-                      ? 'bg-primary text-surface border-primary shadow-warm-sm'
-                      : 'bg-surface border-sand-300 hover:bg-sand-50 text-textDark'
+                      ? 'bg-primary text-white border-primary dark:bg-orange-600 dark:border-orange-500 dark:text-white shadow-md ring-2 ring-orange-500/30'
+                      : 'bg-surface dark:bg-slate-900 border-sand-300 dark:border-slate-800 hover:bg-sand-50 dark:hover:bg-slate-800 text-textDark dark:text-slate-300'
                   }`}
                 >
-                  <UserCheck className="w-4 h-4 flex-shrink-0 mt-0.5 text-secondary" />
+                  <UserCheck className={`w-5 h-5 flex-shrink-0 mt-0.5 ${!isAnonymousMode ? 'text-white' : 'text-secondary dark:text-orange-400'}`} />
                   <div>
-                    <span className="block font-bold">Verified Account</span>
-                    <span className="text-[10px] font-normal opacity-90">Linked to your profile: {user?.alias || 'User'}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="block font-bold text-sm">Verified Account</span>
+                      {!isAnonymousMode && <span className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded font-extrabold uppercase">Selected</span>}
+                    </div>
+                    <span className="text-[11px] font-normal opacity-90 block mt-0.5">Linked to profile: {user?.alias || 'User'}</span>
                   </div>
                 </button>
               </div>
@@ -583,10 +589,10 @@ export const ReportIncident: React.FC = () => {
                 <label 
                   onPaste={handlePasteEvent}
                   tabIndex={0}
-                  className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer flex flex-col items-center justify-center transition-colors focus:outline-hidden focus:ring-2 focus:ring-secondary/50 ${
+                  className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer flex flex-col items-center justify-center transition-all focus:outline-hidden ${
                   evidenceFiles.length === 0
-                    ? 'border-errorRed/60 bg-errorContainer/30 hover:border-errorRed'
-                    : 'border-sand-300 hover:border-primary bg-sand-100'
+                    ? 'border-rose-500/60 bg-rose-500/5 hover:border-rose-500 dark:bg-rose-950/20 dark:border-rose-500/40 dark:hover:border-rose-400'
+                    : 'border-sand-300 dark:border-slate-700 hover:border-primary dark:hover:border-orange-400 bg-sand-100 dark:bg-slate-900'
                 }`}>
                   <input
                     type="file"
@@ -594,21 +600,23 @@ export const ReportIncident: React.FC = () => {
                     accept="image/*,.pdf"
                     onChange={handleFileUpload}
                   />
-                  <UploadCloud className="w-8 h-8 text-primary mb-1.5" />
-                  <p className="text-xs font-bold text-primary">
+                  <UploadCloud className="w-8 h-8 text-primary dark:text-orange-400 mb-1.5" />
+                  <p className="text-xs font-extrabold text-primary dark:text-slate-100">
                     {evidenceFiles.length === 0 ? 'Upload or Paste (Ctrl+V) Evidence File' : 'Add / Paste Additional Evidence'}
                   </p>
-                  <p className="text-[10px] text-textMuted mt-0.5">Screenshots, image exports, PDF, or copied chat log • Maximum 25MB</p>
+                  <p className="text-[11px] text-textMuted dark:text-slate-400 mt-0.5 font-medium">
+                    Screenshots, image exports, PDF, or copied chat log • Maximum 25MB
+                  </p>
                 </label>
 
                 {/* File List */}
                 {evidenceFiles.map((file, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 rounded-lg bg-sand-200 border border-sand-300 text-xs">
-                    <div className="flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-primary" />
+                  <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-sand-200 dark:bg-slate-900 border border-sand-300 dark:border-slate-800 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <FileText className="w-4 h-4 text-primary dark:text-orange-400" />
                       <div>
-                        <p className="font-bold text-primary">{file.name}</p>
-                        <p className="text-[10px] text-textMuted">{file.size} • {file.status}</p>
+                        <p className="font-bold text-primary dark:text-slate-100">{file.name}</p>
+                        <p className="text-[10px] text-textMuted dark:text-slate-400">{file.size} • {file.status}</p>
                       </div>
                     </div>
                     <button

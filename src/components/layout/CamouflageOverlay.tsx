@@ -705,20 +705,20 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                 <button
                   key={topic.id}
                   onClick={() => setSecondaryTopic(topic.id)}
-                  className={`w-full text-left p-2.5 rounded-lg transition-colors flex items-start justify-between ${
-                    secondaryTopic === topic.id || (secondaryTopic.includes(topic.id.slice(0, 3)))
-                      ? 'bg-emerald-50 text-emerald-900 font-bold border border-emerald-200'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  className={`w-full text-left p-2.5 rounded-lg transition-colors flex items-start justify-between cursor-pointer ${
+                    secondaryTopic === topic.id || secondaryTopic.includes(topic.id.slice(0, 3))
+                      ? 'bg-emerald-100 text-emerald-900 font-bold border border-emerald-300 shadow-xs'
+                      : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'
                   }`}
                 >
                   <span className="leading-snug pr-2">{topic.title}</span>
-                  <span className="text-[10px] text-slate-400 flex-shrink-0 mt-0.5">{topic.readTime}</span>
+                  <span className="text-[10px] text-slate-500 font-medium flex-shrink-0 mt-0.5">{topic.readTime}</span>
                 </button>
               ))}
             </nav>
           </div>
 
-          <div className="p-4 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-950 space-y-1">
+          <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-950 space-y-1">
             <p className="font-bold flex items-center gap-1 text-amber-900">
               <Sparkles className="w-3.5 h-3.5 text-amber-700" />
               Board Exam Tip (CBSE 2026):
@@ -734,7 +734,7 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
         </aside>
 
         {/* Main Article Canvas */}
-        <main className="lg:col-span-9 bg-white border border-slate-200 rounded-2xl p-6 sm:p-10 shadow-xs space-y-8">
+        <main className="lg:col-span-9 bg-white border border-slate-200 rounded-2xl p-6 sm:p-10 shadow-xs space-y-8 text-slate-900">
           {secondarySubject === 'biology' && (
             <article className="space-y-6">
               <div className="space-y-1 border-b border-slate-200 pb-4">
@@ -742,7 +742,13 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                   NCERT Class 10 Science • Biology Section
                 </span>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                  Chapter 6: Life Processes — Respiration & Cellular Metabolism
+                  {secondaryTopic.includes('6.1') 
+                    ? '6.1 Autotrophic Nutrition — Photosynthesis & Chloroplasts' 
+                    : secondaryTopic.includes('6.3') 
+                    ? '6.3 Transportation — Human Circulatory System & Heart' 
+                    : secondaryTopic.includes('6.4') 
+                    ? '6.4 Excretion — Structure & Function of Nephron' 
+                    : '6.2 Respiration — Aerobic & Anaerobic Pathways'}
                 </h1>
                 <p className="text-xs text-slate-500">
                   Prescribed curriculum under NCERT Directorate • Updated for 2025–26 Academic Year
@@ -750,56 +756,116 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
               </div>
 
               <div className="prose prose-slate max-w-none text-sm leading-relaxed text-slate-700 space-y-4">
-                <p>
-                  We have discussed nutrition in organisms in the previous section. The food material taken in during the process of nutrition is used in cells to provide energy for various life processes. Diverse organisms do this in different ways — some use oxygen to break-down glucose completely into carbon dioxide and water, some use other pathways that do not involve oxygen.
-                </p>
-
-                {/* Biochemical Equation */}
-                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 font-mono text-xs sm:text-sm space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px] font-sans font-bold text-slate-600 uppercase border-b border-slate-200 pb-1">
-                    <span>Summary Biochemical Equation</span>
-                    <span className="text-emerald-700">Net ATP Yield: ~38 ATP</span>
-                  </div>
-                  <p className="text-slate-900 font-bold leading-relaxed pt-1">
-                    C₆H₁₂O₆ (Glucose) + 6 O₂ ⟶ 6 CO₂ + 6 H₂O + Energy (Stored as ATP)
-                  </p>
-                </div>
-
-                <h3 className="text-base font-bold text-slate-900 pt-1">
-                  Breakdown of Glucose by Various Pathways:
-                </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                    <span className="font-bold text-slate-900 block border-b border-slate-200 pb-1">
-                      1. Absence of Oxygen (In Yeast)
-                    </span>
-                    <p className="text-slate-600 leading-relaxed">
-                      Ethanol + Carbon dioxide + Energy (2 ATP). Known as <strong>fermentation</strong> under anaerobic conditions.
+                {secondaryTopic.includes('6.1') ? (
+                  <>
+                    <p>
+                      Autotrophic nutrition is a process where organisms prepare their own food from simple inorganic materials like carbon dioxide and water in the presence of sunlight and chlorophyll. Green plants and autotrophic bacteria carry out this process.
                     </p>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                    <span className="font-bold text-slate-900 block border-b border-slate-200 pb-1">
-                      2. Lack of Oxygen (In Muscle Cells)
-                    </span>
-                    <p className="text-slate-600 leading-relaxed">
-                      Lactic acid + Energy. Build-up during sudden athletics causes muscle cramps.
+                    <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-200 font-mono text-xs sm:text-sm space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-sans font-bold text-emerald-800 uppercase border-b border-emerald-200 pb-1">
+                        <span>Photosynthesis Biochemical Equation</span>
+                        <span className="text-emerald-700">Light Reaction Yield</span>
+                      </div>
+                      <p className="text-emerald-950 font-bold leading-relaxed pt-1">
+                        6 CO₂ + 12 H₂O ──[Chlorophyll + Sunlight]──&gt; C₆H₁₂O₆ + 6 O₂ + 6 H₂O
+                      </p>
+                    </div>
+                    <h3 className="text-base font-bold text-slate-900 pt-1">
+                      Three Main Steps of Photosynthesis:
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+                        <span className="font-bold text-slate-900 block border-b border-slate-200 pb-1">1. Light Absorption</span>
+                        <p className="text-slate-600">Absorption of light energy by chlorophyll pigment inside chloroplasts.</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+                        <span className="font-bold text-slate-900 block border-b border-slate-200 pb-1">2. Water Splitting</span>
+                        <p className="text-slate-600">Conversion of light energy to chemical energy and splitting of H₂O into H₂ and O₂.</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-1.5">
+                        <span className="font-bold text-emerald-950 block border-b border-emerald-200 pb-1">3. CO₂ Reduction</span>
+                        <p className="text-emerald-900">Reduction of carbon dioxide to carbohydrates (Glucose).</p>
+                      </div>
+                    </div>
+                  </>
+                ) : secondaryTopic.includes('6.3') ? (
+                  <>
+                    <p>
+                      In human beings, the circulatory system consists of the heart, blood vessels (arteries, veins, capillaries), and blood. The human heart is a muscular organ with four distinct chambers preventing oxygen-rich blood from mixing with carbon dioxide-rich blood.
                     </p>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 space-y-2">
-                    <span className="font-bold text-emerald-950 block border-b border-emerald-200 pb-1">
-                      3. Presence of Oxygen (Mitochondria)
-                    </span>
-                    <p className="text-emerald-900 leading-relaxed">
-                      CO₂ + H₂O + Energy (~38 ATP). Provides baseline energy for human cellular mechanics.
+                    <div className="p-4 bg-sky-50 rounded-xl border border-sky-200 space-y-2 text-xs">
+                      <span className="font-bold text-sky-900 text-sm block border-b border-sky-200 pb-1">Double Circulation Mechanics</span>
+                      <p className="text-sky-950 leading-relaxed">
+                        Blood goes through the heart twice during each cycle in the body. Pulmonary circulation carries deoxygenated blood to lungs, while Systemic circulation pumps oxygenated blood to body tissues.
+                      </p>
+                    </div>
+                  </>
+                ) : secondaryTopic.includes('6.4') ? (
+                  <>
+                    <p>
+                      The excretory system of human beings includes a pair of kidneys, a pair of ureters, a urinary bladder, and a urethra. Each kidney contains basic filtration units called <strong>Nephrons</strong>.
                     </p>
-                  </div>
-                </div>
+                    <div className="p-4 bg-purple-50 rounded-xl border border-purple-200 space-y-2 text-xs">
+                      <span className="font-bold text-purple-900 text-sm block border-b border-purple-200 pb-1">Selective Reabsorption in Bowman's Capsule</span>
+                      <p className="text-purple-950 leading-relaxed">
+                        As the initial filtrate moves through the nephron tubule, useful substances like glucose, amino acids, salts, and major water are selectively reabsorbed back into capillaries.
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p>
+                      We have discussed nutrition in organisms in the previous section. The food material taken in during the process of nutrition is used in cells to provide energy for various life processes. Diverse organisms do this in different ways — some use oxygen to break-down glucose completely into carbon dioxide and water, some use other pathways that do not involve oxygen.
+                    </p>
+
+                    {/* Biochemical Equation */}
+                    <div className="p-4 bg-slate-100 rounded-xl border border-slate-200 font-mono text-xs sm:text-sm space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px] font-sans font-bold text-slate-700 uppercase border-b border-slate-200 pb-1">
+                        <span>Summary Biochemical Equation</span>
+                        <span className="text-emerald-700">Net ATP Yield: ~38 ATP</span>
+                      </div>
+                      <p className="text-slate-900 font-bold leading-relaxed pt-1">
+                        C₆H₁₂O₆ (Glucose) + 6 O₂ ⟶ 6 CO₂ + 6 H₂O + Energy (Stored as ATP)
+                      </p>
+                    </div>
+
+                    <h3 className="text-base font-bold text-slate-900 pt-1">
+                      Breakdown of Glucose by Various Pathways:
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                        <span className="font-bold text-slate-900 block border-b border-slate-200 pb-1">
+                          1. Absence of Oxygen (In Yeast)
+                        </span>
+                        <p className="text-slate-600 leading-relaxed">
+                          Ethanol + Carbon dioxide + Energy (2 ATP). Known as <strong>fermentation</strong> under anaerobic conditions.
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                        <span className="font-bold text-slate-900 block border-b border-slate-200 pb-1">
+                          2. Lack of Oxygen (In Muscle Cells)
+                        </span>
+                        <p className="text-slate-600 leading-relaxed">
+                          Lactic acid + Energy. Build-up during sudden athletics causes muscle cramps.
+                        </p>
+                      </div>
+
+                      <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 space-y-2">
+                        <span className="font-bold text-emerald-950 block border-b border-emerald-200 pb-1">
+                          3. Presence of Oxygen (Mitochondria)
+                        </span>
+                        <p className="text-emerald-900 leading-relaxed">
+                          CO₂ + H₂O + Energy (~38 ATP). Provides baseline energy for human cellular mechanics.
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
 
                 {/* Concept Check Accordion */}
-                <div className="p-4 rounded-xl bg-blue-50/60 border border-blue-200 space-y-2 text-xs">
+                <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 space-y-2 text-xs">
                   <div 
                     onClick={() => setConceptCheckRevealed(!conceptCheckRevealed)}
                     className="flex items-center justify-between cursor-pointer font-bold text-blue-900"
@@ -811,7 +877,7 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                     <ChevronDown className={`w-4 h-4 transition-transform ${conceptCheckRevealed ? 'rotate-180' : ''}`} />
                   </div>
                   {conceptCheckRevealed && (
-                    <p className="leading-relaxed text-slate-700 pt-2 border-t border-blue-200/60 animate-in fade-in">
+                    <p className="leading-relaxed text-slate-700 pt-2 border-t border-blue-200 animate-in fade-in">
                       ATP is broken down into ADP and inorganic phosphate, releasing approximately 30.5 kJ/mol of energy to drive endothermic metabolic reactions.
                     </p>
                   )}

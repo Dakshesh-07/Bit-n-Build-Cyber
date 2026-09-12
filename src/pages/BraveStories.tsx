@@ -342,13 +342,9 @@ export const BraveStories: React.FC = () => {
                 onClick={() => setSelectedItem(item)}
                 className="group flex flex-col space-y-2 cursor-pointer transition-all duration-300"
               >
-                {/* Text Card Container (Preserving Frame Geometry, Badges & Star Button) */}
+                {/* Text Card Container (Clean, Inverted Hover Highlight: Normal dark slate by default, Orange highlight on hover) */}
                 <div 
-                  className={`relative w-full rounded-2xl sm:rounded-3xl p-5 sm:p-6 transition-all duration-300 flex flex-col justify-between border shadow-warm-card hover:shadow-warm-elevated ${
-                    isGrievance 
-                      ? 'bg-amber-50/60 dark:bg-amber-950/30 border-amber-200/90 dark:border-amber-900/60 hover:border-amber-400' 
-                      : 'bg-surface dark:bg-slate-900 border-sand-300 dark:border-slate-800 hover:border-sand-400 dark:hover:border-slate-700'
-                  }`}
+                  className="relative w-full rounded-2xl sm:rounded-3xl p-5 sm:p-6 transition-all duration-200 flex flex-col justify-between border bg-surface dark:bg-slate-900 border-sand-300 dark:border-slate-800 hover:border-sand-400 dark:hover:border-orange-500 shadow-warm-card hover:shadow-warm-elevated group-hover:translate-y-[-2px]"
                 >
                   {/* Top Row: Category Pill, Doubt Voting & Star Button */}
                   <div className="flex items-start justify-between gap-2 mb-3.5">
@@ -366,8 +362,8 @@ export const BraveStories: React.FC = () => {
                           onClick={(e) => handleVote(item.id, e)}
                           className={`inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-2.5 py-0.5 rounded-full font-bold transition-all active:scale-90 border ${
                             item.userVoted
-                              ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700 shadow-xs'
-                              : 'bg-surface dark:bg-slate-800 hover:bg-amber-50 text-slate-700 dark:text-slate-300 border-sand-300 dark:border-slate-700'
+                              ? 'bg-amber-500/20 text-amber-600 dark:text-amber-300 border-amber-500/40 shadow-xs'
+                              : 'bg-sand-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border-sand-300 dark:border-slate-700'
                           }`}
                           title="Upvote / I have this doubt too"
                         >
@@ -377,7 +373,8 @@ export const BraveStories: React.FC = () => {
                       )}
 
                       {item.urgency === 'Critical' && (
-                        <span className="px-2 py-0.5 rounded-full bg-rose-600 text-white text-[9px] font-extrabold animate-pulse">
+                        <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-[10px] font-bold flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
                           Critical Alert
                         </span>
                       )}
@@ -410,14 +407,14 @@ export const BraveStories: React.FC = () => {
                       {item.title}
                     </h3>
 
-                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 line-clamp-5 leading-relaxed italic bg-sand-100/50 dark:bg-slate-950/60 p-3.5 rounded-2xl border-l-3 border-secondary dark:border-orange-500">
+                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 line-clamp-5 leading-relaxed italic bg-sand-100/50 dark:bg-slate-950/70 p-3.5 rounded-2xl border-l-3 border-secondary dark:border-orange-500">
                       "{item.storyText}"
                     </p>
 
                     {/* Tags / Officer Guidance Indicator */}
                     <div className="flex flex-wrap items-center gap-1.5 pt-1">
                       {isGrievance && item.verifiedAdvice && (
-                        <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                        <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-950/50 border border-amber-500/30 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
                           <Shield className="w-3 h-3 text-amber-600 dark:text-amber-400" />
                           Verified Guidance
                         </span>
