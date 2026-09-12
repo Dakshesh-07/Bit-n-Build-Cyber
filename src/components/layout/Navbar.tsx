@@ -201,53 +201,55 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
                       )}
                     </div>
 
-                    {/* RBAC Quick Role Switcher */}
-                    <div className="space-y-1 pt-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 block">
-                        Verified Role Clearance (RBAC)
-                      </span>
-                      <div className="grid grid-cols-1 gap-1">
-                        <button
-                          onClick={() => handleRoleSwitch('registered_youth')}
-                          className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${
-                            currentRole === 'registered_youth' ? 'bg-blue-50 text-blue-800 font-bold' : 'hover:bg-slate-50 text-slate-700'
-                          }`}
-                        >
-                          <span className="flex items-center gap-1.5">🎓 <span>Student Defender</span></span>
-                          {currentRole === 'registered_youth' && <span className="text-[10px] text-blue-600 font-bold">Shield 1</span>}
-                        </button>
+                    {/* RBAC Quick Role Switcher (Visible ONLY to Admin) */}
+                    {user?.role === 'admin' && (
+                      <div className="space-y-1 pt-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 block">
+                          Verified Role Clearance (RBAC)
+                        </span>
+                        <div className="grid grid-cols-1 gap-1">
+                          <button
+                            onClick={() => handleRoleSwitch('registered_youth')}
+                            className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${
+                              currentRole === 'registered_youth' ? 'bg-blue-50 text-blue-800 font-bold' : 'hover:bg-slate-50 text-slate-700'
+                            }`}
+                          >
+                            <span className="flex items-center gap-1.5">🎓 <span>Student Defender</span></span>
+                            {currentRole === 'registered_youth' && <span className="text-[10px] text-blue-600 font-bold">Shield 1</span>}
+                          </button>
 
-                        <button
-                          onClick={() => handleRoleSwitch('parent_guardian')}
-                          className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${
-                            currentRole === 'parent_guardian' ? 'bg-purple-50 text-purple-800 font-bold' : 'hover:bg-slate-50 text-slate-700'
-                          }`}
-                        >
-                          <span className="flex items-center gap-1.5">🛡️ <span>Parent / Guardian</span></span>
-                          {currentRole === 'parent_guardian' && <span className="text-[10px] text-purple-600 font-bold">Family</span>}
-                        </button>
+                          <button
+                            onClick={() => handleRoleSwitch('parent_guardian')}
+                            className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${
+                              currentRole === 'parent_guardian' ? 'bg-purple-50 text-purple-800 font-bold' : 'hover:bg-slate-50 text-slate-700'
+                            }`}
+                          >
+                            <span className="flex items-center gap-1.5">🛡️ <span>Parent / Guardian</span></span>
+                            {currentRole === 'parent_guardian' && <span className="text-[10px] text-purple-600 font-bold">Family</span>}
+                          </button>
 
-                        <button
-                          onClick={() => handleRoleSwitch('welfare_officer')}
-                          className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${
-                            currentRole === 'welfare_officer' ? 'bg-amber-50 text-amber-900 font-bold' : 'hover:bg-slate-50 text-slate-700'
-                          }`}
-                        >
-                          <span className="flex items-center gap-1.5">⚖️ <span>Police Inspector</span></span>
-                          {currentRole === 'welfare_officer' && <span className="text-[10px] text-amber-700 font-bold">Level 3</span>}
-                        </button>
+                          <button
+                            onClick={() => handleRoleSwitch('welfare_officer')}
+                            className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${
+                              currentRole === 'welfare_officer' ? 'bg-amber-50 text-amber-900 font-bold' : 'hover:bg-slate-50 text-slate-700'
+                            }`}
+                          >
+                            <span className="flex items-center gap-1.5">⚖️ <span>Police Inspector</span></span>
+                            {currentRole === 'welfare_officer' && <span className="text-[10px] text-amber-700 font-bold">Level 3</span>}
+                          </button>
 
-                        <button
-                          onClick={() => handleRoleSwitch('anonymous_user')}
-                          className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${
-                            currentRole === 'anonymous_user' ? 'bg-sand-100 text-primary font-bold' : 'hover:bg-slate-50 text-slate-700'
-                          }`}
-                        >
-                          <span className="flex items-center gap-1.5">🔒 <span>Anonymous Minor</span></span>
-                          {currentRole === 'anonymous_user' && <span className="text-[10px] text-primary font-bold">Anon</span>}
-                        </button>
+                          <button
+                            onClick={() => handleRoleSwitch('anonymous_user')}
+                            className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between ${
+                              currentRole === 'anonymous_user' ? 'bg-sand-100 text-primary font-bold' : 'hover:bg-slate-50 text-slate-700'
+                            }`}
+                          >
+                            <span className="flex items-center gap-1.5">🔒 <span>Anonymous Minor</span></span>
+                            {currentRole === 'anonymous_user' && <span className="text-[10px] text-primary font-bold">Anon</span>}
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     <div className="border-t border-slate-100 pt-2 space-y-1">
                       <Link

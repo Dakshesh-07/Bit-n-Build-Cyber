@@ -424,8 +424,7 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
   function renderProfileDropdown() {
     return (
       <div 
-        className="absolute right-0 mt-2 w-72 bg-white border border-slate-200 rounded-xl shadow-xl p-3 z-50 text-xs font-medium space-y-3 animate-in fade-in"
-        onMouseLeave={() => setProfileDropdownOpen(false)}
+        className="fixed top-14 right-4 sm:right-8 w-72 bg-white border border-slate-200 rounded-xl shadow-2xl p-3 z-[100] text-xs font-medium space-y-3 animate-in fade-in max-h-[85vh] overflow-y-auto"
       >
         {/* User Persona Details */}
         <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-between">

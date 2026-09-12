@@ -3,12 +3,7 @@ import {
   Users, 
   PhoneCall, 
   ShieldCheck, 
-  Award, 
-  MessageSquare, 
-  Clock, 
-  CheckCircle2, 
-  Search, 
-  ExternalLink 
+  Mail
 } from 'lucide-react';
 
 interface Counselor {
@@ -20,6 +15,8 @@ interface Counselor {
   languages: string[];
   isAvailable: boolean;
   clearanceVerified: boolean;
+  phone: string;
+  email: string;
 }
 
 const COUNSELORS: Counselor[] = [
@@ -32,6 +29,8 @@ const COUNSELORS: Counselor[] = [
     languages: ['English', 'Hindi', 'Bengali'],
     isAvailable: true,
     clearanceVerified: true,
+    phone: '+91 98765 43210',
+    email: 'radhika.sen@nimhans.ac.in',
   },
   {
     id: 'c-2',
@@ -42,6 +41,8 @@ const COUNSELORS: Counselor[] = [
     languages: ['English', 'Hindi', 'Kannada'],
     isAvailable: true,
     clearanceVerified: true,
+    phone: '+91 98123 45678',
+    email: 'kiran.varma@ncla.org.in',
   },
   {
     id: 'c-3',
@@ -52,17 +53,13 @@ const COUNSELORS: Counselor[] = [
     languages: ['English', 'Hindi', 'Malayalam'],
     isAvailable: false,
     clearanceVerified: true,
+    phone: '+91 94567 89012',
+    email: 'mary.joseph@balsuraksha.org',
   }
 ];
 
 export const SafeConnect: React.FC = () => {
   const [counselors] = useState<Counselor[]>(COUNSELORS);
-  const [requestedCounselor, setRequestedCounselor] = useState<string | null>(null);
-
-  const handleRequest = (name: string) => {
-    setRequestedCounselor(name);
-    setTimeout(() => setRequestedCounselor(null), 3000);
-  };
 
   return (
     <div className="space-y-10 pb-16">
@@ -77,7 +74,7 @@ export const SafeConnect: React.FC = () => {
             SafeConnect: Verified Mentors & Counselors
           </h1>
           <p className="text-sm text-textMuted leading-relaxed">
-            Connect directly with verified adolescent psychologists, legal aid advocates, and school nodal counselors. All communications are confidential and child-safe.
+            Connect directly with verified adolescent psychologists, legal aid advocates, and school nodal counselors. Direct phone lines and official secure emails are available below.
           </p>
         </div>
 
@@ -91,14 +88,6 @@ export const SafeConnect: React.FC = () => {
           </a>
         </div>
       </section>
-
-      {/* Success Notification */}
-      {requestedCounselor && (
-        <div className="p-4 rounded-xl bg-safeGreenContainer border border-safeGreen text-safeGreen text-xs font-bold flex items-center gap-2 max-w-xl mx-auto animate-in fade-in">
-          <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
-          <span>Session request sent to {requestedCounselor}! An accredited counselor will reach out via the confidential portal.</span>
-        </div>
-      )}
 
       {/* Counselors Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -146,12 +135,17 @@ export const SafeConnect: React.FC = () => {
               </div>
             </div>
 
-            <button
-              onClick={() => handleRequest(c.name)}
-              className="w-full py-2.5 px-4 rounded-xl bg-primary hover:bg-primary-hover text-surface text-xs font-bold shadow-warm-sm hover:shadow-md transition-all active:scale-95 group/btn inline-flex items-center justify-center gap-1.5"
-            >
-              <span>Request Confidential Session</span>
-            </button>
+            {/* Static Contact Details (Phone & Email) */}
+            <div className="pt-3 border-t border-sand-200 space-y-2 text-xs">
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-sand-100 border border-sand-200">
+                <PhoneCall className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                <span className="font-bold text-primary select-all">{c.phone}</span>
+              </div>
+              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-sand-100 border border-sand-200">
+                <Mail className="w-3.5 h-3.5 text-secondary flex-shrink-0" />
+                <span className="font-medium text-textDark text-[11px] truncate select-all">{c.email}</span>
+              </div>
+            </div>
           </div>
         ))}
       </div>

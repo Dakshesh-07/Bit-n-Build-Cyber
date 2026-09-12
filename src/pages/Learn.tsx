@@ -132,6 +132,60 @@ const LEARN_MODULES: ExtendedLearnModule[] = [
       correctIndex: 1,
       explanation: 'Domain names like instagram-security-support.xyz are fake phishing domains designed to harvest credentials.'
     }
+  },
+  {
+    id: 'mod-5',
+    title: 'AI Deepfake & Voice Clone Defense',
+    tagline: 'Detect synthetic voice clones, AI face swaps, and emergency extortion scams.',
+    category: 'AI Safety',
+    duration: '8 min read',
+    badgeEarned: 'AI Guardian Sentinel',
+    lessonsCount: 5,
+    completed: false,
+    description: 'Scammers use short audio clips from your social media videos to clone your voice and call parents claiming an emergency. Learn how to verify family code words and spot AI image distortions.',
+    keyRule: 'Rule #5: Always establish a secret 2-word family code word to verify emergency distress calls immediately.',
+    tips: [
+      'If a panicked call claims a friend or relative is in trouble, hang up and call them directly on their known phone number.',
+      'Inspect deepfake images for odd hand digits, flickering lighting, or unnatural eye movement.',
+      'Never panic or send emergency UPI transfers before verifying identity.'
+    ],
+    quiz: {
+      question: 'Your parent receives a voice call that sounds exactly like you, claiming you were in an accident and need urgent money sent via UPI. What is the correct safeguard?',
+      options: [
+        'Immediately send the money to the unknown UPI ID.',
+        'Ask for the secret family code word or hang up and call your child directly.',
+        'Post on social media asking if anyone knows where you are.'
+      ],
+      correctIndex: 1,
+      explanation: 'AI voice cloning requires only 3 seconds of sample audio. Verification using a secret code word or direct callback neutralizes voice clone scams.'
+    }
+  },
+  {
+    id: 'mod-6',
+    title: 'Digital Footprint & Doxxing Prevention',
+    tagline: 'Remove private EXIF metadata, audit app permissions, and prevent exposure.',
+    category: 'Privacy Defense',
+    duration: '6 min read',
+    badgeEarned: 'Privacy Fortification',
+    lessonsCount: 4,
+    completed: false,
+    description: 'Understand how photos uploaded online leak GPS coordinates, home addresses, and school badges, making it easy for cyber stalkers to dox your identity.',
+    keyRule: 'Rule #6: Always turn off camera location tags and scrub EXIF data before sharing photos publicly.',
+    tips: [
+      'Blur school logos, street names, and car license plates in public photos.',
+      'Set social media profiles to private mode and audit followers monthly.',
+      'Use CyberVigil Security Hub to check photo EXIF metadata before sharing.'
+    ],
+    quiz: {
+      question: 'What information can be hidden inside an unedited photo uploaded directly from a smartphone camera?',
+      options: [
+        'Only the color hex codes.',
+        'Exact GPS latitude/longitude, phone model, and time taken (EXIF metadata).',
+        'Your bank account balance.'
+      ],
+      correctIndex: 1,
+      explanation: 'Camera photos store EXIF metadata including exact GPS location unless stripped locally.'
+    }
   }
 ];
 

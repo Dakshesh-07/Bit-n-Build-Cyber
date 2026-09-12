@@ -284,11 +284,16 @@ export const AIAssistant: React.FC = () => {
             </button>
           )}
 
-          <div className="p-2.5 px-3.5 rounded-xl bg-secondary-container/40 border border-secondary/40 flex items-center gap-2">
-            <Heart className="w-4 h-4 text-secondary-dark flex-shrink-0" />
-            <p className="text-xs font-bold text-primary leading-tight">
-              You are safe here.
-            </p>
+          <div className="p-3 px-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center gap-2.5 shadow-xs">
+            <Heart className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 animate-pulse" />
+            <div>
+              <p className="text-xs font-extrabold text-emerald-900 dark:text-emerald-200 leading-tight">
+                You are safe here.
+              </p>
+              <p className="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold">
+                100% Confidential • Zero Judgment • Protected Session
+              </p>
+            </div>
           </div>
         </div>
       </section>
