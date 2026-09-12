@@ -22,6 +22,7 @@ import { IncidentCategory, IncidentPlatform, IncidentReport } from '../types';
 import { localStore } from '../lib/supabase';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { CyberEvidenceDocket } from '../components/CyberEvidenceDocket';
 
 const CATEGORIES: IncidentCategory[] = [
   'Extortion',
@@ -74,6 +75,10 @@ export const ReportIncident: React.FC = () => {
   const [submittedCase, setSubmittedCase] = useState<IncidentReport | null>(null);
   const [copiedCaseId, setCopiedCaseId] = useState<boolean>(false);
   const [isDraftImported, setIsDraftImported] = useState<boolean>(false);
+
+  // Legal Evidence Docket Modal State
+  const [showDocketModal, setShowDocketModal] = useState<boolean>(false);
+  const [activeDocketReport, setActiveDocketReport] = useState<IncidentReport | null>(null);
 
   useEffect(() => {
     const rawDraft = localStorage.getItem('cybervigil_case_draft');
@@ -143,26 +148,63 @@ export const ReportIncident: React.FC = () => {
     }
   };
 
-  // Dynamic Threat Score Calibration
+  // Dynamic Threat Score Calibration (Calibrated so typing normal text starts low, not jumping to 50!)
   const calculateScore = () => {
     if (aiAnalysisResult) return aiAnalysisResult.threatScore;
     if (!incidentText.trim() && evidenceFiles.length === 0) return 0;
 
-    let score = 20;
-    if (selectedCategory === 'Extortion' || selectedCategory === 'Image Abuse') score += 30;
-    else if (selectedCategory === 'Cyberbullying' || selectedCategory === 'Harassment') score += 20;
-    else score += 10;
-
-    if (isImmediateDanger) score += 25;
-    if (evidenceFiles.length > 0) score += 15;
+    let score = 10;
+    const len = incidentText.trim().length;
+    if (len > 0) {
+      score += Math.min(Math.floor(len / 15) * 5, 20);
+    }
 
     const lower = incidentText.toLowerCase();
-    if (lower.includes('threat') || lower.includes('blackmail') || lower.includes('pay') || lower.includes('leaked')) score += 10;
+    const isHighThreat = /nude|pics|photo|sex|groom|extort|blackmail|money|pay|upi|leak|kill|threat|dhamki|paisa/i.test(lower);
+    const isMedThreat = /harass|bully|hate|fake|login|password|otp|pareshan|tang/i.test(lower);
+
+    if (isHighThreat) score += 35;
+    else if (isMedThreat) score += 20;
+
+    if (isImmediateDanger) score += 30;
+    if (evidenceFiles.length > 0) score += 15;
 
     return Math.min(score, 98);
   };
 
   const threatScore = calculateScore();
+
+  // Open Formal Evidence Docket Viewer
+  const handleOpenDocket = (reportToPrint?: IncidentReport) => {
+    if (reportToPrint) {
+      setActiveDocketReport(reportToPrint);
+    } else {
+      const finalPlatformName = selectedPlatform === 'Other' && customPlatformName.trim()
+        ? customPlatformName.trim()
+        : selectedPlatform;
+
+      const previewReport: IncidentReport = {
+        id: `preview-${Date.now()}`,
+        caseNumber: submittedCase?.caseNumber || `#BG-${Math.floor(1000 + Math.random() * 9000)}`,
+        category: selectedCategory,
+        platform: finalPlatformName as IncidentPlatform,
+        incidentDetails: incidentText || 'Initial narrative details recorded for digital forensic intake docket.',
+        immediateDanger: isImmediateDanger,
+        severityLevel: threatScore > 75 ? 'High' : threatScore > 50 ? 'Moderate' : 'Low',
+        threatScore,
+        evidenceSha256: aiAnalysisResult?.evidenceHash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+        status: 'Pending Intake',
+        piiScrubbed: true,
+        createdAt: 'Just now',
+        evidenceFiles: evidenceFiles.length > 0 ? evidenceFiles : [{ name: 'Digital_Screenshot_Intake.png', size: '2.1 MB', status: 'Metadata Scrubbed (SHA-256)' }],
+        isAnonymousReporter: isAnonymousMode,
+        reporterAlias: isAnonymousMode ? 'Anonymous Victim (Zero PII Logged)' : (user?.alias || 'Verified Reporter'),
+        safetyCheckVerified: true
+      };
+      setActiveDocketReport(previewReport);
+    }
+    setShowDocketModal(true);
+  };
 
   // AI Evidence & Threat Analysis Function
   const handleAnalyzeThreatWithAI = () => {
@@ -387,12 +429,22 @@ export const ReportIncident: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => handleOpenDocket(submittedCase)}
+              className="px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm flex items-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer"
+            >
+              <FileText className="w-4 h-4 text-white" />
+              <span>📄 Print Official Cyber Evidence Docket (PDF)</span>
+            </button>
+
             <Link
               to="/assistant"
               className="px-5 py-2.5 rounded-xl bg-primary text-surface font-bold text-sm hover:bg-primary-hover transition-colors shadow-warm-sm"
             >
               Speak with Guardian AI
             </Link>
+
             <button
               onClick={() => setSubmittedCase(null)}
               className="px-5 py-2.5 rounded-xl bg-sand-200 text-primary font-bold text-sm hover:bg-sand-300 transition-colors"
@@ -688,10 +740,10 @@ export const ReportIncident: React.FC = () => {
                       <span>Seal: {aiAnalysisResult.evidenceHash}</span>
                       <button
                         type="button"
-                        onClick={() => window.print()}
-                        className="text-amber-700 dark:text-amber-400 hover:underline font-bold font-sans"
+                        onClick={() => handleOpenDocket()}
+                        className="text-amber-700 dark:text-amber-400 hover:underline font-bold font-sans flex items-center gap-1 cursor-pointer"
                       >
-                        📄 Save / Print Evidence Certificate
+                        📄 View / Print Official Evidence Docket
                       </button>
                     </div>
                   </div>
@@ -872,6 +924,14 @@ export const ReportIncident: React.FC = () => {
             </div>
           </aside>
         </div>
+      )}
+
+      {/* Printable Legal Evidence Docket Modal */}
+      {showDocketModal && activeDocketReport && (
+        <CyberEvidenceDocket
+          report={activeDocketReport}
+          onClose={() => setShowDocketModal(false)}
+        />
       )}
     </div>
   );

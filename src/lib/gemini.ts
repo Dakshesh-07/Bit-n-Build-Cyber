@@ -144,7 +144,7 @@ function detectThreatCategory(text: string): { category: ThreatCategory; severit
     return { category: 'Conversational', severity: 'Advisory' };
   }
 
-  // Online Grooming indicators
+  // Online Grooming indicators (English + Hinglish/Hindi)
   if (
     q.includes('groom') ||
     q.includes('older') ||
@@ -156,12 +156,18 @@ function detectThreatCategory(text: string): { category: ThreatCategory; severit
     q.includes('private photos') ||
     q.includes('shirt') ||
     q.includes('meet in person') ||
-    (q.includes('stranger') && (q.includes('gift') || q.includes('robux') || q.includes('skin')))
+    q.includes('nude') ||
+    q.includes('nudes') ||
+    q.includes('gandi pic') ||
+    q.includes('gandi photo') ||
+    q.includes('kapde') ||
+    q.includes('camera on') ||
+    (q.includes('stranger') && (q.includes('gift') || q.includes('robux') || q.includes('skin') || q.includes('milo')))
   ) {
     return { category: 'Online Grooming', severity: 'High Urgency' };
   }
 
-  // Harmful Acts & Extortion / Blackmail
+  // Harmful Acts & Extortion / Blackmail (English + Hinglish/Hindi)
   if (
     q.includes('extort') ||
     q.includes('blackmail') ||
@@ -173,7 +179,13 @@ function detectThreatCategory(text: string): { category: ThreatCategory; severit
     q.includes('hurt') ||
     q.includes('suicide') ||
     q.includes('kill') ||
-    q.includes('threaten')
+    q.includes('threaten') ||
+    q.includes('paisa') ||
+    q.includes('paise') ||
+    q.includes('rupaye') ||
+    q.includes('dhamki') ||
+    q.includes('viral') ||
+    q.includes('dhamka')
   ) {
     return { category: 'Harmful Acts', severity: 'High Urgency' };
   }
@@ -189,12 +201,14 @@ function detectThreatCategory(text: string): { category: ThreatCategory; severit
     q.includes('admin') ||
     q.includes('banned') ||
     q.includes('login') ||
-    q.includes('hack')
+    q.includes('hack') ||
+    q.includes('link bheja') ||
+    q.includes('account chala gaya')
   ) {
     return { category: 'Phishing', severity: 'Moderate' };
   }
 
-  // Cyberbullying
+  // Cyberbullying & Harassment (English + Hinglish/Hindi)
   if (
     q.includes('bully') ||
     q.includes('hate') ||
@@ -204,12 +218,25 @@ function detectThreatCategory(text: string): { category: ThreatCategory; severit
     q.includes('group chat') ||
     q.includes('harass') ||
     q.includes('shame') ||
-    q.includes('troll')
+    q.includes('troll') ||
+    q.includes('pareshan') ||
+    q.includes('parishan') ||
+    q.includes('tang') ||
+    q.includes('satara') ||
+    q.includes('gaali') ||
+    q.includes('gali') ||
+    q.includes('bother') ||
+    q.includes('tease') ||
+    q.includes('badnaam') ||
+    q.includes('scare') ||
+    q.includes('trouble') ||
+    q.includes('dar') ||
+    q.includes('darr')
   ) {
     return { category: 'Cyberbullying', severity: 'Moderate' };
   }
 
-  return { category: 'General Threat', severity: 'Advisory' };
+  return { category: 'Cyberbullying', severity: 'Moderate' };
 }
 
 function parseGeminiResponse(rawText: string, userQuery: string, isGreeting: boolean): GuardianAIResult {
@@ -220,6 +247,7 @@ function parseGeminiResponse(rawText: string, userQuery: string, isGreeting: boo
       steps: [
         "Ask any question about cyberbullying, extortion, grooming, or phishing.",
         "File a 100% confidential incident report with evidence hashing.",
+        "Print an official legal Cyber Evidence Docket for authorities.",
         "Call Childline 1098 or Cyber Helpline 1930 anytime in crisis."
       ],
       actionLink: { text: "File Confidential Incident", url: "/report" },
@@ -250,17 +278,18 @@ function parseGeminiResponse(rawText: string, userQuery: string, isGreeting: boo
       "Do not comply with demands or send money/photos.",
       "Capture uncropped screenshots with visible timestamps and handles.",
       "Mute and block the suspicious account immediately.",
-      "Escalate directly to Childline 1098 or file an incident report on CyberVigil."
+      "Generate and print your official Cyber Evidence Docket on the Report page.",
+      "Escalate directly to Childline 1098 or Cyber Helpline 1930."
     );
   }
 
   return {
     text: cleanIntro || "Take a deep breath — you did the right thing by speaking up. You are safe now, and we are going to handle this together step by step.",
-    empathyNote: category !== 'General Threat' && category !== 'Conversational'
+    empathyNote: category !== 'Conversational'
       ? `Detected Threat: ${category} (${severity}) • Trauma-Informed Protection Active`
       : "Guardian AI Companion Active",
     steps: steps.slice(0, 5),
-    actionLink: { text: "Report Incident Anonymously", url: "/report" },
+    actionLink: { text: "Report Incident & Generate Legal Docket", url: "/report" },
     isLiveGemini: true,
     detectedThreat: category !== 'Conversational' ? category : undefined,
     threatSeverity: category !== 'Conversational' ? severity : undefined,
@@ -272,6 +301,8 @@ function parseGeminiResponse(rawText: string, userQuery: string, isGreeting: boo
 function generateResilientThreatAnalysis(userQuery: string, wasSafetyTriggered: boolean, language: string = 'English'): GuardianAIResult {
   const isGreeting = isCasualGreeting(userQuery);
   const { category, severity } = detectThreatCategory(userQuery);
+  const qLower = userQuery.toLowerCase();
+  const isHinglishOrHindi = /pareshan|parishan|kar raaha|kar raha|hai|hoon|hu|batao|madad|paisa|paise|dhamki|mujh|mujhe|mera|meri|kya karu|kya karoon/i.test(qLower);
 
   if (isGreeting) {
     const textMap: Record<string, string> = {
@@ -290,6 +321,7 @@ function generateResilientThreatAnalysis(userQuery: string, wasSafetyTriggered: 
       steps: [
         "Ask any question about cyberbullying, extortion, grooming, or phishing.",
         "File a 100% confidential incident report with evidence hashing.",
+        "Print an official legal Cyber Evidence Docket for police/authorities.",
         "Call Childline 1098 or Cyber Helpline 1930 anytime in crisis."
       ],
       actionLink: { text: "File Confidential Incident", url: "/report" },
@@ -300,16 +332,24 @@ function generateResilientThreatAnalysis(userQuery: string, wasSafetyTriggered: 
 
   if (category === 'Online Grooming') {
     return {
-      text: "Take a deep breath. You are safe, and you are not in trouble. Predators often manipulate young people by buying gifts or gaming items and asking for secrecy or private photos. You have legal protection under the POCSO Act.",
+      text: isHinglishOrHindi
+        ? "Aap bilkul mat ghabraiye. Aap bilkul safe hain aur aapne koi galti nahi ki hai. Online strangers jo gifts ya free gaming rewards dekar private photos maangte hain, wo predator hote hain. POCSO Act ke tehat aapko full legal protection praapt hai."
+        : "Take a deep breath. You are safe, and you are not in trouble. Predators often manipulate young people by buying gifts or gaming items and asking for secrecy or private photos. You have legal protection under the POCSO Act.",
       empathyNote: "Online Grooming Threat Detected: High Urgency Protection Active",
-      steps: [
+      steps: isHinglishOrHindi ? [
+        "Private photos ya webcam kabhi na on karein: Koi bhi sachha dost ya safe adult minor se private pictures nahi maangta.",
+        "Secrecy todkar kisi trusted adult ko batayein: Aggressor aapse baatein chhipane ko kehta hai kyunki wo pakde jaane se darta hai. 1098 par call karke zaroor batayein.",
+        "Screenshots lein: Blocking se pehle unke account profile handle, chats aur Discord ID ke saaf screenshots le lein.",
+        "Immediately block karein: Unse behas ya baat kiye bina sabhi platforms par unhe block kar dein.",
+        "Official Evidence Docket print karke report karein: CyberVigil par Incident Report submit karke legal evidence PDF Docket generate karein."
+      ] : [
         "Never send private photos or turn on your camera: Real friends and safe adults will never ask a minor for private media.",
         "Maintain total secrecy from them, not your family: The stranger tells you 'keep it between us' because they fear being exposed. Break their secrecy by telling an adult or calling 1098.",
         "Preserve full chat transcripts before blocking: Screenshot their profile handle, Discord ID or social link, and conversation history.",
         "Block them across all platforms: Do not offer explanations or argue; cut off all communication.",
-        "File an emergency child protection report: Contact Childline 1098 immediately for confidential crisis intervention."
+        "File an emergency child protection report & print Evidence Docket: Contact Childline 1098 and generate an official legal evidence docket on CyberVigil."
       ],
-      actionLink: { text: "File Priority Grooming Incident", url: "/report" },
+      actionLink: { text: "File Priority Grooming Incident & Print Docket", url: "/report" },
       isLiveGemini: !wasSafetyTriggered,
       detectedThreat: 'Online Grooming',
       threatSeverity: 'High Urgency',
@@ -319,16 +359,24 @@ function generateResilientThreatAnalysis(userQuery: string, wasSafetyTriggered: 
 
   if (category === 'Harmful Acts') {
     return {
-      text: "You are not alone, and you did nothing wrong. Extortionists and blackmailers use intense fear and false deadlines to make you panic. Giving in to extortion never stops them; cutting off leverage does.",
+      text: isHinglishOrHindi
+        ? "Aap akele nahi hain aur aapki koi galti nahi hai. Blackmailers aur extortionists dar aur fake deadlines ka istemaal karte hain taaki aap panic karein. Demands poori karne se extortion kabhi nahi rukta; communication cut karne se rukta hai."
+        : "You are not alone, and you did nothing wrong. Extortionists and blackmailers use intense fear and false deadlines to make you panic. Giving in to extortion never stops them; cutting off leverage does.",
       empathyNote: "Harmful Acts & Extortion Detected: Critical Legal Protection Active",
-      steps: [
+      steps: isHinglishOrHindi ? [
+        "Paisa ya photos kabhi mat bhejein: Payments karna unhe aur exploit karne ka mauka deta hai.",
+        "Evidence delete mat karein: Intimidation threats, payment UPI requests aur profile handles ke screenshots safe rakhein.",
+        "Mute aur disconnect karein: Unse behas na karein. Koi reply na dein.",
+        "Cryptographic Takedown Hash Submit karein: CyberVigil media ka SHA-256 hash generate karta hai taaki platforms photo distribution auto-block kar sakein.",
+        "Cyber Evidence Docket Print karein: Yahan report file karke certified legal document print karein aur 1930 / 1098 helpline par call karein."
+      ] : [
         "Never pay money or send additional images: Paying confirms you can be exploited. Stopping all payments immediately halts their scheme.",
         "Do not delete evidence: Take uncropped screenshots of the extortion threats, payment requests (UPI/crypto), and account handles.",
         "Mute and do not engage: Refuse to negotiate or argue. Every response gives them emotional leverage.",
-        "Submit a takedown hash (StopNCII / TakeItDown): CyberVigil can generate cryptographic hashes of media so platforms ban distribution automatically without viewing your photos.",
-        "Contact specialized child cyber advocates: Dial 1098 and 1930 right now. They deal with these cases daily with 100% confidentiality."
+        "Submit a takedown hash (StopNCII / TakeItDown): CyberVigil can generate cryptographic hashes of media so platforms ban distribution automatically.",
+        "Contact specialized child cyber advocates: Dial 1098 and 1930 right now and print your official Cyber Evidence Docket."
       ],
-      actionLink: { text: "Dispatch Cryptographic Takedown", url: "/report" },
+      actionLink: { text: "Dispatch Cryptographic Takedown & Print Docket", url: "/report" },
       isLiveGemini: !wasSafetyTriggered,
       detectedThreat: 'Harmful Acts',
       threatSeverity: 'High Urgency',
@@ -338,14 +386,16 @@ function generateResilientThreatAnalysis(userQuery: string, wasSafetyTriggered: 
 
   if (category === 'Phishing') {
     return {
-      text: "You did the right thing by checking first. Phishing attacks and fake admin messages are designed to steal your passwords, gaming items, and personal accounts through fear of being banned.",
+      text: isHinglishOrHindi
+        ? "Aapne bilkul sahi kiya yahan pucch kar. Phishing attacks aur fake admin links aapke passwords, gaming items ya OTP churaney ke liye banaye jaate hain."
+        : "You did the right thing by checking first. Phishing attacks and fake admin messages are designed to steal your passwords, gaming items, and personal accounts through fear of being banned.",
       empathyNote: "Phishing & Credential Harvest Detected: Account Shield Protocol Active",
       steps: [
-        "Never click the link or enter your password: Real staff from Discord, Roblox, or Instagram will never ask for your password, phone OTP, or authentication codes in DMs.",
-        "Change your password immediately: If you already clicked the link, log into your account via the official app and change your credentials immediately.",
-        "Turn on Two-Factor Authentication (2FA): Use an authenticator app so nobody can access your account even if they have your password.",
-        "Report the phishing link: Flag the message inside the app and report it on CyberVigil to alert other students.",
-        "Check your linked email and phone number: Verify that the attacker hasn't added their own recovery address to your account."
+        "Never click the link or enter your password: Real staff from Discord, Roblox, or Instagram will never ask for your password or OTP.",
+        "Change your password immediately: Log into your account via the official app and reset your credentials.",
+        "Turn on Two-Factor Authentication (2FA): Secure your account using an authenticator app.",
+        "Report the phishing link: Flag the message on CyberVigil to alert other students.",
+        "Check linked email & phone number: Ensure the attacker hasn't added their recovery address."
       ],
       actionLink: { text: "Submit Malicious Link for Analysis", url: "/report" },
       isLiveGemini: !wasSafetyTriggered,
@@ -355,38 +405,29 @@ function generateResilientThreatAnalysis(userQuery: string, wasSafetyTriggered: 
     };
   }
 
-  if (category === 'Cyberbullying') {
-    return {
-      text: "Being targeted by bullying, hate groups, or public harassment hurts deeply, but please remember: this is a reflection of their cruelty, not your worth. You have every right to digital safety and school protection.",
-      empathyNote: "Cyberbullying Threat Detected: Anti-Harassment Guardrails Active",
-      steps: [
-        "Do not retaliate or argue in group chats: Bullies feed on your reactions. Staying silent deprives them of fuel.",
-        "Screenshot all abusive messages and comments: Capture exact usernames, group names, and timestamps before messages disappear.",
-        "Block and exit abusive groups: Protect your mental peace by removing yourself from the toxic space.",
-        "File a school or platform harassment report: Share the screenshots with a trusted school counselor, principal, or on CyberVigil.",
-        "Reach out for emotional support: Talk to a trusted family member or call 1098 for free, non-judgmental counseling."
-      ],
-      actionLink: { text: "Document Bullying Incident", url: "/report" },
-      isLiveGemini: !wasSafetyTriggered,
-      detectedThreat: 'Cyberbullying',
-      threatSeverity: 'Moderate',
-      safetyHelplineNote: "Toll-Free Crisis Support: Childline 1098 • Cyber Crime Helpline 1930"
-    };
-  }
-
+  // Default Cyberbullying / Harassment Protection
   return {
-    text: "Thank you for reaching out. Whatever you are experiencing online, remember that you are in a safe, confidential space. There are concrete steps to protect you.",
-    empathyNote: "Guardian AI Digital Safety Shield Active",
-    steps: [
-      "Document everything: Save screenshots with full account handles and timestamps.",
-      "Secure your digital footprint: Review privacy settings and enable two-factor authentication (2FA).",
-      "Never meet online strangers in person without adult supervision.",
-      "Reach out to verified advocates: Call Childline 1098 or file a report on CyberVigil."
+    text: isHinglishOrHindi
+      ? "Aap bilkul mat ghabraiye. Main samajh sakta hoon ki koi aapko online pareshan (harass) kar raha hai. Aap akele nahi hain aur aapne bilkul sahi jagah bataya hai. Online pareshan karna IT Act (Section 66E/67) aur IPC (Section 354D) ke tehat dhandniya apraadh (punishable offense) hai. Hum aapko step-by-step protect karenge:"
+      : "Being targeted by online harassment or bullying hurts deeply, but please remember: you are in a safe, confidential space and you did nothing wrong. Online harassment is a punishable offense under IT Act Section 66 & IPC 354D. Here are immediate concrete steps to protect you:",
+    empathyNote: "Cyberbullying & Harassment Protection Active",
+    steps: isHinglishOrHindi ? [
+      "📌 Response na dein: Pareshan karne wale person ko koi reply ya attention mat dein. Unki cruelty unki kami hai, aapki nahi.",
+      "📸 Screenshots lein: Abusive messages, group posts, account usernames aur timestamps ke saaf uncropped screenshots le lein.",
+      "🚫 Block aur Report karein: Us person ya fake account ko app par immediately block aur report kar dein.",
+      "📜 Legal Cyber Evidence Docket Print Karein: CyberVigil ke 'Report Incident' page par jaakar Form bharein aur 'Print Official Cyber Evidence Docket (PDF)' button dabayein.",
+      "📞 Free Helpline Par Call Karein: National Childline 1098 ya Cyber Crime Helpline 1930 par 24/7 call karke maddad lein."
+    ] : [
+      "Do not retaliate or argue: Bullies feed on your reaction. Deprive them of fuel by withholding responses.",
+      "Screenshot all evidence: Capture exact usernames, group names, messages, and timestamps before they are deleted.",
+      "Block and exit toxic chats: Protect your peace of mind by severing contact across all social platforms.",
+      "Generate Official Cyber Evidence Docket: Go to the 'Report Incident' page, submit details, and click 'Print Official Cyber Evidence Docket (PDF)'.",
+      "Reach out to verified helplines: Dial Childline 1098 or National Cyber Crime Helpline 1930 for free toll-free support."
     ],
-    actionLink: { text: "File Confidential Report", url: "/report" },
+    actionLink: { text: "Report Incident & Print Evidence Docket", url: "/report" },
     isLiveGemini: !wasSafetyTriggered,
-    detectedThreat: 'General Threat',
-    threatSeverity: 'Advisory',
-    safetyHelplineNote: "Emergency Helplines: 1098 (Child Safety) • 1930 (Cyber Fraud & Threats)"
+    detectedThreat: 'Cyberbullying',
+    threatSeverity: 'Moderate',
+    safetyHelplineNote: "Toll-Free Crisis Support: Childline 1098 • Cyber Crime Helpline 1930"
   };
 }

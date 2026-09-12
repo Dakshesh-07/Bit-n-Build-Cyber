@@ -13,11 +13,13 @@ import {
   Hash, 
   KeyRound, 
   FileCheck,
-  AlertCircle
+  AlertCircle,
+  EyeOff
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserRole } from '../types';
+import { sendDiscordNotification } from '../lib/discord';
 
 const AVATARS = ['🛡️', '🎓', '⚖️', '🦁', '🦉', '⚡', '🌟', '🐬', '🌲', '🚀'];
 
@@ -92,6 +94,19 @@ export const Register: React.FC = () => {
           institutionOrJurisdiction: schoolName,
         }
       );
+      
+      // Dispatch Discord Webhook Notification for Student Defender Registration
+      sendDiscordNotification({
+        title: 'New Student Defender Institutional Verification',
+        description: `Student account activated for **${schoolName}** (${educationLevel}).`,
+        color: 0x3B82F6,
+        fields: [
+          { name: 'Student Roll ID', value: studentRollId, inline: true },
+          { name: 'Academic Level', value: educationLevel, inline: true },
+          { name: 'Camouflage Disguise', value: `Configured for ${educationLevel} (Panic Key: ESC)`, inline: false }
+        ]
+      });
+
       navigate('/');
     } else if (accountType === 'parent_guardian') {
       if (!wardPin.trim()) {
@@ -115,6 +130,18 @@ export const Register: React.FC = () => {
           institutionOrJurisdiction: `Direct Ward Link (#${wardPin})`,
         }
       );
+
+      // Dispatch Discord Webhook Notification
+      sendDiscordNotification({
+        title: 'New Guardian Safety Clearance Activated',
+        description: `Verified Guardian account created for Ward Case PIN **#${wardPin}**.`,
+        color: 0x8B5CF6,
+        fields: [
+          { name: 'Relationship', value: guardianRelation, inline: true },
+          { name: 'Clearance Mode', value: 'Family Safe Mode', inline: true }
+        ]
+      });
+
       navigate('/');
     } else if (accountType === 'welfare_officer') {
       if (!officerBadge.trim() || !govEmail.trim() || !policeJurisdiction.trim()) {
@@ -138,6 +165,18 @@ export const Register: React.FC = () => {
           institutionOrJurisdiction: policeJurisdiction,
         }
       );
+
+      // Dispatch Discord Webhook Notification for Police Officer Clearance
+      sendDiscordNotification({
+        title: 'Police Officer POCSO Level 3 Clearance Activated',
+        description: `Verified Officer **#${officerBadge.replace('#', '')}** logged into **${policeJurisdiction}**.`,
+        color: 0xF59E0B,
+        fields: [
+          { name: 'Gov Email', value: govEmail, inline: true },
+          { name: 'Jurisdiction', value: policeJurisdiction, inline: true }
+        ]
+      });
+
       navigate('/portal');
     }
   };
@@ -180,12 +219,17 @@ export const Register: React.FC = () => {
                 {accountType === 'registered_youth' && <BadgeCheck className="w-4 h-4 text-blue-600" />}
               </div>
               <div>
-                <span className="text-xs font-bold text-primary block">Student Defender</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs font-bold text-primary block">Student Defender</span>
+                </div>
                 <span className="text-[10px] text-textMuted block leading-tight mt-0.5">School / College youth defense & peer circles</span>
               </div>
-              <div className="mt-2 pt-2 border-t border-sand-200/80">
+              <div className="mt-2 pt-2 border-t border-sand-200/80 flex items-center justify-between gap-1 flex-wrap">
                 <span className="text-[9px] font-bold text-blue-700 uppercase tracking-wider bg-blue-100/80 px-1.5 py-0.5 rounded">
                   Shield Level 1
+                </span>
+                <span className="text-[9px] font-bold text-emerald-800 bg-emerald-100/90 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                  🔒 100% Anonymous
                 </span>
               </div>
             </button>
@@ -269,6 +313,17 @@ export const Register: React.FC = () => {
             {/* A. STUDENT VERIFICATION */}
             {accountType === 'registered_youth' && (
               <div className="space-y-3.5 text-xs">
+                {/* 100% Anonymous Identity Guarantee Banner */}
+                <div className="p-3.5 rounded-xl bg-blue-50 border-2 border-blue-400 text-blue-950 text-xs space-y-1 shadow-xs">
+                  <div className="flex items-center gap-2 font-extrabold text-blue-900">
+                    <Shield className="w-4 h-4 text-blue-600 flex-shrink-0 fill-blue-600" />
+                    <span>🔒 100% Anonymous Identity Protection Guarantee</span>
+                  </div>
+                  <p className="text-[11px] text-blue-900/90 leading-relaxed">
+                    Your real name, phone number, and personal identity are <strong>NEVER disclosed, published, or stored on public reports</strong>. Your student roll ID is used strictly for institutional clearance. You will navigate CyberVigil under a <strong>secret custom alias</strong> with full zero-trace protection.
+                  </p>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1 sm:col-span-1">
                     <label className="block font-bold text-primary">Class / Academic Level</label>
@@ -320,6 +375,17 @@ export const Register: React.FC = () => {
                       />
                     </div>
                   </div>
+                </div>
+
+                {/* Camouflage Customization Guidance Note */}
+                <div className="p-3.5 rounded-xl bg-amber-50/90 border border-amber-300 text-amber-950 text-xs space-y-1.5 shadow-xs">
+                  <div className="flex items-center gap-2 font-bold text-amber-900">
+                    <EyeOff className="w-4 h-4 text-amber-700 flex-shrink-0" />
+                    <span>💡 Panic Camouflage Mode Customization Note</span>
+                  </div>
+                  <p className="text-[11px] text-amber-900/90 leading-relaxed">
+                    Selecting your <strong>Class / Academic Level ({educationLevel})</strong> automatically customizes your <strong>Panic Camouflage Disguise Overlay</strong> (e.g. Class 4 Math, Class 10 Physics, College Lecture Notes). If you are ever in panic or need to hide this site instantly from anyone nearby, press <kbd className="px-1.5 py-0.5 rounded bg-amber-200/90 font-mono text-[10px] font-bold text-amber-950">ESC</kbd> (or tap the Quick Exit Panic Switch) to access your customized harmless study disguise in a single click!
+                  </p>
                 </div>
 
                 <label className="flex items-start gap-2.5 p-3 rounded-xl bg-surface border border-sand-200 cursor-pointer hover:bg-sand-50 transition-colors">

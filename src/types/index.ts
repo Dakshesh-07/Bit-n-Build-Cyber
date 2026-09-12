@@ -67,6 +67,7 @@ export interface IncidentReport {
   distressLevel?: number;
   evidenceFiles: { name: string; size: string; status: string }[];
   isAnonymousReporter?: boolean;
+  reporterAlias?: string;
   safetyCheckVerified?: boolean;
 }
 

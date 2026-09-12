@@ -99,7 +99,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
   };
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-40 transition-all">
+    <header className="bg-white dark:bg-[#0f172a] border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-18">
           
@@ -111,7 +111,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
               className="w-10 h-10 object-contain transition-transform duration-200 group-hover:scale-105 filter drop-shadow-sm" 
             />
             <div className="flex flex-col">
-              <span className="font-extrabold text-xl tracking-tight text-slate-900 leading-none">
+              <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-slate-100 leading-none">
                 Cyber<span className="text-secondary">Vigil</span>
               </span>
               <span className="text-[9px] tracking-wider uppercase font-bold text-slate-400 mt-0.5">
@@ -131,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
                     `text-sm tracking-normal transition-all py-1 border-b-2 ${
                       isActive
                         ? 'text-amber-600 border-amber-600 font-bold'
-                        : 'text-slate-600 hover:text-slate-900 border-transparent font-medium'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-transparent font-medium'
                     }`
                   }
                 >
@@ -147,22 +147,22 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
             {/* Dark Mode Toggle Button */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="w-9 h-9 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 flex items-center justify-center text-slate-600 transition-all active:scale-95 shadow-xs"
+              className="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-all active:scale-95 shadow-xs"
               title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
               aria-label="Toggle Dark Mode"
             >
-              {darkMode ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-slate-600" />}
+              {darkMode ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-slate-600 dark:text-slate-300" />}
             </button>
 
             {/* Quick Camouflage Toggle (Circular Button) */}
             {user && onTriggerCamouflage && (
               <button
                 onClick={onTriggerCamouflage}
-                className="w-9 h-9 rounded-full border border-slate-200 hover:border-slate-300 hover:bg-slate-50 flex items-center justify-center text-slate-600 transition-all active:scale-95 shadow-xs"
+                className="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-all active:scale-95 shadow-xs"
                 title="Quick Exit to study notes (ESC)"
                 aria-label="Quick Exit Camouflage Mode"
               >
-                <EyeOff className="w-4 h-4 text-slate-600" />
+                <EyeOff className="w-4 h-4 text-slate-600 dark:text-slate-300" />
               </button>
             )}
 
@@ -171,7 +171,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
               <div className="relative">
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-primary text-xs font-bold transition-all active:scale-95 shadow-xs"
+                  className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-primary text-xs font-bold transition-all active:scale-95 shadow-xs"
                   title={`Logged in as: ${user?.alias}`}
                   aria-label="Account Settings & Role Switcher"
                 >
@@ -181,7 +181,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
                 {/* Minimal Profile Dropdown with RBAC Controls */}
                 {profileDropdownOpen && (
                   <div 
-                    className="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-lg p-3 z-50 text-xs font-medium space-y-2 animate-in fade-in"
+                    className="absolute right-0 mt-2 w-64 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg p-3 z-50 text-xs font-medium space-y-2 animate-in fade-in"
                     onMouseLeave={() => setProfileDropdownOpen(false)}
                   >
                     <div className="p-2 space-y-1">
