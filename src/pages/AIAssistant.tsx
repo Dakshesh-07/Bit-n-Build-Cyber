@@ -102,7 +102,7 @@ export const AIAssistant: React.FC = () => {
   useEffect(() => {
     const key = getGeminiApiKey();
     setHasApiKey(Boolean(key));
-    setApiKeyInput(key);
+    setApiKeyInput(key || '');
   }, []);
 
   const handleSaveApiKey = (e: React.FormEvent) => {
@@ -163,6 +163,9 @@ export const AIAssistant: React.FC = () => {
     }
   };
 
+  // Unique session ID tracking per user session
+  const sessionIdRef = useRef<string>(`session_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`);
+
   const handleSendMessage = async (textToSend?: string) => {
     const text = textToSend || inputText;
     if (!text.trim() || isThinking) return;
@@ -179,27 +182,21 @@ export const AIAssistant: React.FC = () => {
     setIsThinking(true);
 
     try {
-      const history = messages.map(m => ({
-        role: m.sender === 'user' ? ('user' as const) : ('assistant' as const),
-        text: m.text
-      }));
-
       // Simulate natural thinking delay for human-like conversational pace
-      await new Promise(r => setTimeout(r, 850));
+      await new Promise(r => setTimeout(r, 600));
 
-      const result = await askGuardianAI(text, history, selectedLanguage);
+      const result = await askGuardianAI(text, messages, selectedLanguage, sessionIdRef.current);
 
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         sender: 'assistant',
-        text: result.text,
+        text: result.response,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         empathyNote: result.empathyNote,
-        steps: result.steps,
-        actionLink: result.actionLink,
+        steps: result.strategicSteps,
+        actionLink: result.actionLinks?.[0] ? { text: result.actionLinks[0].label, url: result.actionLinks[0].url } : undefined,
         detectedThreat: result.detectedThreat,
-        threatSeverity: result.threatSeverity,
-        safetyHelplineNote: result.safetyHelplineNote,
+        threatSeverity: result.urgencyLevel === 'high' || result.urgencyLevel === 'critical' ? 'High Urgency' : undefined,
       };
 
       setMessages(prev => [...prev, botMsg]);

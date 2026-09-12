@@ -148,26 +148,27 @@ export const ReportIncident: React.FC = () => {
     }
   };
 
-  // Dynamic Threat Score Calibration (Calibrated so typing normal text starts low, not jumping to 50!)
+  // Dynamic Threat Score Calibration (Benign items evaluate low, real threats trigger high urgency)
   const calculateScore = () => {
     if (aiAnalysisResult) return aiAnalysisResult.threatScore;
     if (!incidentText.trim() && evidenceFiles.length === 0) return 0;
 
-    let score = 10;
-    const len = incidentText.trim().length;
-    if (len > 0) {
-      score += Math.min(Math.floor(len / 15) * 5, 20);
+    const lower = incidentText.toLowerCase();
+    const filesLower = evidenceFiles.map(f => f.name.toLowerCase()).join(' ');
+    const combined = `${lower} ${filesLower}`;
+
+    const isHighThreat = /nude|nudes|naked|groom|extort|blackmail|money|pay|upi|leak|kill|threat|dhamki|paisa|morphed|ransom/i.test(combined);
+    const isMedThreat = /harass|bully|hate|fake|login|password|otp|pareshan|tang|cheat/i.test(combined);
+
+    let score = 15;
+    if (isHighThreat) score += 55;
+    else if (isMedThreat) score += 30;
+    else {
+      // Harmless/Benign evidence (e.g. cat photo, scenery, normal text)
+      score = 18;
     }
 
-    const lower = incidentText.toLowerCase();
-    const isHighThreat = /nude|pics|photo|sex|groom|extort|blackmail|money|pay|upi|leak|kill|threat|dhamki|paisa/i.test(lower);
-    const isMedThreat = /harass|bully|hate|fake|login|password|otp|pareshan|tang/i.test(lower);
-
-    if (isHighThreat) score += 35;
-    else if (isMedThreat) score += 20;
-
     if (isImmediateDanger) score += 30;
-    if (evidenceFiles.length > 0) score += 15;
 
     return Math.min(score, 98);
   };
@@ -190,7 +191,7 @@ export const ReportIncident: React.FC = () => {
         platform: finalPlatformName as IncidentPlatform,
         incidentDetails: incidentText || 'Initial narrative details recorded for digital forensic intake docket.',
         immediateDanger: isImmediateDanger,
-        severityLevel: threatScore > 75 ? 'High' : threatScore > 50 ? 'Moderate' : 'Low',
+        severityLevel: threatScore > 75 ? 'High' : threatScore > 40 ? 'Moderate' : 'Low',
         threatScore,
         evidenceSha256: aiAnalysisResult?.evidenceHash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
         status: 'Pending Intake',
@@ -222,11 +223,15 @@ export const ReportIncident: React.FC = () => {
       const combinedLower = `${textLower} ${filesLower}`;
 
       let cat: IncidentCategory = selectedCategory;
-      let score = 45;
+      let score = 18;
       const indicators: string[] = [];
 
       // 1. Online Grooming & Sexual Media Requests (Highest Urgency Check)
-      const isGroomingOrSexualMedia = /pic|pics|photo|photos|nude|nudes|sexual|private|naked|grooming|webcam|snap|show me|send me|intimate|undress|sext/i.test(combinedLower);
+      const isGroomingOrSexualMedia = /nude|nudes|sexual|explicit|naked|grooming|webcam|csae|private photo|private pic|undress|sext/i.test(combinedLower);
+      const isExtortion = /blackmail|extort|pay|money|upi|cash|rupees|ransom|demand money|pay me/i.test(combinedLower);
+      const isImageLeak = /leak photo|leak video|morphed photo|photoshop nude|explicit image/i.test(combinedLower);
+      const isPhishing = /password|otp|verify link|login link|hack|steal account/i.test(combinedLower);
+      const isBullying = /bully|harass|hate|ugly|kill yourself|defame|rumor/i.test(combinedLower);
 
       if (isGroomingOrSexualMedia) {
         cat = 'Online Grooming';
@@ -234,30 +239,31 @@ export const ReportIncident: React.FC = () => {
         indicators.push('Predatory solicitation / demand for intimate media');
         indicators.push('Child Sexual Exploitation & Abuse (CSAE) threat signature');
         indicators.push('POCSO Act & IT Act Section 67B Statutory Risk');
-      } else if (/money|pay|upi|cash|rupees|blackmail|extort|leak/i.test(combinedLower)) {
+      } else if (isExtortion) {
         cat = 'Extortion';
         score = 88;
         indicators.push('Coercive monetary demand & blackmail timeline');
         indicators.push('Time-pressured leverage attempt');
-      } else if (/photo|picture|video|image|leak/i.test(combinedLower)) {
+      } else if (isImageLeak) {
         cat = 'Image Abuse';
         score = 90;
         indicators.push('Non-consensual image manipulation or leak threat');
         indicators.push('Privacy violation attempt');
-      } else if (/password|link|verify|otp|login|fake/i.test(combinedLower)) {
+      } else if (isPhishing) {
         cat = 'Impersonation';
         score = 75;
         indicators.push('Credential harvesting & fake verification link');
-      } else if (/hate|stupid|kill|group|bully|harass|ugly/i.test(combinedLower)) {
+      } else if (isBullying) {
         cat = 'Cyberbullying';
         score = 80;
         indicators.push('Targeted group harassment pattern');
         indicators.push('Defamation & emotional distress risk');
       } else {
-        score = evidenceFiles.length > 0 ? 82 : 50;
-        cat = evidenceFiles.length > 0 ? 'Online Grooming' : selectedCategory;
-        indicators.push('Authentic evidence payload attached for intake review');
-        indicators.push('High-priority protective intake protocol initiated');
+        // Safe / Benign File Upload (e.g., cat.jpg, scenery, benign screenshot, normal text)
+        score = 18;
+        cat = selectedCategory;
+        indicators.push('Benign content payload verified (No malware or threat signatures)');
+        indicators.push('Zero extortion or grooming threat keywords detected in payload');
       }
 
       if (isImmediateDanger) score = Math.max(score, 96);
@@ -266,10 +272,12 @@ export const ReportIncident: React.FC = () => {
       setAiAnalysisResult({
         threatScore: score,
         category: cat,
-        indicators: indicators.length > 0 ? indicators : ['Digital harassment indicator detected'],
-        urgency: score > 75 ? 'Critical High' : score > 40 ? 'Moderate Risk' : 'Low / Advisory',
+        indicators: indicators,
+        urgency: score > 75 ? 'Critical High' : score > 40 ? 'Moderate Risk' : 'Low / Advisory (Safe)',
         evidenceHash: 'sha256-' + Math.random().toString(36).substring(2, 14) + Math.random().toString(36).substring(2, 14),
-        summary: `AI Evidence analysis verified ${evidenceFiles.length} file(s) and narrative context. Threat classified as [${cat}] with High Severity Risk Score of ${score}%. Priority dispatch queued for Child Welfare Officer.`
+        summary: score > 40
+          ? `AI Evidence analysis verified ${evidenceFiles.length} file(s) and narrative context. Threat classified as [${cat}] with Risk Score of ${score}%. Priority dispatch queued for Child Welfare Officer.`
+          : `AI Evidence analysis scanned payload: Benign content signature verified. No active threat or extortion signatures detected. Risk Score: ${score}% (Low / Safe).`
       });
     }, 1400);
   };

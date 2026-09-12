@@ -120,7 +120,7 @@ export interface ChatMessage {
   steps?: string[];
   actionLink?: { text: string; url: string };
   empathyNote?: string;
-  detectedThreat?: 'Cyberbullying' | 'Online Grooming' | 'Harmful Acts' | 'Phishing' | 'General Threat' | 'Conversational';
+  detectedThreat?: string;
   threatSeverity?: 'High Urgency' | 'Moderate' | 'Advisory';
   safetyHelplineNote?: string;
 }

@@ -520,13 +520,19 @@ class LocalStore {
       localStorage.setItem(this.storiesKey, JSON.stringify(INITIAL_STORIES));
       return INITIAL_STORIES;
     }
-    const parsed: BraveStory[] = JSON.parse(saved);
-    // Auto-migrate if stored stories lack replies or voting counters
-    if (parsed.length > 0 && (!parsed[0].replies || parsed[0].replies.length === 0)) {
+    try {
+      const parsed: BraveStory[] = JSON.parse(saved);
+      // Ensure all stories have initialized arrays without overwriting user created items
+      const sanitized = parsed.map(s => ({
+        ...s,
+        replies: s.replies || []
+      }));
+      return sanitized;
+    } catch (err) {
+      console.error('Error loading stories from localStore:', err);
       localStorage.setItem(this.storiesKey, JSON.stringify(INITIAL_STORIES));
       return INITIAL_STORIES;
     }
-    return parsed;
   }
 
   saveStory(story: BraveStory): BraveStory {

@@ -61,23 +61,31 @@ export const Register: React.FC = () => {
   const [securityToken, setSecurityToken] = useState('POCSO-7749-SEC');
   const [statutoryOath, setStatutoryOath] = useState(true);
 
+  // Admin Verification Fields
+  const [adminBadge, setAdminBadge] = useState('ADMIN-01');
+  const [adminDept, setAdminDept] = useState('CyberVigil Cyber Forensic Core');
+  const [adminOath, setAdminOath] = useState(true);
+
   // Avatar switch on role change
   const handleRoleChange = (role: UserRole) => {
     setAccountType(role);
     setErrorMessage('');
     if (role === 'registered_youth') {
       setSelectedAvatar('🎓');
-      if (userEmail === 'officer@cybervigil.gov.in' || userEmail === 'guardian@cybervigil.org') {
+      if (userEmail === 'officer@cybervigil.gov.in' || userEmail === 'guardian@cybervigil.org' || userEmail === 'admin@cybervigil.org') {
         setUserEmail('student@cybervigil.org');
       }
     } else if (role === 'parent_guardian') {
       setSelectedAvatar('🛡️');
-      if (userEmail === 'student@cybervigil.org' || userEmail === 'officer@cybervigil.gov.in') {
+      if (userEmail === 'student@cybervigil.org' || userEmail === 'officer@cybervigil.gov.in' || userEmail === 'admin@cybervigil.org') {
         setUserEmail('guardian@cybervigil.org');
       }
     } else if (role === 'welfare_officer') {
       setSelectedAvatar('⚖️');
       setUserEmail(govEmail || 'officer@cybervigil.gov.in');
+    } else if (role === 'admin') {
+      setSelectedAvatar('⚡');
+      setUserEmail('admin@cybervigil.org');
     }
   };
 
@@ -219,6 +227,47 @@ export const Register: React.FC = () => {
 
       setPendingRegistrationCallback(() => proceedOfficerRegistration);
       setIsOTPModalOpen(true);
+
+    } else if (accountType === 'admin') {
+      if (!adminBadge.trim() || !userEmail.trim()) {
+        setErrorMessage('Please enter your Admin Email and Master Admin Badge ID.');
+        return;
+      }
+      if (!adminOath) {
+        setErrorMessage('Master system administrator compliance verification is required.');
+        return;
+      }
+      const finalAlias = alias.trim() ? `${selectedAvatar} ${alias.trim()}` : `${selectedAvatar} Admin Lead`;
+      
+      const proceedAdminRegistration = () => {
+        registerUser(
+          finalAlias, 
+          'admin', 
+          'Master Security Clearance', 
+          `#${adminBadge.replace('#', '')}`, 
+          {
+            isVerified: true,
+            verificationId: `#${adminBadge.replace('#', '')}`,
+            verificationType: 'inspector_pocso_nodal',
+            institutionOrJurisdiction: adminDept,
+          }
+        );
+
+        sendDiscordNotification({
+          title: 'System Administrator Master Clearance Activated',
+          description: `Verified Administrator **#${adminBadge.replace('#', '')}** initialized. Email OTP verified.`,
+          color: 0x10B981,
+          fields: [
+            { name: 'Admin Email', value: userEmail, inline: true },
+            { name: 'Department', value: adminDept, inline: true }
+          ]
+        });
+
+        navigate('/portal');
+      };
+
+      setPendingRegistrationCallback(() => proceedAdminRegistration);
+      setIsOTPModalOpen(true);
     }
   };
 
@@ -246,12 +295,12 @@ export const Register: React.FC = () => {
 
       <div className="bg-surface dark:bg-sand-900 rounded-2xl p-6 sm:p-8 border border-sand-300 dark:border-sand-800 shadow-warm-card space-y-6">
         
-        {/* Step 1: Role Selection Cards */}
+        {/* Step 1: Role Selection Cards - All 4 Roles */}
         <div className="space-y-2">
           <label className="block text-xs font-bold text-primary dark:text-sand-100 uppercase tracking-wider">
             1. Select Your Role / Category
           </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
             {/* Student Card */}
             <button
               type="button"
@@ -328,6 +377,31 @@ export const Register: React.FC = () => {
               <div className="mt-2 pt-2 border-t border-sand-200/80 dark:border-sand-700/80">
                 <span className="text-[9px] font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider bg-amber-100 dark:bg-amber-900/80 px-1.5 py-0.5 rounded">
                   Level 3 Clearance
+                </span>
+              </div>
+            </button>
+
+            {/* Admin Card */}
+            <button
+              type="button"
+              onClick={() => handleRoleChange('admin')}
+              className={`p-3.5 rounded-xl border text-left transition-all active:scale-95 flex flex-col justify-between ${
+                accountType === 'admin'
+                  ? 'bg-emerald-50/90 dark:bg-emerald-950/60 border-emerald-500 dark:border-emerald-400 ring-2 ring-emerald-500/20 shadow-warm-sm'
+                  : 'bg-sand-50 dark:bg-sand-800/60 border-sand-300 dark:border-sand-700 hover:border-sand-400 dark:hover:border-sand-600 text-textDark dark:text-sand-200'
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-xl">⚡</span>
+                {accountType === 'admin' && <BadgeCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />}
+              </div>
+              <div>
+                <span className="text-xs font-bold text-primary dark:text-sand-100 block">Administrator</span>
+                <span className="text-[10px] text-textMuted dark:text-sand-400 block leading-tight mt-0.5">Core system admin & forensic lead</span>
+              </div>
+              <div className="mt-2 pt-2 border-t border-sand-200/80 dark:border-sand-700/80">
+                <span className="text-[9px] font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider bg-emerald-100 dark:bg-emerald-900/80 px-1.5 py-0.5 rounded">
+                  Master Clearance
                 </span>
               </div>
             </button>
@@ -589,6 +663,70 @@ export const Register: React.FC = () => {
                   <CheckCircle className="w-4 h-4 text-amber-700 dark:text-amber-400 flex-shrink-0" />
                   <span>
                     Verification unlocks: <strong>Level 3 Clearance (POCSO Statutory)</strong> with full access to the Officer Case Portal, Forensic Exports, and Platform Takedown Dispatches.
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* D. SYSTEM ADMINISTRATOR VERIFICATION */}
+            {accountType === 'admin' && (
+              <div className="space-y-3.5 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="block font-bold text-primary dark:text-sand-200">Administrator Departmental Email</label>
+                    <input
+                      type="email"
+                      value={userEmail}
+                      onChange={(e) => setUserEmail(e.target.value)}
+                      placeholder="admin@cybervigil.org"
+                      className="w-full px-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs text-primary dark:text-sand-100 font-mono focus:ring-2 focus:ring-secondary/40"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block font-bold text-primary dark:text-sand-200">Master Admin Badge ID</label>
+                    <input
+                      type="text"
+                      value={adminBadge}
+                      onChange={(e) => setAdminBadge(e.target.value)}
+                      placeholder="ADMIN-01"
+                      className="w-full px-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs text-primary dark:text-sand-100 font-mono font-bold focus:ring-2 focus:ring-secondary/40"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block font-bold text-primary dark:text-sand-200">Department / Unit</label>
+                  <input
+                    type="text"
+                    value={adminDept}
+                    onChange={(e) => setAdminDept(e.target.value)}
+                    placeholder="CyberVigil Cyber Forensic Core"
+                    className="w-full px-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs text-primary dark:text-sand-100 font-medium focus:ring-2 focus:ring-secondary/40"
+                    required
+                  />
+                </div>
+
+                <label className="flex items-start gap-2.5 p-3 rounded-xl bg-surface dark:bg-sand-800 border border-sand-200 dark:border-sand-700 cursor-pointer hover:bg-sand-50 dark:hover:bg-sand-700/60 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={adminOath}
+                    onChange={(e) => setAdminOath(e.target.checked)}
+                    className="mt-0.5 rounded text-primary focus:ring-secondary"
+                  />
+                  <span className="text-[11px] text-textMuted dark:text-sand-300 leading-relaxed">
+                    <strong className="text-primary dark:text-sand-100 block font-bold">System Administrator Master Certification</strong>
+                    I certify authorized administrative authority for system forensic analysis, API management, and global platform security oversight.
+                  </span>
+                </label>
+
+                {/* Clearance Tag */}
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-700 text-emerald-950 dark:text-emerald-200 text-[11px]">
+                  <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                  <span>
+                    Verification unlocks: <strong>Master Security Clearance</strong> with full access to Platform Settings, Gemini API configuration, and global logs.
                   </span>
                 </div>
               </div>

@@ -161,6 +161,8 @@ export const BraveStories: React.FC = () => {
       timeAgo: 'Just now',
       supportCount: 1,
       userSupported: true,
+      votesCount: 1,
+      userVoted: false,
       tags: [category, entryType === 'grievance' ? 'Community Doubt' : 'Brave Survivor'],
       isAnonymous: isAnonymousShare,
       duration: entryType === 'grievance' ? `Doubt #${Math.floor(100 + Math.random() * 400)}` : '0:25',
@@ -168,12 +170,15 @@ export const BraveStories: React.FC = () => {
       captionEmoji: captionEmoji || (entryType === 'grievance' ? 'Community Query ❓' : 'Courage Story 💙'),
       isSaved: true,
       urgency: entryType === 'grievance' ? 'Needs Guidance' : undefined,
-      answersCount: entryType === 'grievance' ? 1 : undefined,
-      verifiedAdvice: entryType === 'grievance' ? 'Official counselor review is pending. In immediate peril, dial Childline 1098 or 1930.' : undefined
+      answersCount: entryType === 'grievance' ? 0 : undefined,
+      verifiedAdvice: entryType === 'grievance' ? 'Official counselor review is pending. In immediate peril, dial Childline 1098 or 1930.' : undefined,
+      replies: []
     };
 
     localStore.saveStory(newEntry);
     setStories(localStore.getStories());
+    setActiveTab(entryType === 'grievance' ? 'grievances' : 'stories');
+    setActiveCategory('All');
     setSubmittedMessage(true);
     setTimeout(() => {
       setSubmittedMessage(false);

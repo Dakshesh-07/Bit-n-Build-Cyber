@@ -72,8 +72,8 @@ export const Login: React.FC = () => {
   const { loginAsAnonymous, loginWithCredentials } = useAuth();
   const navigate = useNavigate();
 
-  // Active Login Role Tab
-  const [activeTab, setActiveTab] = useState<'student' | 'guardian' | 'officer' | 'anonymous'>('student');
+  // Active Login Role Tab: Student, Guardian, Inspector, Admin, Anonymous Case PIN
+  const [activeTab, setActiveTab] = useState<'student' | 'guardian' | 'officer' | 'admin' | 'anonymous'>('student');
   
   // Form State
   const [email, setEmail] = useState('student@cybervigil.org');
@@ -82,12 +82,9 @@ export const Login: React.FC = () => {
   const [wardPin, setWardPin] = useState('CV-1042');
   const [officerBadge, setOfficerBadge] = useState('CPU-4');
   const [securityToken, setSecurityToken] = useState('POCSO-7749-SEC');
+  const [adminBadge, setAdminBadge] = useState('ADMIN-01');
   const [ticketPin, setTicketPin] = useState('CV-1042');
   const [errorMessage, setErrorMessage] = useState('');
-
-  // Email OTP Modal State
-  const [isOTPModalOpen, setIsOTPModalOpen] = useState<boolean>(false);
-  const [pendingLoginCallback, setPendingLoginCallback] = useState<(() => void) | null>(null);
 
   const handleApplyPreset = (preset: typeof PRESET_CREDENTIALS[0]) => {
     setEmail(preset.email);
@@ -100,9 +97,12 @@ export const Login: React.FC = () => {
     } else if (preset.role === 'parent_guardian') {
       setActiveTab('guardian');
       if (preset.wardPin) setWardPin(preset.wardPin);
-    } else if (preset.role === 'welfare_officer' || preset.role === 'admin') {
+    } else if (preset.role === 'welfare_officer') {
       setActiveTab('officer');
       if (preset.badge) setOfficerBadge(preset.badge.replace('#', ''));
+    } else if (preset.role === 'admin') {
+      setActiveTab('admin');
+      if (preset.badge) setAdminBadge(preset.badge.replace('#', ''));
     }
   };
 
@@ -114,24 +114,19 @@ export const Login: React.FC = () => {
     }
 
     const matched = PRESET_CREDENTIALS.find(p => p.email.toLowerCase() === email.toLowerCase());
-    const proceedLogin = () => {
-      loginWithCredentials(
-        matched ? matched.alias : `🎓 ${email.split('@')[0]}`, 
-        'registered_youth',
-        'Shield Level 1 (Institutional Verified)',
-        studentRoll || 'STU-VERIFIED',
-        {
-          isVerified: true,
-          verificationId: studentRoll || 'STU-VERIFIED',
-          verificationType: 'student_institutional_id',
-          institutionOrJurisdiction: matched?.institution || 'Verified Educational Institution'
-        }
-      );
-      navigate('/');
-    };
-
-    setPendingLoginCallback(() => proceedLogin);
-    setIsOTPModalOpen(true);
+    loginWithCredentials(
+      matched ? matched.alias : `🎓 ${email.split('@')[0]}`, 
+      'registered_youth',
+      'Shield Level 1 (Institutional Verified)',
+      studentRoll || 'STU-VERIFIED',
+      {
+        isVerified: true,
+        verificationId: studentRoll || 'STU-VERIFIED',
+        verificationType: 'student_institutional_id',
+        institutionOrJurisdiction: matched?.institution || 'Verified Educational Institution'
+      }
+    );
+    navigate('/');
   };
 
   const handleGuardianLogin = (e: React.FormEvent) => {
@@ -142,24 +137,19 @@ export const Login: React.FC = () => {
     }
 
     const matched = PRESET_CREDENTIALS.find(p => p.email.toLowerCase() === email.toLowerCase());
-    const proceedLogin = () => {
-      loginWithCredentials(
-        matched ? matched.alias : `🛡️ Guardian (${email.split('@')[0]})`, 
-        'parent_guardian',
-        'Family Safe Mode (Verified)',
-        `Ward: ${wardPin || 'CV-1042'}`,
-        {
-          isVerified: true,
-          verificationId: wardPin || 'CV-1042',
-          verificationType: 'guardian_ward_link',
-          institutionOrJurisdiction: `Ward Link #${wardPin || 'CV-1042'}`
-        }
-      );
-      navigate('/');
-    };
-
-    setPendingLoginCallback(() => proceedLogin);
-    setIsOTPModalOpen(true);
+    loginWithCredentials(
+      matched ? matched.alias : `🛡️ Guardian (${email.split('@')[0]})`, 
+      'parent_guardian',
+      'Family Safe Mode (Verified)',
+      `Ward: ${wardPin || 'CV-1042'}`,
+      {
+        isVerified: true,
+        verificationId: wardPin || 'CV-1042',
+        verificationType: 'guardian_ward_link',
+        institutionOrJurisdiction: `Ward Link #${wardPin || 'CV-1042'}`
+      }
+    );
+    navigate('/');
   };
 
   const handleOfficerLogin = (e: React.FormEvent) => {
@@ -170,36 +160,42 @@ export const Login: React.FC = () => {
     }
 
     const matched = PRESET_CREDENTIALS.find(p => p.email.toLowerCase() === email.toLowerCase());
-    const role: UserRole = matched?.role === 'admin' ? 'admin' : 'welfare_officer';
-    const clearance = role === 'admin' 
-      ? 'Master Security Clearance' 
-      : 'Level 3 Clearance (POCSO Statutory Verified)';
-
-    const proceedLogin = () => {
-      loginWithCredentials(
-        matched ? matched.alias : `⚖️ Inspector (${officerBadge})`, 
-        role, 
-        clearance, 
-        `#${officerBadge.replace('#', '')}`,
-        {
-          isVerified: true,
-          verificationId: `#${officerBadge.replace('#', '')}`,
-          verificationType: 'inspector_pocso_nodal',
-          institutionOrJurisdiction: matched?.institution || 'POCSO Nodal Unit DL-04, Cyber Cell'
-        }
-      );
-      navigate('/portal');
-    };
-
-    setPendingLoginCallback(() => proceedLogin);
-    setIsOTPModalOpen(true);
+    loginWithCredentials(
+      matched ? matched.alias : `⚖️ Inspector (${officerBadge})`, 
+      'welfare_officer', 
+      'Level 3 Clearance (POCSO Statutory Verified)', 
+      `#${officerBadge.replace('#', '')}`,
+      {
+        isVerified: true,
+        verificationId: `#${officerBadge.replace('#', '')}`,
+        verificationType: 'inspector_pocso_nodal',
+        institutionOrJurisdiction: matched?.institution || 'POCSO Nodal Unit DL-04, Cyber Cell'
+      }
+    );
+    navigate('/portal');
   };
 
-  const handleOTPVerifySuccess = () => {
-    setIsOTPModalOpen(false);
-    if (pendingLoginCallback) {
-      pendingLoginCallback();
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !password.trim()) {
+      setErrorMessage('Please enter system administrator email and password.');
+      return;
     }
+
+    const matched = PRESET_CREDENTIALS.find(p => p.role === 'admin');
+    loginWithCredentials(
+      matched ? matched.alias : `⚡ Admin (${email.split('@')[0]})`, 
+      'admin', 
+      'Master Security Clearance', 
+      `#${adminBadge.replace('#', '')}`,
+      {
+        isVerified: true,
+        verificationId: `#${adminBadge.replace('#', '')}`,
+        verificationType: 'inspector_pocso_nodal',
+        institutionOrJurisdiction: matched?.institution || 'CyberVigil Cyber Forensic Core'
+      }
+    );
+    navigate('/portal');
   };
 
   const handleAnonymousLogin = (e: React.FormEvent) => {
@@ -261,8 +257,8 @@ export const Login: React.FC = () => {
         </div>
       </div>
 
-      {/* Role Tabs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 rounded-xl bg-sand-200 dark:bg-sand-800/80 p-1 border border-sand-300 dark:border-sand-700 text-xs font-bold gap-1">
+      {/* Role Tabs - All 4 Roles + Case PIN */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 rounded-xl bg-sand-200 dark:bg-sand-800/80 p-1 border border-sand-300 dark:border-sand-700 text-xs font-bold gap-1">
         <button
           onClick={() => { setActiveTab('student'); setErrorMessage(''); setEmail('student@cybervigil.org'); setPassword('student123'); }}
           className={`py-2 px-1 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1 ${
@@ -289,12 +285,23 @@ export const Login: React.FC = () => {
           onClick={() => { setActiveTab('officer'); setErrorMessage(''); setEmail('officer@cybervigil.gov.in'); setPassword('officer123'); }}
           className={`py-2 px-1 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1 ${
             activeTab === 'officer'
-              ? 'bg-primary dark:bg-secondary text-secondary dark:text-primary shadow-sm font-extrabold'
+              ? 'bg-amber-600 text-surface shadow-sm font-extrabold'
               : 'text-textMuted dark:text-sand-400 hover:text-primary dark:hover:text-sand-100'
           }`}
         >
           <span>⚖️</span>
           <span>Inspector</span>
+        </button>
+        <button
+          onClick={() => { setActiveTab('admin'); setErrorMessage(''); setEmail('admin@cybervigil.org'); setPassword('admin123'); }}
+          className={`py-2 px-1 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1 ${
+            activeTab === 'admin'
+              ? 'bg-primary dark:bg-secondary text-secondary dark:text-primary shadow-sm font-extrabold'
+              : 'text-textMuted dark:text-sand-400 hover:text-primary dark:hover:text-sand-100'
+          }`}
+        >
+          <span>⚡</span>
+          <span>Admin</span>
         </button>
         <button
           onClick={() => { setActiveTab('anonymous'); setErrorMessage(''); }}
@@ -391,7 +398,7 @@ export const Login: React.FC = () => {
               type="submit"
               className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-surface font-bold text-sm shadow-warm-sm hover:shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 group/btn"
             >
-              <span>Verify Student Clearance & Sign In</span>
+              <span>Sign In as Student Defender</span>
               <ArrowRight className="w-4 h-4 text-secondary group-hover/btn:translate-x-0.5 transition-transform" />
             </button>
 
@@ -474,7 +481,7 @@ export const Login: React.FC = () => {
               type="submit"
               className="w-full py-3.5 rounded-xl bg-purple-700 hover:bg-purple-800 text-surface font-bold text-sm shadow-warm-sm hover:shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 group/btn"
             >
-              <span>Verify Guardian Clearance & Sign In</span>
+              <span>Sign In as Guardian</span>
               <ArrowRight className="w-4 h-4 text-secondary group-hover/btn:translate-x-0.5 transition-transform" />
             </button>
 
@@ -579,22 +586,105 @@ export const Login: React.FC = () => {
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-xl bg-secondary hover:bg-secondary-dark text-primary font-bold text-sm shadow-warm-sm hover:shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 group/btn"
+              className="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-surface font-bold text-sm shadow-warm-sm hover:shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 group/btn"
             >
               <Shield className="w-4 h-4" />
-              <span>Verify Level 3 POCSO Clearance & Enter Portal</span>
-              <ArrowRight className="w-4 h-4 text-primary group-hover/btn:translate-x-0.5 transition-transform" />
+              <span>Sign In as Police Inspector</span>
+              <ArrowRight className="w-4 h-4 text-surface group-hover/btn:translate-x-0.5 transition-transform" />
             </button>
 
             <div className="text-center pt-1">
-              <Link to="/register" className="text-xs font-bold text-secondary-dark hover:underline">
+              <Link to="/register" className="text-xs font-bold text-amber-700 hover:underline">
                 New officer? Register departmental credentials
               </Link>
             </div>
           </form>
         )}
 
-        {/* Tab 4: Anonymous Case PIN Tracking */}
+        {/* Tab 4: System Administrator */}
+        {activeTab === 'admin' && (
+          <form onSubmit={handleAdminLogin} className="space-y-4">
+            <div className="p-3.5 rounded-xl bg-primary text-surface text-xs space-y-1 border border-sand-300">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-secondary font-bold">
+                  <Sparkles className="w-4 h-4 text-secondary" />
+                  <span>CyberVigil System Administrator Core</span>
+                </div>
+                <span className="text-[10px] font-bold bg-amber-500/20 text-secondary border border-secondary/40 px-2 py-0.5 rounded-full">
+                  Master Clearance
+                </span>
+              </div>
+              <p className="text-sand-300 text-[11px]">
+                System Administrator operations, global forensics, system telemetry, and platform management.
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="admin-email" className="block text-xs font-bold text-primary">
+                Administrator Email
+              </label>
+              <div className="relative">
+                <User className="w-4 h-4 text-textMuted absolute left-3.5 top-3.5" />
+                <input
+                  id="admin-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@cybervigil.org"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-sand-300 bg-sand-50 focus:bg-surface focus:ring-2 focus:ring-secondary/40 text-xs sm:text-sm text-primary font-mono font-medium"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="admin-badge" className="block text-xs font-bold text-primary">
+                Master Admin Badge ID
+              </label>
+              <div className="relative">
+                <BadgeCheck className="w-4 h-4 text-textMuted absolute left-3.5 top-3.5" />
+                <input
+                  id="admin-badge"
+                  type="text"
+                  value={adminBadge}
+                  onChange={(e) => setAdminBadge(e.target.value)}
+                  placeholder="ADMIN-01"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-sand-300 bg-sand-50 focus:bg-surface focus:ring-2 focus:ring-secondary/40 text-xs sm:text-sm font-mono font-bold text-primary"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label htmlFor="admin-pass" className="block text-xs font-bold text-primary">
+                Admin Security Password
+              </label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-textMuted absolute left-3.5 top-3.5" />
+                <input
+                  id="admin-pass"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••••••"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-sand-300 bg-sand-50 focus:bg-surface focus:ring-2 focus:ring-secondary/40 text-xs sm:text-sm text-primary font-mono"
+                  required
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-3.5 rounded-xl bg-secondary hover:bg-secondary-dark text-primary font-bold text-sm shadow-warm-sm hover:shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 group/btn"
+            >
+              <Shield className="w-4 h-4" />
+              <span>Sign In as System Administrator</span>
+              <ArrowRight className="w-4 h-4 text-primary group-hover/btn:translate-x-0.5 transition-transform" />
+            </button>
+          </form>
+        )}
+
+        {/* Tab 5: Anonymous Case PIN Tracking */}
         {activeTab === 'anonymous' && (
           <form onSubmit={handleAnonymousLogin} className="space-y-4">
             <div className="p-4 rounded-xl bg-sand-100 border border-sand-200 text-xs text-textMuted leading-relaxed space-y-1">
@@ -631,14 +721,6 @@ export const Login: React.FC = () => {
           </form>
         )}
       </div>
-
-      <EmailOTPModal
-        isOpen={isOTPModalOpen}
-        onClose={() => setIsOTPModalOpen(false)}
-        onVerifySuccess={handleOTPVerifySuccess}
-        email={email}
-        userRole={activeTab === 'student' ? 'Student Defender' : activeTab === 'guardian' ? 'Parent / Guardian' : 'Police Inspector'}
-      />
     </div>
   );
 };
