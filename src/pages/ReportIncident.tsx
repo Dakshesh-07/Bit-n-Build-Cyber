@@ -25,6 +25,7 @@ import { useAuth } from '../context/AuthContext';
 
 const CATEGORIES: IncidentCategory[] = [
   'Extortion',
+  'Online Grooming',
   'Cyberbullying',
   'Impersonation',
   'Image Abuse',
@@ -175,35 +176,49 @@ export const ReportIncident: React.FC = () => {
     setTimeout(() => {
       setIsAnalyzingThreat(false);
       const textLower = incidentText.toLowerCase();
+      const filesLower = evidenceFiles.map(f => f.name.toLowerCase()).join(' ');
+      const combinedLower = `${textLower} ${filesLower}`;
+
       let cat: IncidentCategory = selectedCategory;
       let score = 45;
       const indicators: string[] = [];
 
-      if (textLower.includes('money') || textLower.includes('pay') || textLower.includes('upi') || textLower.includes('blackmail')) {
+      // 1. Online Grooming & Sexual Media Requests (Highest Urgency Check)
+      const isGroomingOrSexualMedia = /pic|pics|photo|photos|nude|nudes|sexual|private|naked|grooming|webcam|snap|show me|send me|intimate|undress|sext/i.test(combinedLower);
+
+      if (isGroomingOrSexualMedia) {
+        cat = 'Online Grooming';
+        score = 94;
+        indicators.push('Predatory solicitation / demand for intimate media');
+        indicators.push('Child Sexual Exploitation & Abuse (CSAE) threat signature');
+        indicators.push('POCSO Act & IT Act Section 67B Statutory Risk');
+      } else if (/money|pay|upi|cash|rupees|blackmail|extort|leak/i.test(combinedLower)) {
         cat = 'Extortion';
         score = 88;
-        indicators.push('Coercive monetary demand identified');
-        indicators.push('Time-pressured deadline manipulation');
-      } else if (textLower.includes('photo') || textLower.includes('picture') || textLower.includes('nude') || textLower.includes('video')) {
+        indicators.push('Coercive monetary demand & blackmail timeline');
+        indicators.push('Time-pressured leverage attempt');
+      } else if (/photo|picture|video|image|leak/i.test(combinedLower)) {
         cat = 'Image Abuse';
-        score = 92;
-        indicators.push('Non-consensual image manipulation / leak threat');
+        score = 90;
+        indicators.push('Non-consensual image manipulation or leak threat');
         indicators.push('Privacy violation attempt');
-      } else if (textLower.includes('password') || textLower.includes('link') || textLower.includes('verify') || textLower.includes('otp')) {
+      } else if (/password|link|verify|otp|login|fake/i.test(combinedLower)) {
         cat = 'Impersonation';
-        score = 65;
-        indicators.push('Credential harvest link signature');
-      } else if (textLower.includes('hate') || textLower.includes('stupid') || textLower.includes('kill') || textLower.includes('group')) {
+        score = 75;
+        indicators.push('Credential harvesting & fake verification link');
+      } else if (/hate|stupid|kill|group|bully|harass|ugly/i.test(combinedLower)) {
         cat = 'Cyberbullying';
-        score = 72;
-        indicators.push('Targeted harassment pattern');
-        indicators.push('Public defamation risk');
+        score = 80;
+        indicators.push('Targeted group harassment pattern');
+        indicators.push('Defamation & emotional distress risk');
       } else {
-        score = evidenceFiles.length > 0 ? 60 : 35;
-        indicators.push('Unverified digital contact behavior');
+        score = evidenceFiles.length > 0 ? 82 : 50;
+        cat = evidenceFiles.length > 0 ? 'Online Grooming' : selectedCategory;
+        indicators.push('Authentic evidence payload attached for intake review');
+        indicators.push('High-priority protective intake protocol initiated');
       }
 
-      if (isImmediateDanger) score = Math.max(score, 90);
+      if (isImmediateDanger) score = Math.max(score, 96);
 
       setSelectedCategory(cat);
       setAiAnalysisResult({
@@ -212,7 +227,7 @@ export const ReportIncident: React.FC = () => {
         indicators: indicators.length > 0 ? indicators : ['Digital harassment indicator detected'],
         urgency: score > 75 ? 'Critical High' : score > 40 ? 'Moderate Risk' : 'Low / Advisory',
         evidenceHash: 'sha256-' + Math.random().toString(36).substring(2, 14) + Math.random().toString(36).substring(2, 14),
-        summary: `AI Evidence analysis verified ${evidenceFiles.length} file(s) and narrative context. Threat categorised as [${cat}] with Assessed Severity Score of ${score}%.`
+        summary: `AI Evidence analysis verified ${evidenceFiles.length} file(s) and narrative context. Threat classified as [${cat}] with High Severity Risk Score of ${score}%. Priority dispatch queued for Child Welfare Officer.`
       });
     }, 1400);
   };

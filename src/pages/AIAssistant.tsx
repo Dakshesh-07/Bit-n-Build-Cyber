@@ -26,30 +26,22 @@ import { useAuth } from '../context/AuthContext';
 
 const INITIAL_MESSAGES: ChatMessage[] = [
   {
-    id: 'msg-1',
-    sender: 'user',
-    text: "Someone is threatening to post private pictures of me unless I send them money or more photos within 12 hours. I'm really scared.",
-    timestamp: '14:32',
-  },
-  {
-    id: 'msg-2',
+    id: 'msg-welcome',
     sender: 'assistant',
-    text: "I am so sorry you are dealing with this. Take a deep breath — this is not your fault, and you do not have to face it alone. We are going to protect you step by step.",
-    timestamp: '14:32',
-    empathyNote: "Harmful Acts & Extortion Detected: Critical Legal Protection Active",
-    detectedThreat: 'Harmful Acts',
-    threatSeverity: 'High Urgency',
-    safetyHelplineNote: "Emergency Assistance: Childline 1098 (24/7 Free) • Cyber Crime Helpline 1930",
+    text: "Hello! Welcome to CyberVigil Guardian AI. You are in a completely safe, private, zero-knowledge space. Take a deep breath — you are not alone, nothing here is judged or tracked, and you remain in total control.\n\nHow can I support you today? You can describe what happened in your own words, ask for safety steps, or explore key threat definitions below.",
+    timestamp: 'Just now',
+    empathyNote: "Zero-Knowledge Trauma Support Active",
+    detectedThreat: 'Conversational',
+    threatSeverity: 'Advisory',
     steps: [
-      "Do not pay or send additional media: Extortionists rarely stop after payment; cutting off financial yield removes their primary incentive.",
-      "Do not delete the conversation yet: Take high-resolution screenshots showing exact usernames, timestamps, and profile handles.",
-      "Do not engage or argue: Put their profile on mute. Engaging gives them emotional leverage.",
-      "Dispatch an automated takedown: We can hash your image signatures (TakeItDown / StopNCII) without exposing files to human eyes, stopping distribution across Meta, Snapchat, and Discord.",
-      "Connect with a verified counselor: Reach out to Childline 1098 specialists who will support you without judgment."
+      "🛡️ Doxxing: The unauthorized posting of your private personal information (like address, school, phone number, or real identity) online to harass or intimidate you.",
+      "🚨 Online Extortion / Sextortion: When someone threatens to share private photos, chats, or secrets unless you send money, more photos, or meet demands.",
+      "👁️ Online Grooming: When a predator builds fake trust or friendship online over time to manipulate or ask for inappropriate private photos/favors.",
+      "🎣 Phishing & Account Hijacking: Fake verification links or login pages sent to trick you into giving away your passwords or OTPs."
     ],
     actionLink: {
-      text: "File Confidential Takedown Report",
-      url: "/report"
+      text: "Feel free to type your message or select a topic below...",
+      url: "#"
     }
   }
 ];
@@ -284,16 +276,12 @@ export const AIAssistant: React.FC = () => {
             </button>
           )}
 
-          <div className="p-3 px-4 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center gap-2.5 shadow-xs">
-            <Heart className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0 animate-pulse" />
-            <div>
-              <p className="text-xs font-extrabold text-emerald-900 dark:text-emerald-200 leading-tight">
-                You are safe here.
-              </p>
-              <p className="text-[10px] text-emerald-700 dark:text-emerald-400 font-semibold">
-                100% Confidential • Zero Judgment • Protected Session
-              </p>
-            </div>
+          {/* Slim "You are safe" Pill Badge */}
+          <div className="py-1 px-3.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2 shadow-xs">
+            <Heart className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 animate-pulse" />
+            <span className="text-[11px] font-extrabold text-emerald-800 dark:text-emerald-300">
+              You are safe here • 100% Confidential
+            </span>
           </div>
         </div>
       </section>

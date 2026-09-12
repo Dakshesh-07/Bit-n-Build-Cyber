@@ -130,7 +130,7 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-[#f8fafc] text-slate-800 z-[9999] overflow-y-auto font-sans animate-in fade-in duration-100 flex flex-col select-text">
+    <div className="fixed inset-0 bg-[#f8fafc] text-slate-800 z-[9999] overflow-y-auto font-sans animate-in fade-in duration-100 flex flex-col select-text [color-scheme:light] light">
       
       {/* ========================================================================= */}
       {/* 1. TOP HEADER - STYLED EXACTLY PER PERSONA (NO VISIBLE RESUME BUTTON)     */}

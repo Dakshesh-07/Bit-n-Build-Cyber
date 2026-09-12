@@ -25,6 +25,7 @@ export interface UserProfile {
 
 export type IncidentCategory = 
   | 'Extortion'
+  | 'Online Grooming'
   | 'Cyberbullying'
   | 'Impersonation'
   | 'Image Abuse'

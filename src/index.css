@@ -30,20 +30,38 @@ html.dark .bg-surface, html.dark .bg-white {
   color: #f8fafc !important;
 }
 
-html.dark .bg-sand-50, html.dark .bg-sand-100, html.dark .bg-sand-200 {
+html.dark .bg-sand-50, 
+html.dark .bg-sand-100, 
+html.dark .bg-sand-200, 
+html.dark .bg-sand-300,
+html.dark .bg-sand-50\/70,
+html.dark .bg-sand-100\/80,
+html.dark .bg-sand-200\/80,
+html.dark .bg-secondary-container,
+html.dark .bg-amber-100,
+html.dark .bg-slate-200 {
   background-color: #1e293b !important;
   color: #f8fafc !important;
 }
 
-html.dark .bg-sand-300, html.dark .border-sand-200, html.dark .border-sand-300, html.dark .border-sand-400 {
+html.dark .border-sand-200, 
+html.dark .border-sand-300, 
+html.dark .border-sand-400,
+html.dark .border-slate-200 {
   border-color: #334155 !important;
 }
 
-html.dark .text-primary, html.dark .text-textDark, html.dark .text-slate-900, html.dark .text-slate-800 {
+html.dark .text-primary, 
+html.dark .text-textDark, 
+html.dark .text-slate-900, 
+html.dark .text-slate-800,
+html.dark .text-slate-700 {
   color: #f8fafc !important;
 }
 
-html.dark .text-textMuted, html.dark .text-slate-600, html.dark .text-slate-500 {
+html.dark .text-textMuted, 
+html.dark .text-slate-600, 
+html.dark .text-slate-500 {
   color: #94a3b8 !important;
 }
 
