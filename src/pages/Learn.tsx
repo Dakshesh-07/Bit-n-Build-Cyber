@@ -316,30 +316,30 @@ export const Learn: React.FC = () => {
           <p className="text-sm text-textDark leading-relaxed">{activeModule.description}</p>
 
           {/* Golden Rule Highlight */}
-          <div className="p-5 rounded-xl bg-secondary-container/40 border border-secondary/50 space-y-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-primary">Core Protective Rule:</span>
-            <p className="text-sm sm:text-base font-bold text-primary leading-snug">
+          <div className="p-5 rounded-2xl bg-amber-500/10 dark:bg-slate-900 border border-amber-500/30 dark:border-orange-500/40 space-y-2 shadow-xs">
+            <span className="text-xs font-extrabold uppercase tracking-wider text-amber-700 dark:text-orange-400 block">Core Protective Rule:</span>
+            <p className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100 leading-snug">
               {activeModule.keyRule}
             </p>
           </div>
 
           {/* Step-by-Step Action Tips */}
           <div className="space-y-3 pt-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-textMuted">Actionable Guardrails:</h3>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-textMuted dark:text-slate-400">Actionable Guardrails:</h3>
             <div className="space-y-2.5">
               {activeModule.tips.map((tip, idx) => (
-                <div key={idx} className="p-3.5 rounded-xl bg-sand-100 border border-sand-200 flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-lg bg-primary text-secondary font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div key={idx} className="p-3.5 rounded-xl bg-sand-100 dark:bg-slate-900 border border-sand-200 dark:border-slate-800 flex items-start gap-3">
+                  <span className="w-6 h-6 rounded-lg bg-primary dark:bg-orange-600 text-white font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
                     {idx + 1}
                   </span>
-                  <span className="text-xs sm:text-sm text-textDark leading-relaxed">{tip}</span>
+                  <span className="text-xs sm:text-sm text-textDark dark:text-slate-200 leading-relaxed font-medium">{tip}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Interactive Knowledge Challenge */}
-          <div className="p-5 rounded-2xl bg-sand-100/80 border border-sand-300 space-y-4 pt-4">
+          <div className="p-5 rounded-2xl bg-sand-100/80 dark:bg-slate-900 border border-sand-300 dark:border-slate-800 space-y-4 pt-4">
             <div className="flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-secondary" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-primary">

@@ -407,7 +407,7 @@ export const BraveStories: React.FC = () => {
                       {item.title}
                     </h3>
 
-                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 line-clamp-5 leading-relaxed italic bg-sand-100/50 dark:bg-slate-950/70 p-3.5 rounded-2xl border-l-3 border-secondary dark:border-orange-500">
+                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 line-clamp-4 leading-relaxed font-normal">
                       "{item.storyText}"
                     </p>
 

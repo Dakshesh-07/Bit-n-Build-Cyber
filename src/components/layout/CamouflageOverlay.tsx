@@ -130,7 +130,7 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-[#f8fafc] text-slate-800 z-[9999] overflow-y-auto font-sans animate-in fade-in duration-100 flex flex-col select-text [color-scheme:light] light">
+    <div className="fixed inset-0 bg-[#f8fafc] dark:bg-[#0b1120] text-slate-800 dark:text-slate-100 z-[9999] overflow-y-auto font-sans animate-in fade-in duration-100 flex flex-col select-text">
       
       {/* ========================================================================= */}
       {/* 1. TOP HEADER - STYLED EXACTLY PER PERSONA (NO VISIBLE RESUME BUTTON)     */}
@@ -424,15 +424,15 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
   function renderProfileDropdown() {
     return (
       <div 
-        className="fixed top-14 right-4 sm:right-8 w-72 bg-white border border-slate-200 rounded-xl shadow-2xl p-3 z-[100] text-xs font-medium space-y-3 animate-in fade-in max-h-[85vh] overflow-y-auto"
+        className="fixed top-14 right-4 sm:right-8 w-72 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl p-3 z-[100] text-xs font-medium space-y-3 animate-in fade-in max-h-[85vh] overflow-y-auto"
       >
         {/* User Persona Details */}
-        <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-between">
+        <div className="p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 flex items-center justify-between">
           <div>
-            <p className="font-bold text-slate-900 text-sm">
+            <p className="font-bold text-slate-900 dark:text-slate-100 text-sm">
               {user?.alias || (persona === 'primary' ? 'Aarav Sharma' : persona === 'college' ? 'Himanshu Verma' : persona === 'youtube' ? 'StudyDesk Official' : 'Priya Patel')}
             </p>
-            <p className="text-[11px] text-slate-500 font-semibold">
+            <p className="text-[11px] text-slate-600 dark:text-slate-400 font-semibold">
               {persona === 'primary' ? 'Class 4-A • NCERT Primary' : persona === 'college' ? 'Reg #2023CSB1042 • Campus LMS' : persona === 'youtube' ? 'Personal Learning Stream' : 'CBSE Class 10-C • Secondary Science'}
             </p>
           </div>
@@ -441,88 +441,96 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
 
         {/* Camouflage Persona / Grade Selector */}
         <div className="space-y-1.5">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block px-1">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block px-1">
             Camouflage Disguise Persona
           </span>
           <div className="grid grid-cols-2 gap-1.5">
             <button
               onClick={() => handleSelectPersona('primary')}
-              className={`p-2 rounded-lg border text-left flex items-center gap-1.5 transition-colors ${
-                persona === 'primary' ? 'bg-amber-50 border-amber-300 text-amber-950 font-bold' : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+              className={`p-2 rounded-lg border text-left flex items-center gap-1.5 transition-colors cursor-pointer ${
+                persona === 'primary' 
+                  ? 'bg-amber-500/20 dark:bg-amber-950/60 border-amber-400 text-amber-900 dark:text-amber-200 font-bold' 
+                  : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
               }`}
             >
               <span className="text-sm">🧸</span>
               <div>
                 <span className="block text-[11px]">Class 4</span>
-                <span className="text-[9px] text-slate-400">Primary EVS</span>
+                <span className="text-[9px] text-slate-500 dark:text-slate-400">Primary EVS</span>
               </div>
             </button>
 
             <button
               onClick={() => handleSelectPersona('secondary')}
-              className={`p-2 rounded-lg border text-left flex items-center gap-1.5 transition-colors ${
-                persona === 'secondary' ? 'bg-emerald-50 border-emerald-300 text-emerald-950 font-bold' : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+              className={`p-2 rounded-lg border text-left flex items-center gap-1.5 transition-colors cursor-pointer ${
+                persona === 'secondary' 
+                  ? 'bg-emerald-500/20 dark:bg-emerald-950/60 border-emerald-400 text-emerald-900 dark:text-emerald-200 font-bold' 
+                  : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
               }`}
             >
               <span className="text-sm">🔬</span>
               <div>
                 <span className="block text-[11px]">Class 10</span>
-                <span className="text-[9px] text-slate-400">CBSE Science</span>
+                <span className="text-[9px] text-slate-500 dark:text-slate-400">CBSE Science</span>
               </div>
             </button>
 
             <button
               onClick={() => handleSelectPersona('college')}
-              className={`p-2 rounded-lg border text-left flex items-center gap-1.5 transition-colors ${
-                persona === 'college' ? 'bg-sky-50 border-sky-300 text-sky-950 font-bold' : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+              className={`p-2 rounded-lg border text-left flex items-center gap-1.5 transition-colors cursor-pointer ${
+                persona === 'college' 
+                  ? 'bg-sky-500/20 dark:bg-sky-950/60 border-sky-400 text-sky-900 dark:text-sky-200 font-bold' 
+                  : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
               }`}
             >
               <span className="text-sm">🎓</span>
               <div>
                 <span className="block text-[11px]">College</span>
-                <span className="text-[9px] text-slate-400">Campus LMS</span>
+                <span className="text-[9px] text-slate-500 dark:text-slate-400">Campus LMS</span>
               </div>
             </button>
 
             <button
               onClick={() => handleSelectPersona('youtube')}
-              className={`p-2 rounded-lg border text-left flex items-center gap-1.5 transition-colors ${
-                persona === 'youtube' ? 'bg-red-50 border-red-300 text-red-950 font-bold' : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+              className={`p-2 rounded-lg border text-left flex items-center gap-1.5 transition-colors cursor-pointer ${
+                persona === 'youtube' 
+                  ? 'bg-red-500/20 dark:bg-red-950/60 border-red-400 text-red-900 dark:text-red-200 font-bold' 
+                  : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
               }`}
             >
               <span className="text-sm">📺</span>
               <div>
                 <span className="block text-[11px]">YouTube</span>
-                <span className="text-[9px] text-slate-400">Video Player</span>
+                <span className="text-[9px] text-slate-500 dark:text-slate-400">Video Player</span>
               </div>
             </button>
           </div>
         </div>
 
         {/* Academic Settings Links */}
-        <div className="space-y-0.5 border-t border-slate-100 pt-2 text-slate-600">
-          <button className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-50 flex items-center justify-between text-xs">
+        <div className="space-y-0.5 border-t border-slate-100 dark:border-slate-800 pt-2 text-slate-700 dark:text-slate-300">
+          <button className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between text-xs">
             <span>Saved Course Notes</span>
-            <span className="text-[10px] text-slate-400">12 Files</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">12 Files</span>
           </button>
-          <button className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-50 flex items-center justify-between text-xs">
+          <button className="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between text-xs">
             <span>Cloud Sync Status</span>
-            <span className="text-[10px] text-emerald-600">Up to date</span>
+            <span className="text-[10px] text-emerald-600 dark:text-emerald-400">Up to date</span>
           </button>
         </div>
 
         {/* DISCREET RETURN TO SESSION (Not visible on main page, maintains shortcut ESC) */}
-        <div className="border-t border-slate-100 pt-2">
+        <div className="border-t border-slate-100 dark:border-slate-800 pt-2">
           <button
             onClick={onClose}
-            className="w-full text-left px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 flex items-center justify-between transition-colors"
+            className="w-full text-left px-2.5 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-between transition-colors cursor-pointer"
             title="Resume CyberVigil Session (ESC)"
           >
             <span className="flex items-center gap-1.5">
               <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
               <span>Return to Active Session</span>
             </span>
-            <span className="font-mono text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded border border-slate-200">
+            <span className="font-mono text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700">
               ESC
             </span>
           </button>
@@ -1109,14 +1117,14 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
         {/* Content depending on selected college tab */}
         {collegeTab === 'notes' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-8 bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
-              <h2 className="text-lg font-bold text-slate-900">Dijkstra's Algorithm Implementation Notes</h2>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+            <div className="lg:col-span-8 bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4 shadow-xs text-slate-900 dark:text-slate-100">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">Dijkstra's Algorithm Implementation Notes</h2>
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                 Given a weighted graph G = (V, E) with non-negative edge weights w(u, v) ≥ 0, Dijkstra's algorithm finds the shortest path from a source vertex s to all other vertices.
               </p>
 
               {/* Code Snippet */}
-              <div className="bg-[#1e1e1e] text-slate-200 rounded-xl p-4 font-mono text-xs overflow-x-auto border border-slate-800 space-y-1">
+              <div className="bg-[#090d16] text-slate-200 rounded-xl p-4 font-mono text-xs overflow-x-auto border border-slate-800 space-y-1">
                 <p className="text-slate-500"># Dijkstra's Algorithm with Min-Heap Priority Queue</p>
                 <p><span className="text-purple-400">import</span> heapq</p>
                 <br />
@@ -1137,28 +1145,28 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
                 <p className="pl-4"><span className="text-purple-400">return</span> distances</p>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-xl border text-xs space-y-1">
-                <span className="font-bold text-slate-800">Time Complexity Analysis:</span>
-                <p className="text-slate-600 font-mono">With Binary Min-Heap: O((V + E) log V)</p>
-                <p className="text-slate-600 font-mono">With Fibonacci Heap: O(E + V log V)</p>
+              <div className="p-4 bg-slate-50 dark:bg-slate-900/90 rounded-xl border border-slate-200 dark:border-slate-800 text-xs space-y-1">
+                <span className="font-bold text-slate-800 dark:text-slate-200">Time Complexity Analysis:</span>
+                <p className="text-slate-600 dark:text-slate-400 font-mono">With Binary Min-Heap: O((V + E) log V)</p>
+                <p className="text-slate-600 dark:text-slate-400 font-mono">With Fibonacci Heap: O(E + V log V)</p>
               </div>
             </div>
 
             <div className="lg:col-span-4 space-y-4">
-              <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-xs space-y-3">
-                <h3 className="font-bold text-sm text-slate-900 border-b pb-2">Academic Progress</h3>
+              <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-xs space-y-3">
+                <h3 className="font-bold text-sm text-slate-900 dark:text-slate-100 border-b border-slate-200 dark:border-slate-800 pb-2">Academic Progress</h3>
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Cumulative GPA:</span>
-                    <span className="font-bold text-slate-800">8.94 / 10.0</span>
+                    <span className="text-slate-500 dark:text-slate-400">Cumulative GPA:</span>
+                    <span className="font-bold text-slate-800 dark:text-slate-200">8.94 / 10.0</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Lab Attendance:</span>
-                    <span className="font-bold text-emerald-700">94.2%</span>
+                    <span className="text-slate-500 dark:text-slate-400">Lab Attendance:</span>
+                    <span className="font-bold text-emerald-700 dark:text-emerald-400">94.2%</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-500">Mid-Term Grade:</span>
-                    <span className="font-bold text-slate-800">47 / 50 (94%)</span>
+                    <span className="text-slate-500 dark:text-slate-400">Mid-Term Grade:</span>
+                    <span className="font-bold text-slate-800 dark:text-slate-200">47 / 50 (94%)</span>
                   </div>
                 </div>
               </div>
@@ -1167,10 +1175,10 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
         )}
 
         {collegeTab === 'code' && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
+          <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4 shadow-xs">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-sky-600" />
+              <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-sky-600 dark:text-sky-400" />
                 <span>CS301 Lab Terminal Simulator</span>
               </h2>
               <button
@@ -1196,23 +1204,23 @@ export const CamouflageOverlay: React.FC<CamouflageOverlayProps> = ({ isOpen, on
         )}
 
         {collegeTab === 'assignments' && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
-            <h2 className="text-base font-bold text-slate-900">Active Course Submissions</h2>
+          <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 space-y-4 shadow-xs">
+            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">Active Course Submissions</h2>
             <div className="space-y-3 text-xs">
-              <div className="p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-slate-800">Assignment 4: AVL Trees & Red-Black Invariant</h3>
-                  <p className="text-slate-500">Submitted 2 days ago • Git Commit #7fa10c</p>
+                  <h3 className="font-bold text-slate-800 dark:text-slate-200">Assignment 4: AVL Trees & Red-Black Invariant</h3>
+                  <p className="text-slate-500 dark:text-slate-400">Submitted 2 days ago • Git Commit #7fa10c</p>
                 </div>
-                <span className="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 font-bold">Graded: 98/100</span>
+                <span className="px-2.5 py-1 rounded bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-800">Graded: 98/100</span>
               </div>
 
-              <div className="p-4 rounded-xl border border-slate-200 flex items-center justify-between">
+              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-slate-800">Term Project: Distributed Consensus with Raft</h3>
-                  <p className="text-slate-500">Due Friday, 23:59 IST • Partner: Arjun M.</p>
+                  <h3 className="font-bold text-slate-800 dark:text-slate-200">Term Project: Distributed Consensus with Raft</h3>
+                  <p className="text-slate-500 dark:text-slate-400">Due Friday, 23:59 IST • Partner: Arjun M.</p>
                 </div>
-                <span className="px-2.5 py-1 rounded bg-amber-100 text-amber-800 font-bold">In Progress</span>
+                <span className="px-2.5 py-1 rounded bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 font-bold border border-amber-200 dark:border-amber-800">In Progress</span>
               </div>
             </div>
           </div>
