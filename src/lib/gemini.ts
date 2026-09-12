@@ -26,12 +26,12 @@ If threat detected:
 const sessionsMap = new Map<string, any>();
 const activeModelMap = new Map<string, string>();
 
-// List of supported Gemini Flash candidate models in order of priority
+// List of supported Gemini candidate models in order of priority (Gemini 2.5 series primary)
 const CANDIDATE_MODELS = [
-  'gemini-2.0-flash',
-  'gemini-1.5-flash',
   'gemini-2.5-flash',
-  'gemini-1.5-pro'
+  'gemini-2.5-pro',
+  'gemini-2.0-flash',
+  'gemini-1.5-flash'
 ];
 
 /**

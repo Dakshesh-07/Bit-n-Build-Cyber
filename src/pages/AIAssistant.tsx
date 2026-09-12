@@ -595,7 +595,7 @@ export const AIAssistant: React.FC = () => {
 
                 <div className="flex items-center justify-between text-xs pt-1">
                   <span className="text-[11px] text-textMuted">
-                    Model: <strong className="text-primary">Gemini 3.6 Flash</strong>
+                    Model: <strong className="text-primary">Gemini 2.5 Flash</strong>
                   </span>
                   {hasApiKey && (
                     <button
