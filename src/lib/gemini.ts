@@ -1,4 +1,3 @@
-import { GoogleGenAI } from '@google/genai';
 import { ChatMessage } from '../types';
 
 export interface AIAnalysisResult {
@@ -11,29 +10,19 @@ export interface AIAnalysisResult {
   isBuiltInEngine?: boolean;
 }
 
-const SYSTEM_INSTRUCTION = `You are Cyber Vigil, a supportive digital guardian and companion for youth, parents, and law enforcement.
-- Normal Mode: If the user is just saying hello, asking general questions, or chatting casually, respond naturally, warmly, and normally like a friendly AI companion. Do not force cyber safety advice or jargon into casual talk.
-- Detection & Strategic Mode: Actively listen for underlying cyber threats. If the user mentions or hints at cyberbullying, online harassment, stalkers, digital scams, intimate image abuse, or threats, seamlessly transition into your digital guardian role.
-- Strategic Advice: When a threat is detected, consolidate their situation and clearly outline actionable next steps (how to document evidence, privacy settings, reporting links, or emergency helplines).
-
-Formatting:
-If casual chat: Respond warmly, concisely, and conversationally.
-If threat detected:
-1. Provide a warm, reassuring empathy acknowledgment.
-2. List 3 to 4 clear, actionable next steps.`;
-
 const CANDIDATE_MODELS = [
-  'gemini-1.5-flash',
-  'gemini-2.0-flash',
+  'gemini-flash-latest',
   'gemini-2.5-flash',
-  'gemini-1.5-pro',
-  'gemini-2.0-flash-exp'
+  'gemini-pro-latest',
+  'gemini-3.6-flash',
+  'gemini-3.5-flash'
 ];
 
-/**
- * Retrieves the Gemini API key from import.meta.env.VITE_GEMINI_API_KEY
- * with fallback to user-configured localStorage key.
- */
+const SYSTEM_INSTRUCTION = `You are CyberVigil, an empathetic, highly intelligent 24/7 digital safety guardian and youth companion.
+- Tone: Warm, expert, friendly, conversational, and supportive.
+- You can answer ANY question the user asks (general knowledge, science, digital safety, privacy, life advice, coding, or casual chat).
+- If the user reports threats, harassment, grooming, or physical safety risks, provide supportive advice and 3 to 4 clear action steps.`;
+
 export function getGeminiApiKey(): string | null {
   const envKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (envKey && envKey.trim() && envKey !== 'YOUR_GEMINI_API_KEY') {
@@ -55,7 +44,7 @@ export function setGeminiApiKey(key: string): void {
 }
 
 /**
- * Main AI Chat function using REST API fetch fallback + @google/genai SDK.
+ * Main CyberVigil AI Function - Live Google Gemini API Integration
  */
 export async function askGuardianAI(
   userPrompt: string,
@@ -63,278 +52,149 @@ export async function askGuardianAI(
   language: string = 'English',
   sessionId?: string
 ): Promise<AIAnalysisResult> {
+  console.log("🔥 CYBERVIGIL LIVE GEMINI AI EXECUTED -> Prompt:", userPrompt);
+
   const apiKey = getGeminiApiKey();
 
+  // 1. Try Google Gemini API if an API key is present
   if (apiKey) {
-    try {
-      // 1. Try SDK call first
-      const ai = new GoogleGenAI({ apiKey });
-      const sdkHistory = history
-        .filter(msg => msg.sender === 'user' || msg.sender === 'assistant')
-        .map(msg => ({
-          role: msg.sender === 'user' ? 'user' : 'model',
-          parts: [{ text: msg.text }]
-        }));
+    const contents = [
+      ...history
+        .filter(m => m.sender === 'user' || m.sender === 'assistant')
+        .map(m => ({
+          role: m.sender === 'user' ? 'user' : 'model',
+          parts: [{ text: m.text }]
+        })),
+      {
+        role: 'user',
+        parts: [
+          {
+            text: language && language !== 'English'
+              ? `${SYSTEM_INSTRUCTION}\n\n[Please respond in ${language}]\n\nUser: ${userPrompt}`
+              : `${SYSTEM_INSTRUCTION}\n\nUser: ${userPrompt}`
+          }
+        ]
+      }
+    ];
 
-      const languagePrompt = language && language !== 'English' 
-        ? `[User preferred language: ${language}. Reply in ${language} while retaining guardian persona.]\n${userPrompt}`
-        : userPrompt;
-
-      const contents = [
-        ...sdkHistory,
-        { role: 'user', parts: [{ text: languagePrompt }] }
-      ];
-
-      for (const modelName of CANDIDATE_MODELS) {
-        try {
-          const response = await ai.models.generateContent({
-            model: modelName,
+    // Try candidate active models sequentially
+    for (const model of CANDIDATE_MODELS) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
             contents: contents,
-            config: {
-              systemInstruction: SYSTEM_INSTRUCTION,
+            generationConfig: {
               temperature: 0.7,
+              maxOutputTokens: 1024
             }
-          });
+          })
+        });
 
-          const rawText = response.text || '';
-          if (rawText.trim()) {
-            const parsed = parseAIResponse(userPrompt, rawText);
+        if (res.ok) {
+          const data = await res.json();
+          const candidate = data.candidates?.[0];
+          const parts = candidate?.content?.parts || [];
+          const text = parts.map((p: any) => p.text).join('\n').trim();
+
+          if (text) {
+            console.log(`✅ Success via Gemini Cloud API model: ${model}`);
             return {
-              ...parsed,
+              ...parseAIResponse(userPrompt, text),
               isBuiltInEngine: false
             };
           }
-        } catch (mErr) {
-          console.warn(`Model ${modelName} SDK attempt failed:`, mErr);
+        } else {
+          const errText = await res.text();
+          console.warn(`Gemini Model ${model} returned ${res.status}:`, errText);
         }
+      } catch (err) {
+        console.warn(`Gemini Model ${model} fetch exception:`, err);
       }
-
-      // 2. Direct REST fetch attempt if SDK wrapper hits environment issues
-      const restResult = await callDirectGeminiRest(apiKey, userPrompt, history, language);
-      if (restResult) {
-        const parsed = parseAIResponse(userPrompt, restResult);
-        return {
-          ...parsed,
-          isBuiltInEngine: false
-        };
-      }
-    } catch (err) {
-      console.error('Gemini Cloud API call failed:', err);
     }
   }
 
-  // Fallback to intelligent built-in guardian engine
-  return getBuiltInGuardianResponse(
-    userPrompt,
-    apiKey ? undefined : 'Note: Configure VITE_GEMINI_API_KEY or click API Settings to connect live Gemini cloud AI.'
-  );
+  // 2. Fallback to Guardian Engine
+  console.info("Using CyberVigil Offline Safety Engine.");
+  return getOfflineSafetyResponse(userPrompt);
 }
 
 /**
- * Direct REST fetch to Google Gemini endpoint for maximum reliability in browser environments.
+ * Offline Safety Engine (Only used if network drops or key is absent)
  */
-async function callDirectGeminiRest(
-  apiKey: string,
-  prompt: string,
-  history: ChatMessage[],
-  language?: string
-): Promise<string | null> {
-  const formattedContents = history
-    .filter(m => m.sender === 'user' || m.sender === 'assistant')
-    .map(m => ({
-      role: m.sender === 'user' ? 'user' : 'model',
-      parts: [{ text: m.text }]
-    }));
-
-  const userText = language && language !== 'English' 
-    ? `[Respond in ${language}]: ${prompt}`
-    : prompt;
-
-  formattedContents.push({
-    role: 'user',
-    parts: [{ text: userText }]
-  });
-
-  const payload = {
-    system_instruction: {
-      parts: [{ text: SYSTEM_INSTRUCTION }]
-    },
-    contents: formattedContents,
-    generationConfig: {
-      temperature: 0.7
-    }
-  };
-
-  for (const model of CANDIDATE_MODELS) {
-    try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (text && text.trim()) {
-          return text.trim();
-        }
-      }
-    } catch (e) {
-      console.warn(`Direct fetch to ${model} failed:`, e);
-    }
-  }
-  return null;
-}
-
-/**
- * Intelligent, comprehensive built-in guardian engine.
- * Dynamically answers any question, link query, threat, or casual prompt.
- */
-function getBuiltInGuardianResponse(userPrompt: string, note?: string): AIAnalysisResult {
+function getOfflineSafetyResponse(userPrompt: string): AIAnalysisResult {
   const lower = userPrompt.toLowerCase().trim();
 
-  // 1. Suspicious Links / Phishing Queries
-  if (lower.includes('link') || lower.includes('url') || lower.includes('click') || lower.includes('website') || lower.includes('http') || lower.includes('domain')) {
+  if (
+    lower.includes('kill me') ||
+    lower.includes('threaten to kill') ||
+    lower.includes('threatening to kill') ||
+    lower.includes('death threat') ||
+    lower.includes('harm me')
+  ) {
     return {
-      response: "Be extremely cautious before clicking any unfamiliar links. Scammers and cybercriminals frequently use suspicious links to trick you into downloading malware, giving away passwords, or surrendering financial details.",
-      detectedThreat: 'Phishing & Malicious Link Detection',
-      urgencyLevel: 'medium',
-      empathyNote: 'Your caution is very smart! Never click a link until you have verified its origin.',
+      response: "🚨 **URGENT SAFETY ALERT**: Please treat death threats with immediate seriousness. Your physical safety is the absolute top priority.\n\n**Immediate Protective Actions:**\n1. **Contact Emergency Services**: Call Police (112) or Cyber Crime Helpline (1930) immediately.\n2. **Do Not Delete Messages**: Take clear, unedited screenshots of the threats showing sender details.\n3. **Inform Trusted Adults / Authorities**: Notify family or school officers right away.",
+      detectedThreat: 'Severe Physical Threat & Extortion',
+      urgencyLevel: 'critical',
+      empathyNote: 'Take a deep breath — you are not alone. Reach out to emergency services immediately.',
       isBuiltInEngine: true,
       strategicSteps: [
-        'Inspect the URL: Hover over the link to see the actual destination address. Look out for misspellings like "g00gle.com" or strange subdomains.',
-        'Never Enter Credentials: If a link takes you to a login page or asks for an OTP or password, close it immediately.',
-        'Scan with Safety Tools: Paste the link into free URL scanners like VirusTotal (virustotal.com) or Google Transparency Report before opening.',
-        'Verify via Main Channel: Contact the sender through an official phone number or separate app to confirm if they actually sent it.'
+        'Call Police / Emergency: Dial 112 or Cyber Helpline 1930 immediately.',
+        'Preserve Screenshot Evidence: Save uncropped screenshots of all threatening messages.',
+        'Notify Family / Adults: Inform trusted adults or school welfare officers.'
       ],
       actionLinks: [
-        { label: 'Check Link on VirusTotal', url: 'https://www.virustotal.com', type: 'link' },
-        { label: 'Report Phishing Scam', url: '/report', type: 'action' }
+        { label: 'Call Emergency Police (112)', url: 'tel:112', type: 'helpline' },
+        { label: 'Call Cyber Crime Helpline (1930)', url: 'tel:1930', type: 'helpline' }
       ]
     };
   }
 
-  // 2. Passwords, Hacking & Account Security
-  if (lower.includes('password') || lower.includes('hack') || lower.includes('account') || lower.includes('login') || lower.includes('otp') || lower.includes('stolen')) {
+  if (
+    lower.includes('send me photos') ||
+    lower.includes('send me pics') ||
+    lower.includes('asking for photos') ||
+    lower.includes('send photos')
+  ) {
     return {
-      response: "If you suspect an account compromise, immediate proactive steps will prevent further unauthorized access to your identity and data.",
-      detectedThreat: 'Account Compromise & Credential Safety',
+      response: "⚠️ **Important Safety Warning**: Please **DO NOT** send any private, intimate, or personal photos to anyone online — regardless of who they claim to be.\n\n**What you should do right now:**\n1. Say **NO** firmly and refuse the request.\n2. **Block them immediately** if they pressure you.\n3. Save screenshots as evidence.",
+      detectedThreat: 'Online Grooming & Image Safety',
       urgencyLevel: 'high',
-      empathyNote: 'Do not panic. Act quickly to lock out unauthorized devices.',
+      empathyNote: 'Stand your ground — your privacy and safety come first.',
       isBuiltInEngine: true,
       strategicSteps: [
-        'Change Passwords Immediately: Update your password using a strong, unique combination of letters, numbers, and symbols.',
-        'Enable 2-Factor Authentication (2FA): Turn on 2FA using an authenticator app or SMS code.',
-        'Revoke Active Sessions: Go to account security settings and choose "Log out of all other devices".',
-        'Never Share OTPs: Remember that bank officials and app support will NEVER ask for your OTP or PIN.'
+        'Do Not Send Anything: Never send private pictures online.',
+        'Block the Person: Stop replying and block their account.',
+        'Save Evidence: Screenshot the chat history.'
       ],
       actionLinks: [
-        { label: 'Report Compromised Account', url: '/report', type: 'action' },
-        { label: 'National Cyber Crime Helpline (1930)', url: 'tel:1930', type: 'helpline' }
-      ]
-    };
-  }
-
-  // 3. Cyberbullying & Online Harassment
-  if (lower.includes('bully') || lower.includes('harass') || lower.includes('insult') || lower.includes('mean') || lower.includes('troll') || lower.includes('stalk')) {
-    return {
-      response: "I am really sorry you are dealing with online harassment. Nobody has the right to intimidate or abuse you online. Remember: this is not your fault, and you do not have to handle it alone.",
-      detectedThreat: 'Cyberbullying & Online Harassment',
-      urgencyLevel: 'medium',
-      empathyNote: 'Take a deep breath. We are here to support and protect you.',
-      isBuiltInEngine: true,
-      strategicSteps: [
-        'Do Not Respond: Engaging with bullies often escalates the harassment.',
-        'Document Evidence: Take clear screenshots of all messages, comments, and profile handles before blocking.',
-        'Privacy Lockdown: Set your social profiles to private and restrict comment permissions.',
-        'Report & Escalate: Submit an incident report on CyberVigil or notify your school counselor.'
-      ],
-      actionLinks: [
-        { label: 'File Anonymous Incident Report', url: '/report', type: 'action' },
+        { label: 'File Protection Report', url: '/report', type: 'action' },
         { label: 'Childline Emergency (1098)', url: 'tel:1098', type: 'helpline' }
       ]
     };
   }
 
-  // 4. Sextortion, Leaks & Blackmail
-  if (lower.includes('photo') || lower.includes('nude') || lower.includes('leak') || lower.includes('extort') || lower.includes('blackmail') || lower.includes('threat')) {
-    return {
-      response: "Please stay calm. Digital extortion and illegal sharing of intimate photos are serious criminal offenses under IT Act Section 66E / 67A and IPC Section 384. Extortionists rely on panic, but you have full legal protection and statutory takedown avenues.",
-      detectedThreat: 'Sextortion / Digital Blackmail',
-      urgencyLevel: 'high',
-      empathyNote: 'Do not transfer money or comply with threats. You are protected under strict victim privacy laws.',
-      isBuiltInEngine: true,
-      strategicSteps: [
-        'Stop All Communication: Immediately cut contact with the extortionist.',
-        'Preserve Chat History: Save uncropped screenshots containing full phone numbers or social handles.',
-        'Report to Cyber Cell: Submit your case on www.cybercrime.gov.in under Women & Children Protection.',
-        'File CyberVigil Docket: Generate a certified legal evidence docket to present to law enforcement.'
-      ],
-      actionLinks: [
-        { label: 'Generate Cyber Evidence Docket', url: '/report', type: 'action' },
-        { label: 'National Cyber Crime Helpline (1930)', url: 'tel:1930', type: 'helpline' }
-      ]
-    };
-  }
-
-  // 5. Financial Scams & Fraud
-  if (lower.includes('scam') || lower.includes('money') || lower.includes('fraud') || lower.includes('bank') || lower.includes('upi') || lower.includes('card')) {
-    return {
-      response: "If your account has been compromised or you suspect financial fraud, immediate action is critical to safeguard your funds and identity.",
-      detectedThreat: 'Cyber Crime / Financial Fraud',
-      urgencyLevel: 'high',
-      empathyNote: 'Act fast to block unauthorized access and freeze pending transactions.',
-      isBuiltInEngine: true,
-      strategicSteps: [
-        'Freeze Accounts: Contact your bank or payment app immediately to freeze compromised cards.',
-        'Call 1930 Immediately: Dial National Cyber Financial Helpline 1930 within the golden hour to freeze fraudulent transfers.',
-        'Reset Passwords: Turn on 2-Factor Authentication (2FA) across your main email and social accounts.',
-        'Report Phishing: Lodge a complaint on the official portal at cybercrime.gov.in.'
-      ],
-      actionLinks: [
-        { label: 'Call Financial Cyber Helpline 1930', url: 'tel:1930', type: 'helpline' },
-        { label: 'National Cyber Crime Portal', url: 'https://cybercrime.gov.in', type: 'link' }
-      ]
-    };
-  }
-
-  // 6. Greetings & Open Casual Conversation
-  if (/^(hi|hello|hey|greetings|good morning|good evening|who are you|what is your name|tell me about yourself|help|how are you)/i.test(lower) || lower === 'test') {
-    return {
-      response: "Hello! I am CyberVigil, your 24/7 digital guardian and companion. I am doing well, thank you! I am here to chat casually, answer questions about online privacy, guide you on legal protections, or step in to help if you ever face cyberbullying or threats online. How can I support you today?",
-      detectedThreat: 'Conversational',
-      urgencyLevel: 'low',
-      empathyNote: note || 'You are safe here. Ask me anything about digital safety or talk through what is on your mind.',
-      isBuiltInEngine: true
-    };
-  }
-
-  // 7. General Open-Ended Safety & Companion Response
   return {
-    response: `Thank you for asking! As CyberVigil, I am equipped to analyze links, evaluate cyber security threats, guide you through account recovery, protect your privacy, and provide legal reporting advice. What specific detail can I clarify for you right now?`,
-    detectedThreat: 'General Guidance',
+    response: "Hello! As CyberVigil, I am here to answer your questions, assist with digital safety, or help you protect your online privacy. How can I assist you right now?",
+    detectedThreat: 'Conversational',
     urgencyLevel: 'low',
-    empathyNote: note || 'CyberVigil digital protection active.',
+    empathyNote: 'CyberVigil Safety Active',
     isBuiltInEngine: true
   };
 }
 
-/**
- * Parses real Gemini response text to extract threat signals and strategic steps.
- */
 function parseAIResponse(userPrompt: string, aiText: string): AIAnalysisResult {
   const lowerPrompt = userPrompt.toLowerCase();
   
-  const threatKeywords = [
-    'threat', 'blackmail', 'extort', 'bully', 'harass', 'stalk', 'nude', 'photo',
-    'leak', 'scam', 'hacked', 'abused', 'scared', 'suicide', 'kill', 'doxx', 'fake account', 'link'
-  ];
+  const containsCrisis = lowerPrompt.includes('kill me') || lowerPrompt.includes('threaten to kill') || lowerPrompt.includes('death threat') || lowerPrompt.includes('harm me');
+  const containsExtortion = lowerPrompt.includes('nude') || lowerPrompt.includes('blackmail') || lowerPrompt.includes('extort') || lowerPrompt.includes('intimate photo') || lowerPrompt.includes('leak my photo');
+  const containsBullying = lowerPrompt.includes('bully') || lowerPrompt.includes('harass') || lowerPrompt.includes('hate chat') || lowerPrompt.includes('stalking me');
+  const containsPhishing = lowerPrompt.includes('phishing') || lowerPrompt.includes('fake login') || lowerPrompt.includes('suspicious link');
+  const containsGrooming = lowerPrompt.includes('send me photos') || lowerPrompt.includes('send pics') || lowerPrompt.includes('asking for photos');
 
-  const containsThreat = threatKeywords.some(kw => lowerPrompt.includes(kw));
-
-  if (!containsThreat) {
+  if (!containsCrisis && !containsExtortion && !containsBullying && !containsPhishing && !containsGrooming) {
     return {
       response: aiText,
       detectedThreat: 'Conversational',
@@ -345,44 +205,38 @@ function parseAIResponse(userPrompt: string, aiText: string): AIAnalysisResult {
   let detectedThreat = 'Digital Safety Concern';
   let urgencyLevel: 'low' | 'medium' | 'high' | 'critical' = 'medium';
 
-  if (lowerPrompt.includes('suicide') || lowerPrompt.includes('kill') || lowerPrompt.includes('harm')) {
-    detectedThreat = 'Crisis & Emergency Support';
+  if (containsCrisis) {
+    detectedThreat = 'Severe Physical Threat & Extortion';
     urgencyLevel = 'critical';
-  } else if (lowerPrompt.includes('nude') || lowerPrompt.includes('photo') || lowerPrompt.includes('leak') || lowerPrompt.includes('extort')) {
+  } else if (containsExtortion) {
     detectedThreat = 'Sextortion / Digital Blackmail';
+    urgencyLevel = 'critical';
+  } else if (containsGrooming) {
+    detectedThreat = 'Online Grooming & Image Safety';
     urgencyLevel = 'high';
-  } else if (lowerPrompt.includes('bully') || lowerPrompt.includes('harass')) {
+  } else if (containsBullying) {
     detectedThreat = 'Cyberbullying & Online Harassment';
     urgencyLevel = 'medium';
-  } else if (lowerPrompt.includes('scam') || lowerPrompt.includes('hacked') || lowerPrompt.includes('link')) {
-    detectedThreat = 'Cyber Crime / Phishing Threat';
+  } else if (containsPhishing) {
+    detectedThreat = 'Phishing & Malicious Link Detection';
     urgencyLevel = 'medium';
   }
-
-  const lines = aiText.split('\n');
-  const strategicSteps: string[] = [];
-  lines.forEach(line => {
-    const trimmed = line.trim();
-    if (/^[\d\*\-\•]\s*/.test(trimmed) && trimmed.length > 5) {
-      strategicSteps.push(trimmed.replace(/^[\d\*\-\•]\s*/, ''));
-    }
-  });
 
   return {
     response: aiText,
     detectedThreat,
     urgencyLevel,
-    empathyNote: 'You are safe here. Take a deep breath — we will guide you through this step by step.',
-    strategicSteps: strategicSteps.length > 0 ? strategicSteps : [
+    empathyNote: 'You are safe here. Take a deep breath — we are here to support you step by step.',
+    strategicSteps: [
       'Document evidence: Take unedited screenshots showing timestamps, usernames, and messages.',
       'Block & Do Not Delete: Block the offender immediately, but preserve the evidence chat history.',
       'File Anonymous Report: Submit a report on CyberVigil to generate an incident reference PIN.',
-      'Contact Authorities: Call 1930 (Cyber Crime Helpline) or notify school nodal welfare officers.'
+      'Contact Authorities: Call 1930 (Cyber Crime Helpline) or 112 (Emergency Police).'
     ],
     actionLinks: [
-      { label: 'File Anonymous Report', url: '/report', type: 'action' },
+      { label: 'File Emergency Docket', url: '/report', type: 'action' },
       { label: 'Cyber Crime Helpline (1930)', url: 'tel:1930', type: 'helpline' },
-      { label: 'National Cyber Crime Portal', url: 'https://cybercrime.gov.in', type: 'link' }
+      { label: 'Emergency Police (112)', url: 'tel:112', type: 'helpline' }
     ]
   };
 }
