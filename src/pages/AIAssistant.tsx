@@ -233,58 +233,64 @@ export const AIAssistant: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-16">
       {/* 1. Assistant Header & Reassurance Banner */}
-      <section className="bg-surface rounded-2xl p-6 sm:p-8 border border-sand-300 shadow-warm-card flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-start gap-4">
-          <img 
-            src="/cybervigil-shield.png" 
-            alt="CyberVigil Guardian" 
-            className="w-12 h-12 object-contain filter drop-shadow-sm flex-shrink-0" 
-          />
-          <div>
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h1 className="text-xl sm:text-2xl font-bold text-primary dark:text-slate-100">CyberVigil Guardian AI</h1>
+      <section className="bg-surface rounded-2xl p-6 sm:p-7 border border-sand-300 dark:border-slate-800 shadow-warm-card space-y-4">
+        {/* Top Row: Title & Action Controls */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <img 
+              src="/cybervigil-shield.png" 
+              alt="CyberVigil Guardian" 
+              className="w-10 h-10 object-contain filter drop-shadow-sm flex-shrink-0" 
+            />
+            <div>
+              <h1 className="text-xl sm:text-2xl font-extrabold text-primary dark:text-slate-100 leading-tight">
+                CyberVigil Guardian AI
+              </h1>
             </div>
-            <p className="text-xs sm:text-sm text-textMuted dark:text-slate-400 mt-1">
-              Configured to detect Cyberbullying, Online Grooming, Harmful Acts & Phishing with zero safety shutdown.
-            </p>
           </div>
-        </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          {/* Regional Language Selector */}
-          <div className="flex items-center gap-1.5 bg-sand-100 border border-sand-300 dark:bg-slate-800 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs">
-            <Globe className="w-3.5 h-3.5 text-secondary dark:text-orange-400" />
-            <select
-              value={selectedLanguage}
-              onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="bg-transparent font-bold text-primary dark:text-slate-200 focus:outline-hidden cursor-pointer"
+          {/* Action Controls & Badges Bar */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Regional Language Selector */}
+            <div className="flex items-center gap-1.5 bg-sand-100 border border-sand-300 dark:bg-slate-800 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs">
+              <Globe className="w-3.5 h-3.5 text-secondary dark:text-orange-400" />
+              <select
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}
+                className="bg-transparent font-bold text-primary dark:text-slate-200 focus:outline-hidden cursor-pointer"
+              >
+                {REGIONAL_LANGUAGES.map(lang => (
+                  <option key={lang.code} value={lang.code} className="dark:bg-slate-900 dark:text-slate-200">
+                    {lang.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Gemini API Key Configuration Button */}
+            <button
+              onClick={() => setApiKeyModalOpen(true)}
+              className="px-3.5 py-1.5 rounded-xl border border-sand-300 dark:border-slate-700 text-xs font-bold text-textDark dark:text-slate-200 hover:bg-sand-200 dark:hover:bg-slate-700 transition-colors flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+              title="Configure Google Gemini API Key"
             >
-              {REGIONAL_LANGUAGES.map(lang => (
-                <option key={lang.code} value={lang.code} className="dark:bg-slate-900 dark:text-slate-200">
-                  {lang.label}
-                </option>
-              ))}
-            </select>
-          </div>
+              <Key className="w-3.5 h-3.5 text-secondary dark:text-orange-400" />
+              <span>API Settings</span>
+            </button>
 
-          {/* Gemini API Key Configuration Button */}
-          <button
-            onClick={() => setApiKeyModalOpen(true)}
-            className="px-3.5 py-2 rounded-xl border border-sand-300 text-xs font-bold text-textDark hover:bg-sand-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
-            title="Configure Google Gemini API Key"
-          >
-            <Key className="w-3.5 h-3.5 text-secondary dark:text-orange-400" />
-            <span>API Settings</span>
-          </button>
-
-          {/* Slim "You are safe" Pill Badge */}
-          <div className="py-1.5 px-4 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2 shadow-xs whitespace-nowrap flex-shrink-0">
-            <Heart className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 animate-pulse" />
-            <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300">
-              You are safe here • 100% Confidential
-            </span>
+            {/* Slim "You are safe" Pill Badge */}
+            <div className="py-1.5 px-3.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2 shadow-xs whitespace-nowrap flex-shrink-0">
+              <Heart className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0 animate-pulse" />
+              <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                You are safe here • 100% Confidential
+              </span>
+            </div>
           </div>
         </div>
+
+        {/* Subtitle Row */}
+        <p className="text-xs sm:text-sm text-textMuted dark:text-slate-400 border-t border-sand-200 dark:border-slate-800/80 pt-3">
+          Configured to detect Cyberbullying, Online Grooming, Harmful Acts & Phishing with dynamic guardian support.
+        </p>
       </section>
 
       {/* 2. Suggested Scenario Chips - 4 Major Cyber Threat Categories */}

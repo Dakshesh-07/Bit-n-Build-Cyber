@@ -99,7 +99,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
   };
 
   return (
-    <header className="bg-white dark:bg-[#0f172a] border-b border-slate-200 dark:border-slate-800 sticky top-0 z-40 transition-all">
+    <header className="bg-white dark:bg-[#0b1120] border-b border-slate-200 dark:border-slate-800/80 sticky top-0 z-40 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 sm:h-18">
           
@@ -114,7 +114,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
               <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-slate-100 leading-none">
                 Cyber<span className="text-secondary">Vigil</span>
               </span>
-              <span className="text-[9px] tracking-wider uppercase font-bold text-slate-400 mt-0.5">
+              <span className="text-[9px] tracking-wider uppercase font-bold text-slate-400 dark:text-slate-400 mt-0.5">
                 Secure Reporting Partner
               </span>
             </div>
@@ -122,15 +122,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
 
           {/* Center Navigation Links - Only displayed once logged into the website */}
           {user && (
-            <nav className="hidden lg:flex items-center gap-7 xl:gap-9">
+            <nav className="hidden lg:flex items-center gap-7 xl:gap-9 bg-transparent">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.path}
                   to={link.path}
                   className={({ isActive }) =>
-                    `text-sm tracking-normal transition-all py-1 border-b-2 ${
+                    `text-sm tracking-normal transition-all py-1 border-b-2 bg-transparent ${
                       isActive
-                        ? 'text-amber-600 border-amber-600 font-bold'
+                        ? 'text-amber-600 dark:text-amber-500 border-amber-600 dark:border-amber-500 font-bold'
                         : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-transparent font-medium'
                     }`
                   }
