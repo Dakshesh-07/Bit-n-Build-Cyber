@@ -249,15 +249,15 @@ export const AIAssistant: React.FC = () => {
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           {/* Regional Language Selector */}
-          <div className="flex items-center gap-1.5 bg-sand-100 border border-sand-300 px-3 py-1.5 rounded-xl text-xs">
-            <Globe className="w-3.5 h-3.5 text-secondary" />
+          <div className="flex items-center gap-1.5 bg-sand-100 border border-sand-300 dark:bg-slate-800 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs">
+            <Globe className="w-3.5 h-3.5 text-secondary dark:text-orange-400" />
             <select
               value={selectedLanguage}
               onChange={(e) => setSelectedLanguage(e.target.value)}
-              className="bg-transparent font-bold text-primary focus:outline-hidden cursor-pointer"
+              className="bg-transparent font-bold text-primary dark:text-slate-200 focus:outline-hidden cursor-pointer"
             >
               {REGIONAL_LANGUAGES.map(lang => (
-                <option key={lang.code} value={lang.code}>
+                <option key={lang.code} value={lang.code} className="dark:bg-slate-900 dark:text-slate-200">
                   {lang.label}
                 </option>
               ))}
@@ -268,10 +268,10 @@ export const AIAssistant: React.FC = () => {
           {user?.role === 'admin' && (
             <button
               onClick={() => setApiKeyModalOpen(true)}
-              className="px-3.5 py-2 rounded-xl border border-sand-300 text-xs font-bold text-textDark hover:bg-sand-200 transition-colors flex items-center gap-1.5"
+              className="px-3.5 py-2 rounded-xl border border-sand-300 text-xs font-bold text-textDark hover:bg-sand-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 transition-colors flex items-center gap-1.5"
               title="Configure Google Gemini API Key (Admin Only)"
             >
-              <Key className="w-3.5 h-3.5 text-secondary" />
+              <Key className="w-3.5 h-3.5 text-secondary dark:text-orange-400" />
               <span>API Settings</span>
             </button>
           )}
@@ -288,8 +288,8 @@ export const AIAssistant: React.FC = () => {
 
       {/* 2. Suggested Scenario Chips - 4 Major Cyber Threat Categories */}
       <section className="space-y-2">
-        <span className="text-xs font-bold uppercase tracking-wider text-textMuted flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5 text-secondary" />
+        <span className="text-xs font-bold uppercase tracking-wider text-textMuted dark:text-orange-400 flex items-center gap-1">
+          <Sparkles className="w-3.5 h-3.5 text-secondary dark:text-orange-400" />
           Targeted Detection Scenarios (Tap to test):
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -297,42 +297,42 @@ export const AIAssistant: React.FC = () => {
             <button
               key={idx}
               onClick={() => handleSendMessage(item.prompt)}
-              className="text-left p-3.5 rounded-xl bg-surface hover:bg-sand-50/80 border border-sand-300 hover:border-sand-400 text-xs font-semibold text-primary transition-all duration-200 shadow-warm-sm hover:shadow-warm-card active:scale-[0.99] group"
+              className="text-left p-3.5 rounded-xl bg-surface hover:bg-sand-50/80 border border-sand-300 hover:border-sand-400 text-xs font-semibold text-primary dark:bg-slate-900 dark:hover:bg-slate-800/90 dark:border-slate-800 dark:hover:border-slate-700 dark:text-slate-200 transition-all duration-200 shadow-warm-sm hover:shadow-warm-card active:scale-[0.99] group"
             >
               <div className="flex items-center justify-between">
-                <span className="font-bold text-secondary-dark">{item.label}</span>
-                <ArrowRight className="w-3.5 h-3.5 text-textMuted group-hover:translate-x-0.5 group-hover:text-primary transition-all" />
+                <span className="font-bold text-secondary-dark dark:text-orange-300 group-hover:dark:text-orange-200">{item.label}</span>
+                <ArrowRight className="w-3.5 h-3.5 text-textMuted group-hover:translate-x-0.5 group-hover:text-primary dark:text-slate-400 dark:group-hover:text-orange-400 transition-all" />
               </div>
-              <p className="text-[11px] text-textMuted mt-1 line-clamp-1 font-normal">"{item.prompt}"</p>
+              <p className="text-[11px] text-textMuted dark:text-slate-400 mt-1 line-clamp-1 font-normal">"{item.prompt}"</p>
             </button>
           ))}
         </div>
       </section>
 
       {/* 3. Chat Thread Container */}
-      <section className="bg-sand-100/60 rounded-2xl p-4 sm:p-6 border border-sand-300 shadow-warm-sm space-y-6 min-h-[420px] flex flex-col justify-between">
+      <section className="bg-sand-100/60 dark:bg-slate-900/90 rounded-2xl p-4 sm:p-6 border border-sand-300 dark:border-slate-800 shadow-warm-sm dark:shadow-2xl space-y-6 min-h-[420px] flex flex-col justify-between">
         <div className="space-y-6">
           {/* Header Bar with Ephemeral Session & AI Case Report Generator */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 border-b border-sand-200 pb-3">
-            <span className="px-3 py-1 rounded-full bg-sand-200 text-[11px] font-semibold text-textMuted border border-sand-300">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 border-b border-sand-200 dark:border-slate-800 pb-3">
+            <span className="px-3 py-1 rounded-full bg-sand-200 dark:bg-slate-800 text-[11px] font-semibold text-textMuted dark:text-slate-300 border border-sand-300 dark:border-slate-700">
               Ephemeral Session Started • Zero Permanent Logs
             </span>
 
             <button
               onClick={handleGenerateAICaseReport}
-              className="px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary-hover text-surface text-xs font-bold flex items-center gap-1.5 shadow-warm-sm transition-all active:scale-95"
+              className="px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary-hover dark:bg-orange-600 dark:hover:bg-orange-500 text-surface dark:text-white text-xs font-bold flex items-center gap-1.5 shadow-warm-sm dark:shadow-orange-600/20 transition-all active:scale-95"
               title="Synthesize conversation into official incident report draft"
             >
-              <FileText className="w-3.5 h-3.5 text-secondary" />
+              <FileText className="w-3.5 h-3.5 text-secondary dark:text-white" />
               <span>Generate AI Case Report Draft</span>
             </button>
           </div>
 
           {messages.length === 0 ? (
             <div className="text-center py-16 space-y-3">
-              <Bot className="w-12 h-12 text-sand-400 mx-auto" />
-              <p className="text-sm font-semibold text-primary">Your conversation is completely clear.</p>
-              <p className="text-xs text-textMuted max-w-md mx-auto">
+              <Bot className="w-12 h-12 text-sand-400 dark:text-slate-600 mx-auto" />
+              <p className="text-sm font-semibold text-primary dark:text-slate-200">Your conversation is completely clear.</p>
+              <p className="text-xs text-textMuted dark:text-slate-400 max-w-md mx-auto">
                 Type what happened or choose a prompt chip above to get calm, step-by-step protective instructions.
               </p>
             </div>
@@ -342,62 +342,62 @@ export const AIAssistant: React.FC = () => {
                 key={msg.id}
                 className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'} space-y-1.5`}
               >
-                <div className="flex items-center gap-2 text-[11px] text-textMuted px-1">
-                  <span className="font-bold text-primary">
+                <div className="flex items-center gap-2 text-[11px] text-textMuted dark:text-slate-400 px-1">
+                  <span className="font-bold text-primary dark:text-orange-400">
                     {msg.sender === 'user' ? 'You' : 'Guardian AI'}
                   </span>
                   <span>• {msg.timestamp}</span>
                 </div>
 
                 {msg.sender === 'user' ? (
-                  <div className="bg-primary text-surface p-4 rounded-2xl rounded-tr-none text-sm max-w-lg leading-relaxed shadow-warm-sm">
+                  <div className="bg-primary text-surface dark:bg-orange-600 dark:text-white p-4 rounded-2xl rounded-tr-none text-sm max-w-lg leading-relaxed shadow-warm-sm dark:shadow-orange-600/20">
                     {msg.text}
                   </div>
                 ) : (
-                  <div className="bg-surface border border-sand-300 p-5 sm:p-6 rounded-2xl rounded-tl-none max-w-2xl space-y-4 shadow-warm-card">
+                  <div className="bg-surface border border-sand-300 dark:bg-slate-900 dark:border-slate-800 dark:border-l-4 dark:border-l-orange-500 p-5 sm:p-6 rounded-2xl rounded-tl-none max-w-2xl space-y-4 shadow-warm-card dark:shadow-xl">
                     {/* Threat Classification Badge */}
                     {msg.detectedThreat && msg.detectedThreat !== 'Conversational' && (
                       <div className="flex items-center gap-2 flex-wrap pb-1">
                         <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border flex items-center gap-1 ${
                           msg.detectedThreat === 'Online Grooming'
-                            ? 'bg-purple-50 text-purple-800 border-purple-300'
+                            ? 'bg-purple-50 text-purple-800 border-purple-300 dark:bg-purple-950/80 dark:text-purple-300 dark:border-purple-500/40'
                             : msg.detectedThreat === 'Harmful Acts'
-                            ? 'bg-rose-50 text-rose-800 border-rose-300'
+                            ? 'bg-rose-50 text-rose-800 border-rose-300 dark:bg-rose-950/80 dark:text-rose-300 dark:border-rose-500/40'
                             : msg.detectedThreat === 'Phishing'
-                            ? 'bg-amber-50 text-amber-800 border-amber-300'
-                            : 'bg-sky-50 text-sky-800 border-sky-300'
+                            ? 'bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/80 dark:text-amber-300 dark:border-amber-500/40'
+                            : 'bg-sky-50 text-sky-800 border-sky-300 dark:bg-sky-950/80 dark:text-sky-300 dark:border-sky-500/40'
                         }`}>
                           <ShieldAlert className="w-3.5 h-3.5" />
                           <span>Threat: {msg.detectedThreat}</span>
                           {msg.threatSeverity && <span className="opacity-80 font-normal">({msg.threatSeverity})</span>}
                         </span>
-                        <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-semibold">
+                        <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-semibold dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-500/40">
                           🛡️ Unblocked Guardrails Active
                         </span>
                       </div>
                     )}
 
                     {msg.empathyNote && (
-                      <div className="p-3 rounded-lg bg-sand-100 border border-sand-200 text-xs text-primary font-medium flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-safeGreen flex-shrink-0" />
+                      <div className="p-3 rounded-lg bg-sand-100 border border-sand-200 dark:bg-slate-800/80 dark:border-slate-700 text-xs text-primary dark:text-slate-200 font-medium flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-safeGreen dark:text-emerald-400 flex-shrink-0" />
                         <span>{msg.empathyNote}</span>
                       </div>
                     )}
 
-                    <p className="text-sm text-textDark leading-relaxed">{msg.text}</p>
+                    <p className="text-sm text-textDark dark:text-slate-100 leading-relaxed">{msg.text}</p>
 
                     {msg.steps && msg.steps.length > 0 && (
-                      <div className="space-y-2 pt-2 border-t border-sand-200">
-                        <span className="text-xs font-bold text-primary uppercase tracking-wider block">
+                      <div className="space-y-2 pt-2 border-t border-sand-200 dark:border-slate-800">
+                        <span className="text-xs font-bold text-primary dark:text-orange-400 uppercase tracking-wider block">
                           Immediate Protective Guardrails:
                         </span>
                         <div className="space-y-2">
                           {msg.steps.map((step, sIdx) => (
-                            <div key={sIdx} className="p-3 rounded-xl bg-sand-100 border border-sand-200 flex items-start gap-3">
-                              <span className="w-6 h-6 rounded-full bg-secondary text-primary font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <div key={sIdx} className="p-3 rounded-xl bg-sand-100 border border-sand-200 dark:bg-slate-800/60 dark:border-slate-700/80 flex items-start gap-3">
+                              <span className="w-6 h-6 rounded-full bg-secondary text-primary dark:bg-orange-600 dark:text-white font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
                                 {sIdx + 1}
                               </span>
-                              <span className="text-xs text-textDark leading-relaxed">{step}</span>
+                              <span className="text-xs text-textDark dark:text-slate-200 leading-relaxed">{step}</span>
                             </div>
                           ))}
                         </div>
@@ -409,24 +409,24 @@ export const AIAssistant: React.FC = () => {
                       {msg.actionLink && (
                         <Link
                           to={msg.actionLink.url}
-                          className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-surface text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-warm-sm hover:shadow-md active:scale-95 group/btn"
+                          className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover dark:bg-orange-600 dark:hover:bg-orange-500 text-surface dark:text-white text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-warm-sm hover:shadow-md active:scale-95 group/btn"
                         >
                           <span>{msg.actionLink.text}</span>
-                          <ArrowRight className="w-3.5 h-3.5 text-secondary group-hover/btn:translate-x-0.5 transition-transform" />
+                          <ArrowRight className="w-3.5 h-3.5 text-secondary dark:text-white group-hover/btn:translate-x-0.5 transition-transform" />
                         </Link>
                       )}
                       <a
                         href="tel:1098"
-                        className="px-4 py-2 rounded-xl border border-sand-300 bg-surface hover:bg-sand-100 text-primary text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-xs hover:shadow-sm active:scale-95"
+                        className="px-4 py-2 rounded-xl border border-sand-300 bg-surface hover:bg-sand-100 text-primary dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-xs hover:shadow-sm active:scale-95"
                       >
-                        <PhoneCall className="w-3.5 h-3.5 text-errorRed" />
+                        <PhoneCall className="w-3.5 h-3.5 text-errorRed dark:text-rose-400" />
                         <span>Call Childline 1098</span>
                       </a>
                       <a
                         href="tel:1930"
-                        className="px-4 py-2 rounded-xl border border-sand-300 bg-surface hover:bg-sand-100 text-primary text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-xs hover:shadow-sm active:scale-95"
+                        className="px-4 py-2 rounded-xl border border-sand-300 bg-surface hover:bg-sand-100 text-primary dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-xs hover:shadow-sm active:scale-95"
                       >
-                        <PhoneCall className="w-3.5 h-3.5 text-sky-600" />
+                        <PhoneCall className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
                         <span>Cyber Helpline 1930</span>
                       </a>
                     </div>
@@ -438,9 +438,9 @@ export const AIAssistant: React.FC = () => {
 
           {/* Live Thinking Indicator */}
           {isThinking && (
-            <div className="flex items-center gap-3 p-4 bg-surface border border-sand-300 rounded-2xl max-w-sm animate-pulse">
-              <Loader2 className="w-5 h-5 text-secondary animate-spin" />
-              <span className="text-xs font-bold text-primary">
+            <div className="flex items-center gap-3 p-4 bg-surface border border-sand-300 dark:bg-slate-900 dark:border-slate-800 rounded-2xl max-w-sm animate-pulse">
+              <Loader2 className="w-5 h-5 text-secondary dark:text-orange-400 animate-spin" />
+              <span className="text-xs font-bold text-primary dark:text-slate-200">
                 Analyzing threat pattern & preparing child protection guardrails...
               </span>
             </div>
@@ -448,23 +448,23 @@ export const AIAssistant: React.FC = () => {
         </div>
 
         {/* 4. Safety Handoff Bar */}
-        <div className="p-4 rounded-xl bg-surface border border-sand-300 shadow-warm-sm flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
+        <div className="p-4 rounded-xl bg-surface border border-sand-300 dark:bg-slate-900 dark:border-slate-800 shadow-warm-sm flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
           <div className="flex items-center gap-2.5">
-            <ShieldAlert className="w-5 h-5 text-secondary" />
-            <span className="text-xs font-semibold text-textDark">
+            <ShieldAlert className="w-5 h-5 text-secondary dark:text-orange-400" />
+            <span className="text-xs font-semibold text-textDark dark:text-slate-200">
               Need immediate human escalation or platform takedown?
             </span>
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <Link
               to="/report"
-              className="w-full sm:w-auto px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover text-surface text-xs font-bold transition-colors text-center shadow-warm-sm"
+              className="w-full sm:w-auto px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover dark:bg-orange-600 dark:hover:bg-orange-500 text-surface dark:text-white text-xs font-bold transition-colors text-center shadow-warm-sm"
             >
               Report Incident Now
             </Link>
             <a
               href="tel:1098"
-              className="w-full sm:w-auto px-4 py-2 rounded-xl border border-sand-300 bg-surface hover:bg-sand-100 text-primary text-xs font-bold transition-all text-center shadow-xs hover:shadow-sm active:scale-95"
+              className="w-full sm:w-auto px-4 py-2 rounded-xl border border-sand-300 bg-surface hover:bg-sand-100 text-primary dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 text-xs font-bold transition-all text-center shadow-xs hover:shadow-sm active:scale-95"
             >
               Helpline 1098
             </a>
@@ -474,7 +474,7 @@ export const AIAssistant: React.FC = () => {
 
       {/* 5. Input Dock with Voice to Text Mic Button */}
       <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="relative">
-        <div className="bg-surface rounded-2xl border border-sand-300 shadow-warm-card p-3 sm:p-4 space-y-3">
+        <div className="bg-surface border border-sand-300 dark:bg-slate-900 dark:border-slate-800 rounded-2xl shadow-warm-card dark:shadow-xl p-3 sm:p-4 space-y-3">
           <textarea
             rows={2}
             value={inputText}
@@ -490,12 +490,12 @@ export const AIAssistant: React.FC = () => {
                 ? "Listening... Speak your situation..."
                 : "Type your situation or use voice recording (e.g. someone is threatening me)..."
             }
-            className={`w-full bg-transparent text-xs sm:text-sm text-textDark focus:outline-hidden resize-none leading-relaxed transition-all ${
-              isListening ? 'bg-amber-50/50 p-2 rounded-lg border border-amber-300' : ''
+            className={`w-full bg-transparent text-xs sm:text-sm text-textDark dark:text-slate-100 placeholder:dark:text-slate-400 focus:outline-hidden resize-none leading-relaxed transition-all ${
+              isListening ? 'bg-amber-50/50 dark:bg-amber-950/40 p-2 rounded-lg border border-amber-300 dark:border-amber-500/50 dark:text-amber-200' : ''
             }`}
           />
 
-          <div className="flex items-center justify-between pt-2 border-t border-sand-200">
+          <div className="flex items-center justify-between pt-2 border-t border-sand-200 dark:border-slate-800">
             <div className="flex items-center gap-2">
               {/* Voice-to-Text Microphone Button */}
               <button
@@ -504,7 +504,7 @@ export const AIAssistant: React.FC = () => {
                 className={`p-2.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all active:scale-95 ${
                   isListening
                     ? 'bg-rose-600 text-white border-rose-700 animate-pulse shadow-md'
-                    : 'bg-sand-100 hover:bg-sand-200 text-slate-700 border-sand-300'
+                    : 'bg-sand-100 hover:bg-sand-200 text-slate-700 border-sand-300 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 dark:border-slate-700'
                 }`}
                 title={isListening ? "Stop Voice Recording" : "Voice-to-Text Recording"}
               >
@@ -515,13 +515,13 @@ export const AIAssistant: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <Mic className="w-4 h-4 text-primary" />
+                    <Mic className="w-4 h-4 text-primary dark:text-orange-400" />
                     <span className="hidden sm:inline">Voice Input</span>
                   </>
                 )}
               </button>
 
-              <span className="text-[11px] font-semibold text-slate-500 hidden sm:inline">
+              <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hidden sm:inline">
                 🔒 Trauma-Informed • Speech & Text Protection • Zero Shutdown
               </span>
             </div>
@@ -529,10 +529,10 @@ export const AIAssistant: React.FC = () => {
             <button
               type="submit"
               disabled={isThinking || !inputText.trim()}
-              className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-surface text-xs font-bold transition-all shadow-warm-sm hover:shadow-md active:scale-95 flex items-center gap-1.5 disabled:opacity-50"
+              className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover dark:bg-orange-600 dark:hover:bg-orange-500 text-surface dark:text-white text-xs font-bold transition-all shadow-warm-sm dark:shadow-orange-600/30 hover:shadow-md active:scale-95 flex items-center gap-1.5 disabled:opacity-50"
             >
               <span>Send</span>
-              <Send className="w-3.5 h-3.5 text-secondary" />
+              <Send className="w-3.5 h-3.5 text-secondary dark:text-white" />
             </button>
           </div>
         </div>
