@@ -224,10 +224,10 @@ export const Home: React.FC = () => {
           <article className="bg-surface rounded-2xl p-7 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 md:col-span-2 flex flex-col justify-between group">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-xl bg-red-100/70 text-errorRed flex items-center justify-center font-bold group-hover:bg-errorRed group-hover:text-surface transition-colors">
-                  <AlertTriangle className="w-6 h-6" />
+                <div className="w-12 h-12 rounded-xl bg-rose-600 text-white flex items-center justify-center font-bold shadow-md">
+                  <AlertTriangle className="w-6 h-6 text-white" />
                 </div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-errorContainer text-xs font-bold text-errorRed uppercase tracking-wider">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-xs font-bold text-rose-600 dark:text-rose-400 border border-rose-500/30 uppercase tracking-wider">
                   Confidential Legal & Protective Escalation
                 </span>
               </div>

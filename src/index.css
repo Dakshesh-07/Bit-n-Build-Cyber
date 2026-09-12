@@ -105,3 +105,25 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 input:focus, textarea:focus, select:focus {
   outline: none;
 }
+
+/* Card Hover States: Default normal background, highlight ONLY on mouse hover */
+article, .shadow-warm-card {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+article:hover, .shadow-warm-card:hover {
+  transform: translateY(-2px);
+}
+
+html.dark article,
+html.dark .shadow-warm-card {
+  background-color: #0f172a;
+  border-color: #1e293b;
+}
+
+html.dark article:hover,
+html.dark .shadow-warm-card:hover {
+  background-color: #1e293b !important;
+  border-color: #f97316 !important;
+  box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.2), 0 8px 10px -6px rgba(249, 115, 22, 0.1) !important;
+}

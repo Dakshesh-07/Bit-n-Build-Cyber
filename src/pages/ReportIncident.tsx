@@ -691,29 +691,29 @@ export const ReportIncident: React.FC = () => {
               </div>
 
               {/* Step 5: COMPULSORY Safety Check & Verification */}
-              <div className="p-4 rounded-xl bg-secondary-container/30 border border-secondary/40 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-primary uppercase tracking-wider">
-                    5. Safety Check & Compulsory Verification <span className="text-errorRed">*</span>
+              <div className="p-5 rounded-2xl bg-sand-100 border border-sand-300 dark:bg-slate-900 dark:border-slate-800 space-y-4">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-xs font-extrabold text-primary dark:text-slate-100 uppercase tracking-wider">
+                    5. Safety Check & Compulsory Verification <span className="text-errorRed dark:text-rose-400">*</span>
                   </span>
-                  <span className="text-xs text-errorRed font-bold flex items-center gap-1">
-                    <AlertTriangle className="w-3.5 h-3.5" />
+                  <span className="text-xs text-errorRed dark:text-rose-400 font-bold flex items-center gap-1 bg-rose-500/10 px-2.5 py-1 rounded-full border border-rose-500/30">
+                    <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                     Statutory Protocol
                   </span>
                 </div>
 
-                <p className="text-xs text-textMuted">
+                <p className="text-xs text-textMuted dark:text-slate-300">
                   Are you in immediate physical peril, or is someone threatening imminent in-person contact?
                 </p>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setIsImmediateDanger(false)}
-                    className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95 ${
+                    className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer ${
                       !isImmediateDanger
-                        ? 'bg-primary text-surface shadow-warm-sm hover:shadow-md'
-                        : 'bg-surface border border-sand-300 text-textDark hover:bg-sand-50'
+                        ? 'bg-primary text-surface dark:bg-orange-600 dark:text-white shadow-warm-sm hover:shadow-md'
+                        : 'bg-surface dark:bg-slate-800 border border-sand-300 dark:border-slate-700 text-textDark dark:text-slate-200 hover:bg-sand-50 dark:hover:bg-slate-700'
                     }`}
                   >
                     No, I am physically secure
@@ -721,10 +721,10 @@ export const ReportIncident: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setIsImmediateDanger(true)}
-                    className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95 ${
+                    className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer ${
                       isImmediateDanger
-                        ? 'bg-errorRed text-surface shadow-warm-sm hover:shadow-md'
-                        : 'bg-surface border border-sand-300 text-errorRed hover:bg-errorContainer'
+                        ? 'bg-rose-600 text-white shadow-warm-sm hover:shadow-md'
+                        : 'bg-surface dark:bg-slate-800 border border-rose-300 dark:border-rose-900/60 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40'
                     }`}
                   >
                     Yes (Emergency 1098 Escalation)
@@ -732,7 +732,7 @@ export const ReportIncident: React.FC = () => {
                 </div>
 
                 {/* Compulsory Safety Evidence Checkbox */}
-                <label className="flex items-start gap-2.5 pt-2 border-t border-secondary/30 cursor-pointer">
+                <label className="flex items-start gap-2.5 pt-3 border-t border-sand-300 dark:border-slate-800 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={safetyCheckVerified}
@@ -740,9 +740,9 @@ export const ReportIncident: React.FC = () => {
                       setSafetyCheckVerified(e.target.checked);
                       if (e.target.checked) setValidationError(null);
                     }}
-                    className="mt-0.5 rounded border-sand-300 text-primary focus:ring-secondary w-4 h-4"
+                    className="mt-0.5 rounded border-sand-300 text-primary dark:text-orange-500 focus:ring-secondary w-4 h-4"
                   />
-                  <span className="text-xs text-textDark leading-relaxed font-semibold">
+                  <span className="text-xs text-textDark dark:text-slate-200 leading-relaxed font-semibold">
                     Compulsory Safety Verification: I certify that the attached evidence substantiates this threat situation and verify this report for child welfare investigation.
                   </span>
                 </label>

@@ -346,8 +346,8 @@ export const BraveStories: React.FC = () => {
                 <div 
                   className={`relative w-full rounded-2xl sm:rounded-3xl p-5 sm:p-6 transition-all duration-300 flex flex-col justify-between border shadow-warm-card hover:shadow-warm-elevated ${
                     isGrievance 
-                      ? 'bg-gradient-to-br from-amber-50/80 via-amber-50/30 to-surface border-amber-200/90 hover:border-amber-400' 
-                      : 'bg-gradient-to-br from-slate-50/90 via-surface to-surface border-sand-300 hover:border-sand-400'
+                      ? 'bg-amber-50/60 dark:bg-amber-950/30 border-amber-200/90 dark:border-amber-900/60 hover:border-amber-400' 
+                      : 'bg-surface dark:bg-slate-900 border-sand-300 dark:border-slate-800 hover:border-sand-400 dark:hover:border-slate-700'
                   }`}
                 >
                   {/* Top Row: Category Pill, Doubt Voting & Star Button */}
@@ -366,12 +366,12 @@ export const BraveStories: React.FC = () => {
                           onClick={(e) => handleVote(item.id, e)}
                           className={`inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-2.5 py-0.5 rounded-full font-bold transition-all active:scale-90 border ${
                             item.userVoted
-                              ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-xs'
-                              : 'bg-white/90 hover:bg-amber-50 text-slate-700 border-sand-300'
+                              ? 'bg-amber-100 dark:bg-amber-900/50 text-amber-900 dark:text-amber-200 border-amber-300 dark:border-amber-700 shadow-xs'
+                              : 'bg-surface dark:bg-slate-800 hover:bg-amber-50 text-slate-700 dark:text-slate-300 border-sand-300 dark:border-slate-700'
                           }`}
                           title="Upvote / I have this doubt too"
                         >
-                          <ChevronUp className={`w-3.5 h-3.5 stroke-[2.5] ${item.userVoted ? 'text-amber-600' : 'text-slate-500'}`} />
+                          <ChevronUp className={`w-3.5 h-3.5 stroke-[2.5] ${item.userVoted ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400'}`} />
                           <span>{item.votesCount || 0} Votes</span>
                         </button>
                       )}
@@ -388,8 +388,8 @@ export const BraveStories: React.FC = () => {
                       onClick={(e) => handleToggleSave(item.id, e)}
                       className={`w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 flex-shrink-0 ${
                         item.isSaved
-                          ? 'bg-amber-100 text-amber-500 hover:bg-amber-200'
-                          : 'bg-sand-200/80 hover:bg-sand-300 text-slate-500 hover:text-slate-800'
+                          ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-500 hover:bg-amber-200 dark:hover:bg-amber-900/80'
+                          : 'bg-sand-200/80 dark:bg-slate-800 hover:bg-sand-300 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                       }`}
                       title={item.isSaved ? "Saved in All Saves" : "Save Story"}
                       aria-label="Toggle Save"
@@ -406,26 +406,26 @@ export const BraveStories: React.FC = () => {
 
                   {/* Prominent Narrative Text Content */}
                   <div className="space-y-3 my-1 flex-1">
-                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-slate-100 leading-snug line-clamp-2 group-hover:text-amber-600 dark:group-hover:text-orange-400 transition-colors">
                       {item.title}
                     </h3>
 
-                    <p className="text-xs sm:text-sm text-slate-700 line-clamp-5 leading-relaxed italic bg-sand-100/50 p-3.5 rounded-2xl border-l-3 border-secondary">
+                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 line-clamp-5 leading-relaxed italic bg-sand-100/50 dark:bg-slate-950/60 p-3.5 rounded-2xl border-l-3 border-secondary dark:border-orange-500">
                       "{item.storyText}"
                     </p>
 
                     {/* Tags / Officer Guidance Indicator */}
                     <div className="flex flex-wrap items-center gap-1.5 pt-1">
                       {isGrievance && item.verifiedAdvice && (
-                        <span className="text-[10px] font-bold text-amber-800 bg-amber-100/80 border border-amber-200 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
-                          <Shield className="w-3 h-3 text-amber-600" />
+                        <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                          <Shield className="w-3 h-3 text-amber-600 dark:text-amber-400" />
                           Verified Guidance
                         </span>
                       )}
                       {item.tags.slice(0, 2).map((tag, tIdx) => (
                         <span
                           key={tIdx}
-                          className="text-[10px] px-2 py-0.5 rounded-md bg-sand-200/80 text-slate-600 font-medium"
+                          className="text-[10px] px-2 py-0.5 rounded-md bg-sand-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium"
                         >
                           #{tag}
                         </span>
@@ -439,11 +439,11 @@ export const BraveStories: React.FC = () => {
                   <div className="space-y-0.5 flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                       {isGrievance ? (
-                        <HelpCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+                        <HelpCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
                       ) : (
-                        <ShieldCheck className="w-3.5 h-3.5 text-sky-600 flex-shrink-0" />
+                        <ShieldCheck className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 flex-shrink-0" />
                       )}
-                      <p className="text-xs sm:text-sm font-bold text-slate-900 truncate leading-snug">
+                      <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 truncate leading-snug">
                         {item.captionEmoji || item.title}
                       </p>
                     </div>

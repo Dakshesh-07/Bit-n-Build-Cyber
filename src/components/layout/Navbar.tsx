@@ -184,13 +184,13 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
                     className="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-xl shadow-lg p-3 z-50 text-xs font-medium space-y-2 animate-in fade-in"
                     onMouseLeave={() => setProfileDropdownOpen(false)}
                   >
-                    <div className="p-2 border-b border-slate-100 space-y-1">
+                    <div className="p-2 space-y-1">
                       <div className="flex items-center justify-between">
-                        <p className="font-bold text-sm text-slate-900 truncate">{user?.alias}</p>
+                        <p className="font-bold text-sm text-slate-900 dark:text-slate-100 truncate">{user?.alias}</p>
                         <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                       </div>
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded flex items-center gap-1">
+                        <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-1.5 py-0.5 rounded flex items-center gap-1">
                           ✓ {currentRoleInfo.clearance}
                         </span>
                       </div>
