@@ -15,12 +15,22 @@ import {
   Lock,
   ChevronRight,
   UserCheck,
-  Scale
+  Scale,
+  X,
+  User,
+  Sparkles
 } from 'lucide-react';
 import { IncidentReport } from '../types';
 import { localStore } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { CyberEvidenceDocket } from '../components/CyberEvidenceDocket';
+
+const COUNSELOR_PRESETS = [
+  'Dr. Ananya Sharma (Nodal Child Psychologist - Childline 1098)',
+  'Counselor Rajesh Verma (Senior Trauma Interventionist)',
+  'Priya Nair (Cyber Victim Welfare Officer)',
+  'Inspector V. Singh (Nodal POCSO Support Officer)'
+];
 
 export const OrgPortal: React.FC = () => {
   const { user } = useAuth();
@@ -33,11 +43,30 @@ export const OrgPortal: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 4;
 
+  // Interventions & Export Modal State
+  const [showDocketModal, setShowDocketModal] = useState<boolean>(false);
+  const [showCounselorModal, setShowCounselorModal] = useState<boolean>(false);
+  const [customCounselorName, setCustomCounselorName] = useState<string>('');
+
+  // Per-Case Intervention Dynamic State Persistence
+  const [assignedCounselorsMap, setAssignedCounselorsMap] = useState<Record<string, string>>({});
+  const [takedownDispatchedMap, setTakedownDispatchedMap] = useState<Record<string, boolean>>({});
+
   useEffect(() => {
     const list = localStore.getIncidents();
     setIncidents(list);
     if (list.length > 0 && !selectedCase) {
       setSelectedCase(list[0]);
+    }
+
+    // Load saved counselor & takedown mappings from localStorage
+    try {
+      const savedCounselors = localStorage.getItem('cybervigil_assigned_counselors');
+      if (savedCounselors) setAssignedCounselorsMap(JSON.parse(savedCounselors));
+      const savedTakedowns = localStorage.getItem('cybervigil_takedowns_dispatched');
+      if (savedTakedowns) setTakedownDispatchedMap(JSON.parse(savedTakedowns));
+    } catch (e) {
+      console.error('Error loading saved intervention state:', e);
     }
   }, []);
 
@@ -61,6 +90,27 @@ export const OrgPortal: React.FC = () => {
     }
   };
 
+  const handleDispatchTakedown = () => {
+    if (!selectedCase) return;
+    const updatedTakedowns = { ...takedownDispatchedMap, [selectedCase.id]: true };
+    setTakedownDispatchedMap(updatedTakedowns);
+    localStorage.setItem('cybervigil_takedowns_dispatched', JSON.stringify(updatedTakedowns));
+
+    handleUpdateStatus('Platform Notice Drafted', 'Automated Takedown Notice dispatched to Meta & Snapchat Trust/Safety desks!');
+  };
+
+  const handleAssignCounselor = (counselorName: string) => {
+    if (!selectedCase || !counselorName.trim()) return;
+    const nameToAssign = counselorName.trim();
+    const updatedCounselors = { ...assignedCounselorsMap, [selectedCase.id]: nameToAssign };
+    setAssignedCounselorsMap(updatedCounselors);
+    localStorage.setItem('cybervigil_assigned_counselors', JSON.stringify(updatedCounselors));
+
+    setShowCounselorModal(false);
+    setCustomCounselorName('');
+    handleUpdateStatus('Escalated 1098', `Assigned Trauma Counselor (${nameToAssign}) to Case #${selectedCase.caseNumber}!`);
+  };
+
   const filteredIncidents = incidents.filter(item => {
     if (filterSeverity === 'HIGH') return item.severityLevel === 'High' || item.severityLevel === 'Critical';
     return true;
@@ -68,6 +118,9 @@ export const OrgPortal: React.FC = () => {
 
   const totalPages = Math.ceil(filteredIncidents.length / itemsPerPage) || 1;
   const paginatedIncidents = filteredIncidents.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const currentCaseAssignedCounselor = selectedCase ? assignedCounselorsMap[selectedCase.id] : null;
+  const isTakedownDispatched = selectedCase ? takedownDispatchedMap[selectedCase.id] || selectedCase.status === 'Platform Notice Drafted' : false;
 
   return (
     <div className="space-y-8 pb-16">
@@ -104,9 +157,8 @@ export const OrgPortal: React.FC = () => {
         </div>
       </section>
 
-      {/* 2. Key Operational Metrics Row - Decluttered & Spaced */}
+      {/* 2. Key Operational Metrics Row */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {/* Metric 1 */}
         <div className="bg-surface border border-sand-300 hover:border-sand-400 rounded-2xl p-6 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 space-y-3 group">
           <div className="flex items-center justify-between text-textMuted">
             <span className="text-xs font-bold uppercase tracking-wider">New Triage Reports</span>
@@ -121,7 +173,6 @@ export const OrgPortal: React.FC = () => {
           <p className="text-xs text-textMuted">Awaiting cryptographic scrub & review</p>
         </div>
 
-        {/* Metric 2: Immediate Takedowns */}
         <div className="bg-surface border border-sand-300 hover:border-sand-400 rounded-2xl p-6 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 space-y-3 group">
           <div className="flex items-center justify-between text-secondary-dark font-semibold">
             <span className="text-xs font-bold uppercase tracking-wider">Immediate Takedowns</span>
@@ -136,7 +187,6 @@ export const OrgPortal: React.FC = () => {
           <p className="text-xs text-secondary-dark font-medium">POCSO Flagged • &lt;2hr target SLA</p>
         </div>
 
-        {/* Metric 3 */}
         <div className="bg-surface border border-sand-300 hover:border-sand-400 rounded-2xl p-6 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 space-y-3 group">
           <div className="flex items-center justify-between text-textMuted">
             <span className="text-xs font-bold uppercase tracking-wider">Multi-Agency Sync</span>
@@ -151,7 +201,6 @@ export const OrgPortal: React.FC = () => {
           <p className="text-xs text-textMuted">Childline & Cyber Cell nodal synchronized</p>
         </div>
 
-        {/* Metric 4 */}
         <div className="bg-surface border border-sand-300 hover:border-sand-400 rounded-2xl p-6 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 space-y-3 group">
           <div className="flex items-center justify-between text-textMuted">
             <span className="text-xs font-bold uppercase tracking-wider">Dispatched Takedowns</span>
@@ -167,20 +216,19 @@ export const OrgPortal: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. Dual-Zone Layout: Queue Table (7 cols) + Active Case Deep Dive (5 cols) */}
+      {/* 3. Dual-Zone Layout: Queue Table + Active Case Deep Dive */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* LEFT: Incident Queue Table */}
-        <section className="lg:col-span-7 bg-surface border border-sand-300 rounded-2xl shadow-warm-card overflow-hidden">
-          {/* Table Header & Controls */}
-          <div className="p-5 border-b border-sand-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-sand-50">
+        <section className="lg:col-span-7 bg-surface border border-sand-300 dark:border-slate-800 rounded-2xl shadow-warm-card overflow-hidden">
+          <div className="p-5 border-b border-sand-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-sand-50 dark:bg-slate-900">
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-primary">Live Incident Triage Queue</h2>
+                <h2 className="text-base font-bold text-primary dark:text-slate-100">Live Incident Triage Queue</h2>
                 <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-primary text-surface">
                   Live Sync
                 </span>
               </div>
-              <p className="text-xs text-textMuted mt-0.5">
+              <p className="text-xs text-textMuted dark:text-slate-400 mt-0.5">
                 Incoming encrypted reports ingested via Childline 1098 & Web Shield
               </p>
             </div>
@@ -191,7 +239,7 @@ export const OrgPortal: React.FC = () => {
                 className={`px-3 py-1.5 rounded-lg border text-xs font-semibold transition-colors flex items-center gap-1.5 ${
                   filterSeverity === 'HIGH'
                     ? 'bg-secondary text-primary border-secondary font-bold'
-                    : 'bg-surface border-sand-300 text-textDark hover:bg-sand-100'
+                    : 'bg-surface border-sand-300 dark:border-slate-700 text-textDark dark:text-slate-200 hover:bg-sand-100'
                 }`}
               >
                 <Filter className="w-3.5 h-3.5" />
@@ -200,11 +248,10 @@ export const OrgPortal: React.FC = () => {
             </div>
           </div>
 
-          {/* Table Body */}
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-sand-100 text-textDark font-bold border-b border-sand-300">
+                <tr className="bg-sand-100 dark:bg-slate-800 text-textDark dark:text-slate-200 font-bold border-b border-sand-300 dark:border-slate-700">
                   <th className="py-3.5 px-4">Case ID</th>
                   <th className="py-3.5 px-4">Category</th>
                   <th className="py-3.5 px-4">Urgency</th>
@@ -261,7 +308,6 @@ export const OrgPortal: React.FC = () => {
             </table>
           </div>
 
-          {/* Pagination Controls Bar */}
           <div className="p-4 bg-sand-50 dark:bg-slate-900 border-t border-sand-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
             <div className="text-textMuted dark:text-slate-400">
               Showing <span className="font-bold text-primary dark:text-slate-100">{filteredIncidents.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> to <span className="font-bold text-primary dark:text-slate-100">{Math.min(currentPage * itemsPerPage, filteredIncidents.length)}</span> of <span className="font-bold text-primary dark:text-slate-100">{filteredIncidents.length}</span> active cases
@@ -307,7 +353,6 @@ export const OrgPortal: React.FC = () => {
         <aside className="lg:col-span-5 bg-surface border-2 border-primary/20 rounded-2xl shadow-warm-elevated overflow-hidden sticky top-24">
           {selectedCase ? (
             <div>
-              {/* Drawer Header */}
               <div className="bg-primary p-6 text-surface flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2">
@@ -325,9 +370,7 @@ export const OrgPortal: React.FC = () => {
                 </span>
               </div>
 
-              {/* Drawer Body */}
               <div className="p-6 space-y-5">
-                {/* Action Feedback Notification */}
                 {actionSuccessMessage && (
                   <div className="p-3.5 rounded-xl bg-safeGreenContainer border border-safeGreen text-safeGreen text-xs font-bold flex items-center gap-2 animate-in fade-in">
                     <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
@@ -335,86 +378,112 @@ export const OrgPortal: React.FC = () => {
                   </div>
                 )}
 
-                {/* Redacted Narrative */}
-                <div className="p-4 rounded-xl bg-sand-100 border border-sand-200 space-y-1.5">
+                <div className="p-4 rounded-xl bg-sand-100 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-primary">Incident Narrative</span>
+                    <span className="text-xs font-bold text-primary dark:text-slate-100">Incident Narrative</span>
                     <span className="text-[10px] font-bold text-safeGreen uppercase tracking-wider">
                       PII Redacted for Minor
                     </span>
                   </div>
-                  <p className="text-xs text-textDark leading-relaxed">
+                  <p className="text-xs text-textDark dark:text-slate-200 leading-relaxed">
                     "{selectedCase.incidentDetails}"
                   </p>
                 </div>
 
-                {/* AI Automated Signal Matrix */}
-                <div className="p-4 rounded-xl bg-surface border border-sand-300 shadow-warm-sm space-y-3">
-                  <div className="flex items-center justify-between border-b border-sand-200 pb-2">
-                    <span className="text-xs font-bold text-primary">AI Signal Matrix</span>
-                    <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                <div className="p-4 rounded-xl bg-surface border border-sand-300 dark:border-slate-700 shadow-warm-sm space-y-3">
+                  <div className="flex items-center justify-between border-b border-sand-200 dark:border-slate-700 pb-2">
+                    <span className="text-xs font-bold text-primary dark:text-slate-100">AI Signal Matrix</span>
+                    <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
                       Threat Score: {selectedCase.threatScore} / 100
                     </span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div className="p-2.5 rounded-lg bg-sand-100 border border-sand-200">
-                      <span className="text-[10px] text-textMuted uppercase font-semibold">Category</span>
-                      <p className="font-bold text-primary mt-0.5">{selectedCase.category}</p>
+                    <div className="p-2.5 rounded-lg bg-sand-100 dark:bg-slate-800 border border-sand-200 dark:border-slate-700">
+                      <span className="text-[10px] text-textMuted dark:text-slate-400 uppercase font-semibold">Category</span>
+                      <p className="font-bold text-primary dark:text-slate-100 mt-0.5">{selectedCase.category}</p>
                     </div>
-                    <div className="p-2.5 rounded-lg bg-sand-100 border border-sand-200">
-                      <span className="text-[10px] text-textMuted uppercase font-semibold">Emotional Distress</span>
+                    <div className="p-2.5 rounded-lg bg-sand-100 dark:bg-slate-800 border border-sand-200 dark:border-slate-700">
+                      <span className="text-[10px] text-textMuted dark:text-slate-400 uppercase font-semibold">Emotional Distress</span>
                       <p className="font-bold text-errorRed mt-0.5">{selectedCase.distressLevel || 85}% Risk Level</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Cryptographic Hash Seal */}
-                <div className="p-3.5 rounded-xl bg-sand-100 border border-sand-200 space-y-1.5">
+                <div className="p-3.5 rounded-xl bg-sand-100 dark:bg-slate-800 border border-sand-200 dark:border-slate-700 space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-primary flex items-center gap-1">
-                      <Fingerprint className="w-3.5 h-3.5 text-secondary" />
+                    <span className="text-xs font-bold text-primary dark:text-slate-100 flex items-center gap-1">
+                      <Fingerprint className="w-3.5 h-3.5 text-secondary dark:text-orange-400" />
                       Evidence SHA-256 Hash Seal
                     </span>
                     <span className="text-[10px] font-bold text-safeGreen">Court Admissible</span>
                   </div>
-                  <p className="font-mono text-[11px] text-textMuted break-all select-all bg-surface p-2 rounded border border-sand-300">
+                  <p className="font-mono text-[11px] text-textMuted dark:text-slate-300 break-all select-all bg-surface dark:bg-slate-900 p-2 rounded border border-sand-300 dark:border-slate-700">
                     {selectedCase.evidenceSha256 || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}
                   </p>
                 </div>
 
                 {/* Protocol Escalation Actions */}
-                <div className="space-y-2 pt-2 border-t border-sand-200">
-                  <span className="text-xs font-bold uppercase tracking-wider text-textMuted block">
+                <div className="space-y-3 pt-2 border-t border-sand-200 dark:border-slate-800">
+                  <span className="text-xs font-bold uppercase tracking-wider text-textMuted dark:text-slate-400 block">
                     Authorized Protocol Interventions:
                   </span>
 
+                  {/* Button 1: Platform Takedown Notice */}
                   <button
-                    onClick={() => handleUpdateStatus('Platform Notice Drafted', 'Platform Takedown notice dispatched to Meta & Snapchat Trust/Safety!')}
-                    className="w-full py-3 px-4 rounded-xl bg-primary hover:bg-primary-hover text-surface text-xs font-bold flex items-center justify-center gap-2 shadow-warm-sm hover:shadow-md transition-all active:scale-95 group/btn"
+                    onClick={handleDispatchTakedown}
+                    className={`w-full py-3 px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-warm-sm transition-all active:scale-95 cursor-pointer ${
+                      isTakedownDispatched
+                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-500'
+                        : 'bg-primary hover:bg-primary-hover text-surface'
+                    }`}
                   >
-                    <Send className="w-4 h-4 text-secondary group-hover/btn:scale-105 transition-transform" />
-                    <span>Dispatch Automated Platform Takedown Notice</span>
+                    {isTakedownDispatched ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
+                        <span className="truncate">✓ Platform Takedown Dispatched (Meta & Snapchat)</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4 text-secondary flex-shrink-0" />
+                        <span>Dispatch Automated Platform Takedown Notice</span>
+                      </>
+                    )}
                   </button>
 
+                  {/* Button 2: Manual Counselor Assignment */}
                   <button
-                    onClick={() => handleUpdateStatus('Escalated 1098', 'Case escalated to Childline 1098 Counselor Dispatch Desk!')}
-                    className="w-full py-3 px-4 rounded-xl bg-secondary hover:bg-secondary-dark text-primary font-bold text-xs flex items-center justify-center gap-2 shadow-warm-sm hover:shadow-md transition-all active:scale-95 group/btn"
+                    onClick={() => setShowCounselorModal(true)}
+                    className={`w-full py-3 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 shadow-warm-sm transition-all active:scale-95 cursor-pointer ${
+                      currentCaseAssignedCounselor
+                        ? 'bg-purple-600 hover:bg-purple-700 text-white border border-purple-500'
+                        : 'bg-secondary hover:bg-secondary-dark text-primary'
+                    }`}
                   >
-                    <PhoneCall className="w-4 h-4 group-hover/btn:scale-105 transition-transform" />
-                    <span>Assign Trauma Counselor via Childline 1098</span>
+                    {currentCaseAssignedCounselor ? (
+                      <>
+                        <CheckCircle2 className="w-4 h-4 text-white flex-shrink-0" />
+                        <span className="truncate">✓ Counselor Assigned ({currentCaseAssignedCounselor.split(' ')[0]} {currentCaseAssignedCounselor.split(' ')[1] || ''})</span>
+                      </>
+                    ) : (
+                      <>
+                        <PhoneCall className="w-4 h-4 flex-shrink-0" />
+                        <span>Assign Trauma Counselor via Childline 1098</span>
+                      </>
+                    )}
                   </button>
 
+                  {/* Button 3: Actual Dossier Export Modal View */}
                   <button
-                    onClick={() => alert(`Dossier #${selectedCase.caseNumber} exported with cryptographic SHA-256 seal. Ready for Child Welfare Committee (CWC).`)}
-                    className="w-full py-2.5 px-4 rounded-xl border border-sand-300 bg-surface hover:bg-sand-100 text-primary font-semibold text-xs flex items-center justify-center gap-1.5 shadow-xs hover:shadow-sm transition-all active:scale-95"
+                    onClick={() => setShowDocketModal(true)}
+                    className="w-full py-3 px-4 rounded-xl border border-sand-300 dark:border-slate-700 bg-surface dark:bg-slate-800 hover:bg-sand-100 dark:hover:bg-slate-700 text-primary dark:text-slate-100 font-bold text-xs flex items-center justify-center gap-2 shadow-xs hover:shadow-sm transition-all active:scale-95 cursor-pointer"
                   >
-                    <Download className="w-4 h-4 text-textMuted" />
+                    <Download className="w-4 h-4 text-secondary dark:text-orange-400" />
                     <span>Export Admissible Incident Dossier (PDF)</span>
                   </button>
                 </div>
 
-                <div className="text-[11px] text-textMuted text-center pt-1 flex items-center justify-center gap-1">
+                <div className="text-[11px] text-textMuted dark:text-slate-400 text-center pt-1 flex items-center justify-center gap-1">
                   <Scale className="w-3.5 h-3.5" />
                   <span>Immutable audit log generated for High Court judicial scrutiny</span>
                 </div>
@@ -423,12 +492,94 @@ export const OrgPortal: React.FC = () => {
           ) : (
             <div className="p-12 text-center text-textMuted space-y-2">
               <Shield className="w-10 h-10 mx-auto text-sand-400" />
-              <p className="text-sm font-bold text-primary">Select a ticket from the queue</p>
+              <p className="text-sm font-bold text-primary dark:text-slate-100">Select a ticket from the queue</p>
               <p className="text-xs">Click any incident to open the active forensic deep-dive.</p>
             </div>
           )}
         </aside>
       </div>
+
+      {/* ============================================================================== */}
+      {/* MANUAL COUNSELOR ASSIGNMENT MODAL */}
+      {/* ============================================================================== */}
+      {showCounselorModal && selectedCase && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-surface dark:bg-slate-900 border border-sand-300 dark:border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-5 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-sand-200 dark:border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <PhoneCall className="w-5 h-5 text-secondary" />
+                <h3 className="font-extrabold text-base text-primary dark:text-slate-100">
+                  Manual Trauma Counselor Assignment
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowCounselorModal(false)}
+                className="p-1 rounded-lg text-textMuted hover:bg-sand-200 dark:hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-xs text-textMuted dark:text-slate-300">
+                Assign a certified trauma counselor or Childline 1098 officer to Case <strong>#{selectedCase.caseNumber}</strong>:
+              </p>
+
+              {/* Preset Counselors Selection */}
+              <div className="space-y-2">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-primary dark:text-slate-200">
+                  Select Nodal Counselor Preset:
+                </label>
+                <div className="space-y-1.5">
+                  {COUNSELOR_PRESETS.map((preset, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleAssignCounselor(preset)}
+                      className="w-full text-left p-3 rounded-xl border border-sand-300 dark:border-slate-800 bg-sand-50 dark:bg-slate-800 hover:border-secondary dark:hover:border-orange-500 hover:bg-amber-50 dark:hover:bg-slate-700/80 text-xs font-bold text-primary dark:text-slate-100 transition-all flex items-center justify-between cursor-pointer"
+                    >
+                      <span>{preset}</span>
+                      <UserCheck className="w-4 h-4 text-secondary flex-shrink-0 ml-2" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Or Custom Counselor Input */}
+              <div className="pt-2 border-t border-sand-200 dark:border-slate-800 space-y-2">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-primary dark:text-slate-200">
+                  Or Type Custom Officer / Counselor Name:
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={customCounselorName}
+                    onChange={(e) => setCustomCounselorName(e.target.value)}
+                    placeholder="e.g. Dr. Meera Reddy (Childline 1098)"
+                    className="flex-1 px-3 py-2 rounded-xl border border-sand-300 dark:border-slate-700 bg-surface dark:bg-slate-800 text-xs text-primary dark:text-slate-100 font-medium"
+                  />
+                  <button
+                    disabled={!customCounselorName.trim()}
+                    onClick={() => handleAssignCounselor(customCounselorName)}
+                    className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover dark:bg-orange-600 text-white text-xs font-bold disabled:opacity-40 cursor-pointer"
+                  >
+                    Assign
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================================== */}
+      {/* FORMAL CYBER EVIDENCE DOCKET MODAL (ACTUAL PDF EXPORT) */}
+      {/* ============================================================================== */}
+      {showDocketModal && selectedCase && (
+        <CyberEvidenceDocket
+          report={selectedCase}
+          onClose={() => setShowDocketModal(false)}
+        />
+      )}
     </div>
   );
 };

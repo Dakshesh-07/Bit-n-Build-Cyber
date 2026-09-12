@@ -182,15 +182,12 @@ export const AIAssistant: React.FC = () => {
     setIsThinking(true);
 
     try {
-      // Simulate natural thinking delay for human-like conversational pace
-      await new Promise(r => setTimeout(r, 400));
-
       const result = await askGuardianAI(text, messages, selectedLanguage, sessionIdRef.current);
 
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         sender: 'assistant',
-        text: result.response || "I am Cyber Vigil, your digital guardian. How can I support you right now?",
+        text: result.response,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         empathyNote: result.empathyNote,
         steps: result.strategicSteps,
@@ -200,16 +197,18 @@ export const AIAssistant: React.FC = () => {
       };
 
       setMessages(prev => [...prev, botMsg]);
-    } catch (err) {
-      console.error('Error generating AI response:', err);
-      const fallbackMsg: ChatMessage = {
-        id: `bot-${Date.now()}`,
+    } catch (err: any) {
+      console.error('Error connecting to Gemini AI API:', err);
+      const errorMsgText = err?.message || 'Error connecting to AI. Please check your Gemini API Key.';
+      const errorBotMsg: ChatMessage = {
+        id: `bot-err-${Date.now()}`,
         sender: 'assistant',
-        text: "Hello! I am Cyber Vigil, your supportive digital guardian. I am here to chat, answer questions, or help protect you if you ever face cyberbullying or threats online. How can I help you today?",
+        text: `Error connecting to AI: ${errorMsgText}`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        detectedThreat: 'Conversational',
+        detectedThreat: 'API Connection Failure',
+        threatSeverity: 'High Urgency',
       };
-      setMessages(prev => [...prev, fallbackMsg]);
+      setMessages(prev => [...prev, errorBotMsg]);
     } finally {
       setIsThinking(false);
     }
