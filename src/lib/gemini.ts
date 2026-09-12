@@ -24,6 +24,15 @@ If threat detected:
 
 // In-memory chat sessions map for multi-turn chat memory
 const sessionsMap = new Map<string, any>();
+const activeModelMap = new Map<string, string>();
+
+// List of supported Gemini Flash candidate models in order of priority
+const CANDIDATE_MODELS = [
+  'gemini-2.0-flash',
+  'gemini-1.5-flash',
+  'gemini-2.5-flash',
+  'gemini-1.5-pro'
+];
 
 /**
  * Retrieves the Gemini API key from import.meta.env.VITE_GEMINI_API_KEY
@@ -47,11 +56,14 @@ export function setGeminiApiKey(key: string): void {
   } else {
     localStorage.removeItem('cybervigil_gemini_api_key');
   }
+  // Clear cached sessions when API key is updated
+  sessionsMap.clear();
+  activeModelMap.clear();
 }
 
 /**
- * Main AI Chat function using @google/genai SDK when API key is available,
- * with intelligent built-in fallback engine so the assistant is ALWAYS operational.
+ * Main AI Chat function using @google/genai SDK with automatic model candidate fallback,
+ * ensuring live Gemini API calls succeed across all Google Gemini models.
  */
 export async function askGuardianAI(
   userPrompt: string,
@@ -67,47 +79,64 @@ export async function askGuardianAI(
     return getBuiltInGuardianResponse(userPrompt, 'Note: Configure your VITE_GEMINI_API_KEY or click API Settings to connect live Gemini AI cloud models.');
   }
 
-  try {
-    const ai = new GoogleGenAI({ apiKey });
-    
-    // Check if dynamic multi-turn chat session exists
-    let chatSession = sessionsMap.get(activeSessionId);
-    if (!chatSession) {
-      const sdkHistory = history
-        .filter(msg => msg.sender === 'user' || msg.sender === 'assistant')
-        .map(msg => ({
-          role: msg.sender === 'user' ? 'user' : 'model',
-          parts: [{ text: msg.text }]
-        }));
+  const ai = new GoogleGenAI({ apiKey });
+  const languagePrompt = language && language !== 'English' 
+    ? `[User preferred language: ${language}. Please reply in ${language} while retaining supportive guardian persona.]\n${userPrompt}`
+    : userPrompt;
 
-      chatSession = ai.chats.create({
-        model: 'gemini-2.5-flash',
-        config: {
-          systemInstruction: SYSTEM_INSTRUCTION,
-          temperature: 0.7,
-        },
-        history: sdkHistory
-      });
-      sessionsMap.set(activeSessionId, chatSession);
+  const sdkHistory = history
+    .filter(msg => msg.sender === 'user' || msg.sender === 'assistant')
+    .map(msg => ({
+      role: msg.sender === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.text }]
+    }));
+
+  let lastError: any = null;
+
+  // Determine model models to try (prioritize known working model for this session)
+  const cachedWorkingModel = activeModelMap.get(activeSessionId);
+  const modelsToTry = cachedWorkingModel 
+    ? [cachedWorkingModel, ...CANDIDATE_MODELS.filter(m => m !== cachedWorkingModel)]
+    : CANDIDATE_MODELS;
+
+  for (const modelName of modelsToTry) {
+    try {
+      let chatSession = sessionsMap.get(activeSessionId);
+      if (!chatSession || activeModelMap.get(activeSessionId) !== modelName) {
+        chatSession = ai.chats.create({
+          model: modelName,
+          config: {
+            systemInstruction: SYSTEM_INSTRUCTION,
+            temperature: 0.7,
+          },
+          history: sdkHistory
+        });
+        sessionsMap.set(activeSessionId, chatSession);
+        activeModelMap.set(activeSessionId, modelName);
+      }
+
+      const response = await chatSession.sendMessage({ message: languagePrompt });
+      const rawText = response.text || '';
+
+      if (rawText.trim()) {
+        const parsed = parseAIResponse(userPrompt, rawText);
+        // Live cloud connection succeeded! Return response directly (no error banner)
+        return {
+          ...parsed,
+          isBuiltInEngine: false
+        };
+      }
+    } catch (error: any) {
+      console.warn(`Gemini model ${modelName} failed, trying next candidate:`, error);
+      lastError = error;
+      sessionsMap.delete(activeSessionId);
+      activeModelMap.delete(activeSessionId);
     }
-
-    const languagePrompt = language && language !== 'English' 
-      ? `[User preferred language: ${language}. Please reply in ${language} while retaining supportive guardian persona.]\n${userPrompt}`
-      : userPrompt;
-
-    const response = await chatSession.sendMessage({ message: languagePrompt });
-    const rawText = response.text || '';
-
-    if (!rawText.trim()) {
-      throw new Error('Received empty response from Gemini API.');
-    }
-
-    return parseAIResponse(userPrompt, rawText);
-  } catch (error: any) {
-    console.error('Error connecting to Gemini API (falling back to built-in guardian engine):', error);
-    sessionsMap.delete(activeSessionId);
-    return getBuiltInGuardianResponse(userPrompt, `API Notice: Live Gemini cloud connection failed (${error?.message || 'Check API key'}). Using CyberVigil built-in engine.`);
   }
+
+  console.error('All Gemini API models failed (falling back to built-in guardian engine):', lastError);
+  const errorDetails = lastError?.message || lastError?.error?.message || 'Invalid API Key or Quota Limit';
+  return getBuiltInGuardianResponse(userPrompt, `API Notice: Live Gemini cloud connection failed (${errorDetails}). Using CyberVigil built-in engine.`);
 }
 
 /**
@@ -118,12 +147,13 @@ function getBuiltInGuardianResponse(userPrompt: string, note?: string): AIAnalys
   const lower = userPrompt.toLowerCase().trim();
 
   // 1. Greetings & Casual Chat
-  if (/^(hi|hello|hey|greetings|good morning|good evening|who are you|what is your name|tell me about yourself|help)/i.test(lower) || lower === 'test') {
+  if (/^(hi|hello|hey|greetings|good morning|good evening|who are you|what is your name|tell me about yourself|help|how are you)/i.test(lower) || lower === 'test') {
     return {
-      response: "Hello! I am CyberVigil, your 24/7 digital guardian and companion. I am here to chat casually, answer questions about online privacy, guide you on legal protections, or step in to help if you ever face cyberbullying or threats online. How can I support you today?",
+      response: "Hello! I am CyberVigil, your 24/7 digital guardian and companion. I am doing well, thank you! I am here to chat casually, answer questions about online privacy, guide you on legal protections, or step in to help if you ever face cyberbullying or threats online. How can I support you today?",
       detectedThreat: 'Conversational',
       urgencyLevel: 'low',
-      empathyNote: note || 'You are safe here. Ask me anything about digital safety or talk through what is on your mind.'
+      empathyNote: note || 'You are safe here. Ask me anything about digital safety or talk through what is on your mind.',
+      isBuiltInEngine: true
     };
   }
 
@@ -134,6 +164,7 @@ function getBuiltInGuardianResponse(userPrompt: string, note?: string): AIAnalys
       detectedThreat: 'Cyberbullying & Online Harassment',
       urgencyLevel: 'medium',
       empathyNote: 'Take a moment to pause. We are here to support and protect you.',
+      isBuiltInEngine: true,
       strategicSteps: [
         'Do Not Respond: Engaging with bullies often escalates the harassment.',
         'Document Evidence: Take clear screenshots of all messages, comments, and profile handles before blocking.',
@@ -154,6 +185,7 @@ function getBuiltInGuardianResponse(userPrompt: string, note?: string): AIAnalys
       detectedThreat: 'Sextortion / Digital Blackmail',
       urgencyLevel: 'high',
       empathyNote: 'Do not transfer money or comply with threats. You are protected under strict victim privacy laws.',
+      isBuiltInEngine: true,
       strategicSteps: [
         'Stop All Communication: Immediately cut contact with the extortionist.',
         'Preserve Chat History: Save uncropped screenshots containing full phone numbers or social handles.',
@@ -174,6 +206,7 @@ function getBuiltInGuardianResponse(userPrompt: string, note?: string): AIAnalys
       detectedThreat: 'Cyber Crime / Financial Fraud',
       urgencyLevel: 'high',
       empathyNote: 'Act fast to block unauthorized access and freeze pending transactions.',
+      isBuiltInEngine: true,
       strategicSteps: [
         'Freeze Accounts: Contact your bank or payment app immediately to freeze compromised cards.',
         'Call 1930 Immediately: Dial National Cyber Financial Helpline 1930 within the golden hour to freeze fraudulent transfers.',
@@ -192,7 +225,8 @@ function getBuiltInGuardianResponse(userPrompt: string, note?: string): AIAnalys
     response: `Thank you for reaching out to CyberVigil! I am here to help you navigate digital safety, report cyber crimes, protect your privacy, or talk things through. What specific situation or question can I assist you with right now?`,
     detectedThreat: 'Conversational',
     urgencyLevel: 'low',
-    empathyNote: note || 'CyberVigil digital protection active.'
+    empathyNote: note || 'CyberVigil digital protection active.',
+    isBuiltInEngine: true
   };
 }
 
