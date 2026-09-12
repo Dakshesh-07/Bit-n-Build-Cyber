@@ -164,3 +164,28 @@ html.dark .shadow-warm-card:hover {
   }
 }
 
+/* ============================================================================== */
+/* Formal Cyber Evidence Docket Overrides to Guarantee Pure Light Document        */
+/* ============================================================================== */
+html.dark #cyber-evidence-printable-docket {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+html.dark #cyber-evidence-printable-docket * {
+  border-color: #cbd5e1 !important;
+}
+
+html.dark #cyber-evidence-printable-docket .bg-slate-900 {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+html.dark #cyber-evidence-printable-docket .text-slate-900,
+html.dark #cyber-evidence-printable-docket .text-slate-800,
+html.dark #cyber-evidence-printable-docket .text-slate-700,
+html.dark #cyber-evidence-printable-docket .text-slate-600 {
+  color: #0f172a !important;
+}
+
+

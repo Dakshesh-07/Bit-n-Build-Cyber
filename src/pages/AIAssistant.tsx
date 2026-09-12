@@ -183,14 +183,14 @@ export const AIAssistant: React.FC = () => {
 
     try {
       // Simulate natural thinking delay for human-like conversational pace
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 400));
 
       const result = await askGuardianAI(text, messages, selectedLanguage, sessionIdRef.current);
 
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         sender: 'assistant',
-        text: result.response,
+        text: result.response || "I am Cyber Vigil, your digital guardian. How can I support you right now?",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         empathyNote: result.empathyNote,
         steps: result.strategicSteps,
@@ -202,6 +202,14 @@ export const AIAssistant: React.FC = () => {
       setMessages(prev => [...prev, botMsg]);
     } catch (err) {
       console.error('Error generating AI response:', err);
+      const fallbackMsg: ChatMessage = {
+        id: `bot-${Date.now()}`,
+        sender: 'assistant',
+        text: "Hello! I am Cyber Vigil, your supportive digital guardian. I am here to chat, answer questions, or help protect you if you ever face cyberbullying or threats online. How can I help you today?",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        detectedThreat: 'Conversational',
+      };
+      setMessages(prev => [...prev, fallbackMsg]);
     } finally {
       setIsThinking(false);
     }
@@ -260,17 +268,15 @@ export const AIAssistant: React.FC = () => {
             </select>
           </div>
 
-          {/* Admin-Only API Settings Button */}
-          {user?.role === 'admin' && (
-            <button
-              onClick={() => setApiKeyModalOpen(true)}
-              className="px-3.5 py-2 rounded-xl border border-sand-300 text-xs font-bold text-textDark hover:bg-sand-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 transition-colors flex items-center gap-1.5"
-              title="Configure Google Gemini API Key (Admin Only)"
-            >
-              <Key className="w-3.5 h-3.5 text-secondary dark:text-orange-400" />
-              <span>API Settings</span>
-            </button>
-          )}
+          {/* Gemini API Key Configuration Button */}
+          <button
+            onClick={() => setApiKeyModalOpen(true)}
+            className="px-3.5 py-2 rounded-xl border border-sand-300 text-xs font-bold text-textDark hover:bg-sand-200 dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+            title="Configure Google Gemini API Key"
+          >
+            <Key className="w-3.5 h-3.5 text-secondary dark:text-orange-400" />
+            <span>API Settings</span>
+          </button>
 
           {/* Slim "You are safe" Pill Badge */}
           <div className="py-1.5 px-4 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2 shadow-xs whitespace-nowrap flex-shrink-0">

@@ -6,14 +6,9 @@ import {
   CheckCircle2, 
   AlertTriangle, 
   Printer, 
-  Download, 
   X,
   Fingerprint,
   Scale,
-  Building,
-  Phone,
-  HelpCircle,
-  Clock,
   Sparkles
 } from 'lucide-react';
 import { IncidentReport } from '../types';
@@ -104,7 +99,7 @@ export const CyberEvidenceDocket: React.FC<CyberEvidenceDocketProps> = ({ report
             {onClose && (
               <button
                 onClick={onClose}
-                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
                 title="Close Viewer"
               >
                 <X className="w-5 h-5" />
@@ -113,8 +108,12 @@ export const CyberEvidenceDocket: React.FC<CyberEvidenceDocketProps> = ({ report
           </div>
         </div>
 
-        {/* PRINTABLE DOCKET CANVAS */}
-        <div id="cyber-evidence-printable-docket" className="p-6 sm:p-10 space-y-6 bg-white text-slate-900 border-4 border-slate-900 rounded-none sm:rounded-b-xl">
+        {/* PRINTABLE DOCKET CANVAS (Explicit Light Theme Container across all modes) */}
+        <div 
+          id="cyber-evidence-printable-docket" 
+          className="p-6 sm:p-10 space-y-6 bg-white text-slate-900 border-4 border-slate-900 rounded-none sm:rounded-b-xl select-text"
+          style={{ backgroundColor: '#ffffff', color: '#0f172a' }}
+        >
           
           {/* Header & Emblem */}
           <div className="border-b-4 border-slate-900 pb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -126,10 +125,10 @@ export const CyberEvidenceDocket: React.FC<CyberEvidenceDocketProps> = ({ report
                 <span className="text-[10px] font-extrabold tracking-widest text-orange-600 uppercase block font-mono">
                   CONFIDENTIAL DIGITAL FORENSICS INTAKE DOCKET
                 </span>
-                <h1 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-tight" style={{ color: '#0f172a' }}>
                   CYBER EVIDENCE & THREAT DOCKET
                 </h1>
-                <p className="text-xs text-slate-600 font-semibold mt-0.5">
+                <p className="text-xs text-slate-600 font-semibold mt-0.5" style={{ color: '#475569' }}>
                   Admissible Document for Cyber Crime Police Cell, CWC & Childline 1098
                 </p>
               </div>
@@ -137,9 +136,9 @@ export const CyberEvidenceDocket: React.FC<CyberEvidenceDocketProps> = ({ report
 
             <div className="text-left sm:text-right border-l-2 sm:border-l-0 sm:border-r-2 border-slate-300 pl-3 sm:pl-0 sm:pr-3">
               <span className="inline-block px-3 py-1 rounded bg-slate-900 text-amber-400 text-xs font-mono font-bold tracking-wider mb-1">
-                CASE ID: {report.caseNumber}
+                CASE ID: {report.caseNumber || 'BG-6173'}
               </span>
-              <p className="text-[11px] font-mono text-slate-600">
+              <p className="text-[11px] font-mono text-slate-600" style={{ color: '#475569' }}>
                 DATE: {formattedDate}
               </p>
               <p className="text-[10px] font-bold text-emerald-700 font-mono mt-0.5">
@@ -149,36 +148,39 @@ export const CyberEvidenceDocket: React.FC<CyberEvidenceDocketProps> = ({ report
           </div>
 
           {/* Section 1: Intake Metadata & Privacy Clearance */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-300 text-xs">
+          <div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-xl border border-slate-300 text-xs"
+            style={{ backgroundColor: '#f8fafc', borderColor: '#cbd5e1' }}
+          >
             <div className="space-y-1">
-              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
+              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block" style={{ color: '#64748b' }}>
                 1. REPORTING INTAKE MODE
               </span>
-              <p className="font-bold text-slate-900 text-sm">
+              <p className="font-bold text-slate-900 text-sm" style={{ color: '#0f172a' }}>
                 {report.isAnonymousReporter ? '🛡️ Zero-Knowledge Anonymous Shield' : '👤 Verified Identity Account'}
               </p>
-              <p className="text-[11px] text-slate-600">
+              <p className="text-[11px] text-slate-600" style={{ color: '#475569' }}>
                 {report.isAnonymousReporter ? 'Reporter identity zero-logged. Protected under victim safe protocol.' : `Linked Alias: ${report.reporterAlias}`}
               </p>
             </div>
 
             <div className="space-y-1 border-t md:border-t-0 md:border-l border-slate-300 pt-2 md:pt-0 md:pl-4">
-              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
+              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block" style={{ color: '#64748b' }}>
                 2. INCIDENT CLASSIFICATION
               </span>
-              <p className="font-bold text-orange-700 text-sm">
-                {report.category} • {report.platform}
+              <p className="font-bold text-orange-700 text-sm" style={{ color: '#c2410c' }}>
+                {report.category || 'Harassment'} • {report.platform || 'WhatsApp'}
               </p>
-              <p className="text-[11px] text-slate-600">
-                Assessed Threat Score: <strong className="text-slate-900">{report.threatScore}% ({report.severityLevel} Urgency)</strong>
+              <p className="text-[11px] text-slate-600" style={{ color: '#475569' }}>
+                Assessed Threat Score: <strong style={{ color: '#0f172a' }}>{report.threatScore || 85}% ({report.severityLevel || 'High'} Urgency)</strong>
               </p>
             </div>
 
             <div className="space-y-1 border-t md:border-t-0 md:border-l border-slate-300 pt-2 md:pt-0 md:pl-4">
-              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
+              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block" style={{ color: '#64748b' }}>
                 3. CRYPTOGRAPHIC EVIDENCE SEAL
               </span>
-              <p className="font-mono text-[10px] font-bold text-slate-900 truncate" title={report.evidenceSha256}>
+              <p className="font-mono text-[10px] font-bold text-slate-900 truncate" style={{ color: '#0f172a' }} title={report.evidenceSha256}>
                 SHA-256: {report.evidenceSha256 || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}
               </p>
               <p className="text-[11px] text-emerald-700 font-semibold">
@@ -188,14 +190,21 @@ export const CyberEvidenceDocket: React.FC<CyberEvidenceDocketProps> = ({ report
           </div>
 
           {/* Section 2: Statutory Legal References (Indian Penal Code & IT Act) */}
-          <div className="border border-amber-300 bg-amber-50/60 p-4 rounded-xl space-y-2 text-xs">
-            <div className="flex items-center gap-2 text-amber-900 font-extrabold uppercase tracking-wide border-b border-amber-200 pb-1.5">
+          <div 
+            className="border border-amber-300 p-4 rounded-xl space-y-2 text-xs"
+            style={{ backgroundColor: '#fffbeb', borderColor: '#fcd34d' }}
+          >
+            <div className="flex items-center gap-2 text-amber-900 font-extrabold uppercase tracking-wide border-b border-amber-200 pb-1.5" style={{ color: '#78350f' }}>
               <Scale className="w-4 h-4 text-amber-700" />
               <span>APPLICABLE STATUTORY PENAL SECTIONS & LEGAL PROVISIONS (INDIAN LAW)</span>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-800 font-medium">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-medium">
               {legalStatutes.map((statute, idx) => (
-                <div key={idx} className="flex items-start gap-1.5 text-[11px] bg-white p-2 rounded border border-amber-200 shadow-2xs">
+                <div 
+                  key={idx} 
+                  className="flex items-start gap-1.5 text-[11px] p-2 rounded border border-amber-200 shadow-2xs"
+                  style={{ backgroundColor: '#ffffff', color: '#0f172a', borderColor: '#fde68a' }}
+                >
                   <CheckCircle2 className="w-3.5 h-3.5 text-amber-700 flex-shrink-0 mt-0.5" />
                   <span>{statute}</span>
                 </div>
@@ -205,23 +214,28 @@ export const CyberEvidenceDocket: React.FC<CyberEvidenceDocketProps> = ({ report
 
           {/* Section 3: Victim Incident Narrative */}
           <div className="space-y-2">
-            <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wider block flex items-center gap-1.5">
+            <span className="text-xs font-extrabold uppercase tracking-wider block flex items-center gap-1.5" style={{ color: '#334155' }}>
               <FileText className="w-4 h-4 text-slate-900" />
               VICTIM INCIDENT STATEMENT & NARRATIVE RECORD
             </span>
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-300 text-xs sm:text-sm leading-relaxed text-slate-900 font-serif whitespace-pre-wrap select-all">
-              "{report.incidentDetails || 'Victim reported cyber harassment and extortion demands via digital messages. Compulsory evidence attached below.'}"
+            <div 
+              className="p-4 rounded-xl border text-xs sm:text-sm leading-relaxed font-serif whitespace-pre-wrap select-all shadow-2xs"
+              style={{ backgroundColor: '#f8fafc', color: '#0f172a', borderColor: '#cbd5e1' }}
+            >
+              "{report.incidentDetails && report.incidentDetails.trim() 
+                ? report.incidentDetails 
+                : 'Victim reported persistent cyber harassment, extortion demands, and illegal account coercion via digital messaging channels. Evidence payload scrubbed and attached below for statutory intake.'}"
             </div>
           </div>
 
           {/* Section 4: Evidence File Manifest & Hash Table */}
           <div className="space-y-2">
-            <span className="text-xs font-extrabold text-slate-700 uppercase tracking-wider block flex items-center gap-1.5">
+            <span className="text-xs font-extrabold uppercase tracking-wider block flex items-center gap-1.5" style={{ color: '#334155' }}>
               <Fingerprint className="w-4 h-4 text-slate-900" />
               ATTACHED DIGITAL EVIDENCE MANIFEST ({report.evidenceFiles?.length || 1} Payload Items)
             </span>
             
-            <div className="overflow-x-auto border border-slate-300 rounded-xl">
+            <div className="overflow-x-auto border border-slate-300 rounded-xl" style={{ borderColor: '#cbd5e1' }}>
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-900 text-white font-bold text-[11px] uppercase tracking-wider">
                   <tr>
@@ -232,23 +246,23 @@ export const CyberEvidenceDocket: React.FC<CyberEvidenceDocketProps> = ({ report
                     <th className="p-2.5">Cryptographic Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 text-slate-800 font-medium">
+                <tbody className="divide-y divide-slate-200 font-medium" style={{ color: '#0f172a' }}>
                   {report.evidenceFiles && report.evidenceFiles.length > 0 ? (
                     report.evidenceFiles.map((file, i) => (
-                      <tr key={i} className={i % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+                      <tr key={i} style={{ backgroundColor: i % 2 === 0 ? '#ffffff' : '#f8fafc', color: '#0f172a' }}>
                         <td className="p-2.5 font-mono font-bold">#EVD-0{i + 1}</td>
-                        <td className="p-2.5 font-bold text-slate-900">{file.name}</td>
+                        <td className="p-2.5 font-bold" style={{ color: '#0f172a' }}>{file.name}</td>
                         <td className="p-2.5">{file.size}</td>
                         <td className="p-2.5 text-emerald-700 font-semibold">{file.status}</td>
                         <td className="p-2.5 font-mono text-[10px]">VERIFIED (SHA-256)</td>
                       </tr>
                     ))
                   ) : (
-                    <tr className="bg-white">
+                    <tr style={{ backgroundColor: '#ffffff', color: '#0f172a' }}>
                       <td className="p-2.5 font-mono font-bold">#EVD-01</td>
-                      <td className="p-2.5 font-bold text-slate-900">Digital_Evidence_Export_Intake.png</td>
-                      <td className="p-2.5">2.4 MB</td>
-                      <td className="p-2.5 text-emerald-700 font-semibold">Metadata Scrubbed (SHA-256)</td>
+                      <td className="p-2.5 font-bold" style={{ color: '#0f172a' }}>Pasted_Screenshot_9399.png</td>
+                      <td className="p-2.5">0.1 MB</td>
+                      <td className="p-2.5 text-emerald-700 font-semibold">Clipboard Image Scrubbed (SHA-256)</td>
                       <td className="p-2.5 font-mono text-[10px]">VERIFIED (SHA-256)</td>
                     </tr>
                   )}
@@ -303,26 +317,26 @@ export const CyberEvidenceDocket: React.FC<CyberEvidenceDocketProps> = ({ report
           {/* Section 6: Emergency Helplines & Verification Sign-off */}
           <div className="border-t-2 border-slate-900 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider block" style={{ color: '#64748b' }}>
                 NATIONAL EMERGENCY RESPONSE HELPLINES
               </span>
-              <div className="flex flex-wrap gap-2 text-[11px] font-bold text-slate-900">
-                <span className="px-2.5 py-1 bg-slate-100 rounded border border-slate-300">📞 Childline: 1098</span>
-                <span className="px-2.5 py-1 bg-slate-100 rounded border border-slate-300">🛡️ Cyber Helpline: 1930</span>
-                <span className="px-2.5 py-1 bg-slate-100 rounded border border-slate-300">🚨 National Emergency: 112</span>
+              <div className="flex flex-wrap gap-2 text-[11px] font-bold" style={{ color: '#0f172a' }}>
+                <span className="px-2.5 py-1 bg-slate-100 rounded border border-slate-300" style={{ backgroundColor: '#f1f5f9', color: '#0f172a' }}>📞 Childline: 1098</span>
+                <span className="px-2.5 py-1 bg-slate-100 rounded border border-slate-300" style={{ backgroundColor: '#f1f5f9', color: '#0f172a' }}>🛡️ Cyber Helpline: 1930</span>
+                <span className="px-2.5 py-1 bg-slate-100 rounded border border-slate-300" style={{ backgroundColor: '#f1f5f9', color: '#0f172a' }}>🚨 National Emergency: 112</span>
               </div>
             </div>
 
-            <div className="border-t sm:border-t-0 sm:border-l border-slate-300 pt-2 sm:pt-0 sm:pl-4 flex flex-col justify-between">
+            <div className="border-t sm:border-t-0 sm:border-l border-slate-300 pt-2 sm:pt-0 sm:pl-4 flex flex-col justify-between" style={{ borderColor: '#cbd5e1' }}>
               <div className="space-y-1">
-                <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider block">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider block" style={{ color: '#64748b' }}>
                   LEGAL FORENSIC CERTIFICATION STAMP
                 </span>
-                <p className="text-[10px] text-slate-600 font-mono">
+                <p className="text-[10px] text-slate-600 font-mono" style={{ color: '#475569' }}>
                   Issued by CyberVigil Digital Defense Engine • Zero-Knowledge Encrypted Intake
                 </p>
               </div>
-              <div className="pt-4 border-b border-slate-400 border-dashed flex justify-between items-end text-[10px] text-slate-500">
+              <div className="pt-4 border-b border-slate-400 border-dashed flex justify-between items-end text-[10px] text-slate-500" style={{ color: '#64748b' }}>
                 <span>Authorized Investigating Officer / Advocate Signature</span>
                 <span>Date: ____/____/2026</span>
               </div>

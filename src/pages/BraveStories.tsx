@@ -337,7 +337,7 @@ export const BraveStories: React.FC = () => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 items-stretch">
           {filteredItems.map((item) => {
             const isGrievance = item.entryType === 'grievance';
 
@@ -345,17 +345,17 @@ export const BraveStories: React.FC = () => {
               <article
                 key={item.id}
                 onClick={() => setSelectedItem(item)}
-                className="group flex flex-col space-y-2 cursor-pointer transition-all duration-300"
+                className="group flex flex-col cursor-pointer transition-all duration-300 h-full"
               >
-                {/* Text Card Container (Clean, Inverted Hover Highlight: Normal dark slate by default, Orange highlight on hover) */}
+                {/* Visual Card Container (Spacious layout, min-height 250px, rich dark/light styling) */}
                 <div 
-                  className="relative w-full rounded-2xl sm:rounded-3xl p-5 sm:p-6 transition-all duration-200 flex flex-col justify-between border bg-surface dark:bg-slate-900 border-sand-300 dark:border-slate-800 hover:border-sand-400 dark:hover:border-orange-500 shadow-warm-card hover:shadow-warm-elevated group-hover:translate-y-[-2px] overflow-hidden"
+                  className="relative w-full rounded-2xl sm:rounded-3xl p-5 sm:p-6 transition-all duration-200 flex flex-col justify-between border bg-surface dark:bg-slate-900/90 border-sand-300 dark:border-slate-800 hover:border-amber-400 dark:hover:border-orange-500 shadow-warm-card hover:shadow-warm-elevated group-hover:-translate-y-1 overflow-hidden h-full min-h-[250px]"
                 >
                   {/* Top Row: Category Pill, Doubt Voting & Star Button */}
-                  <div className="flex items-start justify-between gap-2 mb-3.5">
-                    <div className="flex flex-wrap items-center gap-1.5">
+                  <div className="flex items-start justify-between gap-2 mb-3">
+                    <div className="flex flex-wrap items-center gap-1.5 min-w-0">
                       {item.pillBadge && (
-                        <span className={`px-2.5 py-0.5 rounded-md text-white font-bold text-[10px] sm:text-[11px] shadow-sm tracking-wide ${
+                        <span className={`px-2.5 py-1 rounded-lg text-white font-extrabold text-[10px] sm:text-[11px] shadow-xs tracking-wide ${
                           isGrievance ? 'bg-amber-600' : 'bg-sky-600'
                         }`}>
                           {item.pillBadge}
@@ -365,7 +365,7 @@ export const BraveStories: React.FC = () => {
                       {isGrievance && (
                         <button
                           onClick={(e) => handleVote(item.id, e)}
-                          className={`inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-2.5 py-0.5 rounded-full font-bold transition-all active:scale-90 border ${
+                          className={`inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-2.5 py-1 rounded-full font-bold transition-all active:scale-90 border ${
                             item.userVoted
                               ? 'bg-amber-500/20 text-amber-600 dark:text-amber-300 border-amber-500/40 shadow-xs'
                               : 'bg-sand-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border-sand-300 dark:border-slate-700'
@@ -378,7 +378,7 @@ export const BraveStories: React.FC = () => {
                       )}
 
                       {item.urgency === 'Critical' && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-[10px] font-bold flex items-center gap-1">
+                        <span className="px-2.5 py-1 rounded-full bg-rose-500/10 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-[10px] font-bold flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
                           Critical Alert
                         </span>
@@ -406,18 +406,18 @@ export const BraveStories: React.FC = () => {
                     </button>
                   </div>
 
-                  {/* Prominent Narrative Text Content */}
-                  <div className="space-y-3 my-1 flex-1">
-                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-slate-100 leading-snug line-clamp-2 group-hover:text-amber-600 dark:group-hover:text-orange-400 transition-colors">
+                  {/* Narrative Content Area */}
+                  <div className="space-y-2.5 my-2 flex-1 flex flex-col justify-start">
+                    <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-slate-100 leading-snug line-clamp-2 group-hover:text-amber-600 dark:group-hover:text-orange-400 transition-colors">
                       {item.title}
                     </h3>
 
-                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 line-clamp-4 leading-relaxed font-normal">
+                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 line-clamp-3 leading-relaxed font-normal italic">
                       "{item.storyText}"
                     </p>
 
-                    {/* Tags / Officer Guidance Indicator */}
-                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                    {/* Tags / Guidance Badge */}
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1.5 mt-auto">
                       {isGrievance && item.verifiedAdvice && (
                         <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-950/50 border border-amber-500/30 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
                           <Shield className="w-3 h-3 text-amber-600 dark:text-amber-400" />
@@ -427,7 +427,7 @@ export const BraveStories: React.FC = () => {
                       {item.tags.slice(0, 2).map((tag, tIdx) => (
                         <span
                           key={tIdx}
-                          className="text-[10px] px-2 py-0.5 rounded-md bg-sand-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-medium"
+                          className="text-[10px] px-2.5 py-0.5 rounded-md bg-sand-200/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 font-medium"
                         >
                           #{tag}
                         </span>
@@ -435,8 +435,8 @@ export const BraveStories: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Card Subtitle / Footer Area (Integrated inside card container for seamless finish) */}
-                  <div className="pt-3 mt-3 border-t border-sand-200 dark:border-slate-800/80 flex items-center justify-between gap-2">
+                  {/* Footer Author & Action Bar */}
+                  <div className="pt-3.5 mt-3 border-t border-sand-200 dark:border-slate-800 flex items-center justify-between gap-2">
                     <div className="space-y-0.5 flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
                         {isGrievance ? (
@@ -449,16 +449,10 @@ export const BraveStories: React.FC = () => {
                         </p>
                       </div>
                       
-                      <div className="flex items-center gap-2 text-[10px] sm:text-[11px] text-textMuted dark:text-slate-400 font-medium">
-                        <span className="truncate">{item.authorAlias}</span>
+                      <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-textMuted dark:text-slate-400 font-medium flex-wrap">
+                        <span className="truncate max-w-[120px]">{item.authorAlias}</span>
                         <span>•</span>
                         <span>{item.timeAgo}</span>
-                        {isGrievance && item.answersCount && (
-                          <>
-                            <span>•</span>
-                            <span className="text-amber-700 dark:text-amber-400 font-bold">{item.answersCount} Advised</span>
-                          </>
-                        )}
                       </div>
                     </div>
 

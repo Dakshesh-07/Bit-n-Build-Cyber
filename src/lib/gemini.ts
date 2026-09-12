@@ -160,7 +160,7 @@ function parseAIResponse(userPrompt: string, aiText: string): AIAnalysisResult {
 
   if (!containsThreat) {
     return {
-      response: aiText,
+      response: aiText || "I'm Cyber Vigil, here to listen and help! How are you doing today?",
       detectedThreat: 'Conversational',
       urgencyLevel: 'low'
     };
@@ -214,40 +214,83 @@ function parseAIResponse(userPrompt: string, aiText: string): AIAnalysisResult {
 }
 
 /**
- * Local Fallback when no API Key is provided or network is offline.
+ * Intelligent Local Fallback for offline mode or when API key is not configured.
  */
 function simulateLocalFallback(userPrompt: string): AIAnalysisResult {
-  const lower = userPrompt.toLowerCase();
-  
-  if (lower.includes('hi') || lower.includes('hello') || lower.includes('hey') || lower.includes('who are you')) {
+  const lower = userPrompt.toLowerCase().trim();
+
+  // 1. Greetings & Casual Chat
+  if (/^(hi|hello|hey|greetings|good morning|good evening|who are you|what is your name)/i.test(lower) || lower === 'test') {
     return {
-      response: "Hello! I'm Cyber Vigil, your supportive digital guardian. I'm here to chat, answer questions, or help keep you safe online. How can I assist you today?",
+      response: "Hello! I'm Cyber Vigil, your 24/7 digital guardian and companion. I'm here to chat casually, answer questions about online privacy, or help protect you if you ever face cyberbullying or threats online. How can I help you today?",
       detectedThreat: 'Conversational',
       urgencyLevel: 'low'
     };
   }
 
-  if (lower.includes('bully') || lower.includes('threat') || lower.includes('scam') || lower.includes('photo') || lower.includes('leak')) {
+  // 2. Cyberbullying & Harassment
+  if (lower.includes('bully') || lower.includes('harass') || lower.includes('insult') || lower.includes('mean messages') || lower.includes('troll')) {
     return {
-      response: "I hear you, and I am here to help protect you. Cyberbullying and digital harassment are serious, but you have full legal rights and safe options.",
-      detectedThreat: 'Cyberbullying & Cyber Safety Threat',
-      urgencyLevel: 'high',
-      empathyNote: 'Please stay calm. You are not alone and we will resolve this securely.',
+      response: "I am really sorry you are dealing with online harassment. Nobody has the right to intimidate or abuse you online. Remember: this is not your fault, and you do not have to handle it alone.",
+      detectedThreat: 'Cyberbullying & Online Harassment',
+      urgencyLevel: 'medium',
+      empathyNote: 'Take a moment to pause. We are here to support and protect you.',
       strategicSteps: [
-        'Preserve evidence: Take screenshots including date, time, and full handle.',
-        'Lock account privacy: Switch profiles to private mode and restrict direct messages.',
-        'File an incident report on CyberVigil to alert certified child welfare officers.',
-        'Call national emergency helpline 1930 for immediate cyber cell intervention.'
+        'Do Not Respond: Engaging with bullies often escalates the harassment.',
+        'Document Evidence: Take clear screenshots of all messages, comments, and profile handles before blocking.',
+        'Privacy Lockdown: Set your social profiles to private and restrict comment permissions.',
+        'Report & Escalate: Submit an incident report on CyberVigil or notify your school counselor.'
       ],
       actionLinks: [
         { label: 'File Anonymous Incident Report', url: '/report', type: 'action' },
-        { label: 'Call Cyber Helpline 1930', url: 'tel:1930', type: 'helpline' }
+        { label: 'Childline Emergency (1098)', url: 'tel:1098', type: 'helpline' }
       ]
     };
   }
 
+  // 3. Sextortion, Leaks, Nudes & Blackmail
+  if (lower.includes('photo') || lower.includes('nude') || lower.includes('leak') || lower.includes('extort') || lower.includes('blackmail') || lower.includes('threat')) {
+    return {
+      response: "Please stay calm. Digital extortion and illegal sharing of intimate photos are serious criminal offenses under IT Act Section 66E / 67A and IPC Section 384. Extortionists rely on panic, but you have full legal protection and statutory takedown avenues.",
+      detectedThreat: 'Sextortion / Digital Blackmail',
+      urgencyLevel: 'high',
+      empathyNote: 'Do not transfer money or comply with threats. You are protected under strict victim privacy laws.',
+      strategicSteps: [
+        'Stop All Communication: Immediately cut contact with the extortionist.',
+        'Preserve Chat History: Save uncropped screenshots containing full phone numbers or social handles.',
+        'Report to Cyber Cell: Submit your case on www.cybercrime.gov.in under Women & Children Protection.',
+        'File CyberVigil Docket: Generate a certified legal evidence docket to present to law enforcement.'
+      ],
+      actionLinks: [
+        { label: 'Generate Cyber Evidence Docket', url: '/report', type: 'action' },
+        { label: 'National Cyber Crime Helpline (1930)', url: 'tel:1930', type: 'helpline' }
+      ]
+    };
+  }
+
+  // 4. Scams, Hacking & Financial Fraud
+  if (lower.includes('scam') || lower.includes('hacked') || lower.includes('money') || lower.includes('fraud') || lower.includes('phishing') || lower.includes('otp')) {
+    return {
+      response: "If your account has been compromised or you suspect financial fraud, immediate action is critical to safeguard your funds and identity.",
+      detectedThreat: 'Cyber Crime / Financial Fraud',
+      urgencyLevel: 'high',
+      empathyNote: 'Act fast to block unauthorized access and freeze pending transactions.',
+      strategicSteps: [
+        'Freeze Accounts: Contact your bank or payment app immediately to freeze compromised cards.',
+        'Call 1930 Immediately: Dial National Cyber Financial Helpline 1930 within the golden hour to freeze fraudulent transfers.',
+        'Reset Passwords: Turn on 2-Factor Authentication (2FA) across your main email and social accounts.',
+        'Report Phishing: Lodge a complaint on the official portal at cybercrime.gov.in.'
+      ],
+      actionLinks: [
+        { label: 'Call Financial Cyber Helpline 1930', url: 'tel:1930', type: 'helpline' },
+        { label: 'National Cyber Crime Portal', url: 'https://cybercrime.gov.in', type: 'link' }
+      ]
+    };
+  }
+
+  // 5. Default General Response
   return {
-    response: "Thank you for reaching out to Cyber Vigil. Whether you want advice on staying safe online or just want to chat, I'm here to support you.",
+    response: `Thank you for reaching out to Cyber Vigil! I am configured to help you navigate digital safety, report cyber crimes, protect your privacy, or simply talk things through. What specific situation or question would you like advice on?`,
     detectedThreat: 'Conversational',
     urgencyLevel: 'low'
   };
