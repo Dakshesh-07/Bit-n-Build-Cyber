@@ -104,7 +104,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
         <div className="flex justify-between items-center h-16 sm:h-18">
           
           {/* Brand Identity - CyberVigil Emblem & Typography */}
-          <Link to={user ? "/" : "/login"} className="flex items-center gap-2.5 group flex-shrink-0">
+          <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
             <img 
               src="/cybervigil-shield.png" 
               alt="CyberVigil Shield" 
@@ -276,14 +276,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
               <div className="flex items-center gap-2">
                 <Link
                   to="/login"
-                  className="text-xs font-bold px-3.5 py-2 rounded-xl bg-primary hover:bg-primary-hover text-surface flex items-center gap-1.5 transition-all shadow-warm-sm active:scale-95"
+                  className="text-xs font-bold px-3.5 py-2 rounded-xl bg-primary dark:bg-secondary hover:bg-primary-hover dark:hover:bg-secondary-dark text-surface dark:text-primary flex items-center gap-1.5 transition-all shadow-warm-sm active:scale-95"
                 >
-                  <User className="w-3.5 h-3.5 text-secondary" />
+                  <User className="w-3.5 h-3.5 text-secondary dark:text-primary" />
                   <span>Sign In</span>
                 </Link>
                 <Link
                   to="/register"
-                  className="text-xs font-bold px-3 py-2 rounded-xl border border-sand-300 hover:bg-sand-100 text-primary flex items-center gap-1 transition-all shadow-xs active:scale-95"
+                  className="text-xs font-bold px-3.5 py-2 rounded-xl border border-sand-300 dark:border-sand-700 hover:bg-sand-100 dark:hover:bg-sand-800 text-primary dark:text-sand-100 flex items-center gap-1 transition-all shadow-xs active:scale-95"
                 >
                   <span>Register</span>
                 </Link>

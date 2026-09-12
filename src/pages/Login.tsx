@@ -194,22 +194,22 @@ export const Login: React.FC = () => {
           alt="CyberVigil" 
           className="w-16 h-16 object-contain mx-auto filter drop-shadow-md" 
         />
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-primary tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-primary dark:text-sand-50 tracking-tight">
           CyberVigil Authentication
         </h1>
-        <p className="text-xs sm:text-sm text-textMuted max-w-sm mx-auto">
+        <p className="text-xs sm:text-sm text-textMuted dark:text-sand-400 max-w-sm mx-auto">
           Sign into verified Student, Guardian, or Inspector clearance, or track anonymous cases.
         </p>
       </div>
 
       {/* 1-Click Credential Quick-Picker */}
-      <div className="bg-sand-100 rounded-2xl p-4 border border-sand-300 space-y-2.5">
+      <div className="bg-sand-100 dark:bg-sand-900/90 rounded-2xl p-4 border border-sand-300 dark:border-sand-800 space-y-2.5">
         <div className="flex items-center justify-between">
-          <span className="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
+          <span className="text-[11px] font-bold text-primary dark:text-sand-100 uppercase tracking-wider flex items-center gap-1">
             <Sparkles className="w-3.5 h-3.5 text-secondary" />
             Verified Role Quick-Fill (1-Click)
           </span>
-          <span className="text-[10px] text-textMuted font-semibold">Test accounts</span>
+          <span className="text-[10px] text-textMuted dark:text-sand-400 font-semibold">Test accounts</span>
         </div>
 
         <div className="grid grid-cols-2 gap-2 text-xs">
@@ -218,30 +218,30 @@ export const Login: React.FC = () => {
               key={p.roleLabel}
               type="button"
               onClick={() => handleApplyPreset(p)}
-              className="p-2.5 rounded-xl bg-surface border border-sand-300 hover:border-sand-400 hover:bg-sand-50/80 text-left transition-all duration-200 active:scale-95 shadow-xs hover:shadow-sm group"
+              className="p-2.5 rounded-xl bg-surface dark:bg-sand-800 border border-sand-300 dark:border-sand-700 hover:border-sand-400 dark:hover:border-sand-600 hover:bg-sand-50/80 dark:hover:bg-sand-700/80 text-left transition-all duration-200 active:scale-95 shadow-xs hover:shadow-sm group"
             >
               <div className="flex items-center justify-between">
-                <span className="font-bold text-primary block leading-tight group-hover:text-secondary-dark transition-colors truncate">
+                <span className="font-bold text-primary dark:text-sand-100 block leading-tight group-hover:text-secondary-dark dark:group-hover:text-secondary transition-colors truncate">
                   {p.roleLabel}
                 </span>
-                <span className="text-[9px] font-semibold text-textMuted bg-sand-100 px-1.5 py-0.5 rounded">
+                <span className="text-[9px] font-semibold text-textMuted dark:text-sand-400 bg-sand-100 dark:bg-sand-700 px-1.5 py-0.5 rounded">
                   {p.tag}
                 </span>
               </div>
-              <span className="text-[10px] text-textMuted block truncate font-mono mt-0.5">{p.email}</span>
+              <span className="text-[10px] text-textMuted dark:text-sand-400 block truncate font-mono mt-0.5">{p.email}</span>
             </button>
           ))}
         </div>
       </div>
 
       {/* Role Tabs */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 rounded-xl bg-sand-200 p-1 border border-sand-300 text-xs font-bold gap-1">
+      <div className="grid grid-cols-2 sm:grid-cols-4 rounded-xl bg-sand-200 dark:bg-sand-800/80 p-1 border border-sand-300 dark:border-sand-700 text-xs font-bold gap-1">
         <button
           onClick={() => { setActiveTab('student'); setErrorMessage(''); setEmail('student@cybervigil.org'); setPassword('student123'); }}
           className={`py-2 px-1 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1 ${
             activeTab === 'student'
               ? 'bg-blue-600 text-surface shadow-sm font-extrabold'
-              : 'text-textMuted hover:text-primary'
+              : 'text-textMuted dark:text-sand-400 hover:text-primary dark:hover:text-sand-100'
           }`}
         >
           <span>🎓</span>
@@ -252,7 +252,7 @@ export const Login: React.FC = () => {
           className={`py-2 px-1 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1 ${
             activeTab === 'guardian'
               ? 'bg-purple-600 text-surface shadow-sm font-extrabold'
-              : 'text-textMuted hover:text-primary'
+              : 'text-textMuted dark:text-sand-400 hover:text-primary dark:hover:text-sand-100'
           }`}
         >
           <span>🛡️</span>
@@ -262,8 +262,8 @@ export const Login: React.FC = () => {
           onClick={() => { setActiveTab('officer'); setErrorMessage(''); setEmail('officer@cybervigil.gov.in'); setPassword('officer123'); }}
           className={`py-2 px-1 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1 ${
             activeTab === 'officer'
-              ? 'bg-primary text-secondary shadow-sm font-extrabold'
-              : 'text-textMuted hover:text-primary'
+              ? 'bg-primary dark:bg-secondary text-secondary dark:text-primary shadow-sm font-extrabold'
+              : 'text-textMuted dark:text-sand-400 hover:text-primary dark:hover:text-sand-100'
           }`}
         >
           <span>⚖️</span>
@@ -273,8 +273,8 @@ export const Login: React.FC = () => {
           onClick={() => { setActiveTab('anonymous'); setErrorMessage(''); }}
           className={`py-2 px-1 rounded-lg transition-all active:scale-95 flex items-center justify-center gap-1 ${
             activeTab === 'anonymous'
-              ? 'bg-surface text-primary shadow-sm font-extrabold'
-              : 'text-textMuted hover:text-primary'
+              ? 'bg-surface dark:bg-sand-700 text-primary dark:text-sand-100 shadow-sm font-extrabold'
+              : 'text-textMuted dark:text-sand-400 hover:text-primary dark:hover:text-sand-100'
           }`}
         >
           <span>🔒</span>
@@ -291,70 +291,70 @@ export const Login: React.FC = () => {
       )}
 
       {/* Main Card Container */}
-      <div className="bg-surface rounded-2xl p-6 sm:p-8 border border-sand-300 shadow-warm-card space-y-5">
+      <div className="bg-surface dark:bg-sand-900 rounded-2xl p-6 sm:p-8 border border-sand-300 dark:border-sand-800 shadow-warm-card space-y-5">
         
         {/* Tab 1: Student / Youth Defender */}
         {activeTab === 'student' && (
           <form onSubmit={handleStudentLogin} className="space-y-4">
-            <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50 border border-blue-200 text-xs">
+            <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-xs">
               <div className="flex items-center gap-2">
-                <GraduationCap className="w-4 h-4 text-blue-700" />
-                <span className="font-bold text-blue-900">Student & Youth Defender Portal</span>
+                <GraduationCap className="w-4 h-4 text-blue-700 dark:text-blue-300" />
+                <span className="font-bold text-blue-900 dark:text-blue-200">Student & Youth Defender Portal</span>
               </div>
-              <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-0.5 rounded-full">
                 Shield Level 1
               </span>
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="student-email" className="block text-xs font-bold text-primary">
+              <label htmlFor="student-email" className="block text-xs font-bold text-primary dark:text-sand-200">
                 Student Email / Institutional Login
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-textMuted absolute left-3.5 top-3.5" />
+                <User className="w-4 h-4 text-textMuted dark:text-sand-400 absolute left-3.5 top-3.5" />
                 <input
                   id="student-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="student@cybervigil.org"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-sand-300 bg-sand-50 focus:bg-surface focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm text-primary font-medium"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-sand-300 dark:border-sand-700 bg-sand-50 dark:bg-sand-800 focus:bg-surface dark:focus:bg-sand-800 focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm text-primary dark:text-sand-100 font-medium"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="student-roll" className="block text-xs font-bold text-primary">
+              <label htmlFor="student-roll" className="block text-xs font-bold text-primary dark:text-sand-200">
                 Student Roll / Institutional ID Code (Verified)
               </label>
               <div className="relative">
-                <Hash className="w-4 h-4 text-textMuted absolute left-3.5 top-3.5" />
+                <Hash className="w-4 h-4 text-textMuted dark:text-sand-400 absolute left-3.5 top-3.5" />
                 <input
                   id="student-roll"
                   type="text"
                   value={studentRoll}
                   onChange={(e) => setStudentRoll(e.target.value)}
                   placeholder="DPS-2026-X88"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-sand-300 bg-sand-50 focus:bg-surface focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm font-mono font-bold text-primary"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-sand-300 dark:border-sand-700 bg-sand-50 dark:bg-sand-800 focus:bg-surface dark:focus:bg-sand-800 focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm font-mono font-bold text-primary dark:text-sand-100"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="student-pass" className="block text-xs font-bold text-primary">
+              <label htmlFor="student-pass" className="block text-xs font-bold text-primary dark:text-sand-200">
                 Security Password
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-textMuted absolute left-3.5 top-3.5" />
+                <Lock className="w-4 h-4 text-textMuted dark:text-sand-400 absolute left-3.5 top-3.5" />
                 <input
                   id="student-pass"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-sand-300 bg-sand-50 focus:bg-surface focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm text-primary font-mono"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-sand-300 dark:border-sand-700 bg-sand-50 dark:bg-sand-800 focus:bg-surface dark:focus:bg-sand-800 focus:ring-2 focus:ring-blue-400 text-xs sm:text-sm text-primary dark:text-sand-100 font-mono"
                   required
                 />
               </div>
@@ -369,7 +369,7 @@ export const Login: React.FC = () => {
             </button>
 
             <div className="text-center pt-1">
-              <Link to="/register" className="text-xs font-bold text-blue-700 hover:underline">
+              <Link to="/register" className="text-xs font-bold text-blue-700 dark:text-blue-400 hover:underline">
                 New student? Create verified Defender profile
               </Link>
             </div>

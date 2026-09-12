@@ -10,6 +10,7 @@ import { ArrowUp, ShieldCheck, Sparkles, EyeOff, PhoneCall, X } from 'lucide-rea
 
 // Pages
 import { Home } from './pages/Home';
+import { LandingPage } from './pages/LandingPage';
 import { ReportIncident } from './pages/ReportIncident';
 import { AIAssistant } from './pages/AIAssistant';
 import { OrgPortal } from './pages/OrgPortal';
@@ -116,13 +117,11 @@ const AppContent: React.FC = () => {
             } 
           />
 
-          {/* Protected Application Routes: Strictly require authentication to enter */}
+          {/* Root Route: Shows Landing Page if unauthenticated, Home Dashboard if logged in */}
           <Route 
             path="/" 
             element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
+              isAuthenticated ? <Home /> : <LandingPage />
             } 
           />
           <Route 

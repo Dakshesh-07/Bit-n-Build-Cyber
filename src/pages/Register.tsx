@@ -185,23 +185,23 @@ export const Register: React.FC = () => {
     <div className="max-w-2xl mx-auto py-10 pb-16 space-y-6">
       {/* Header */}
       <div className="text-center space-y-2">
-        <div className="w-14 h-14 rounded-2xl bg-primary text-secondary flex items-center justify-center mx-auto shadow-warm-sm border border-sand-300">
-          <Shield className="w-7 h-7 fill-secondary" />
+        <div className="w-14 h-14 rounded-2xl bg-primary dark:bg-secondary text-secondary dark:text-primary flex items-center justify-center mx-auto shadow-warm-sm border border-sand-300 dark:border-sand-700">
+          <Shield className="w-7 h-7 fill-secondary dark:fill-primary" />
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-primary tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-primary dark:text-sand-50 tracking-tight">
           Create Verified CyberVigil Profile
         </h1>
-        <p className="text-xs sm:text-sm text-textMuted max-w-md mx-auto">
+        <p className="text-xs sm:text-sm text-textMuted dark:text-sand-400 max-w-md mx-auto">
           Select your platform role and complete identity verification to unlock authenticated defense clearance.
         </p>
       </div>
 
-      <div className="bg-surface rounded-2xl p-6 sm:p-8 border border-sand-300 shadow-warm-card space-y-6">
+      <div className="bg-surface dark:bg-sand-900 rounded-2xl p-6 sm:p-8 border border-sand-300 dark:border-sand-800 shadow-warm-card space-y-6">
         
         {/* Step 1: Role Selection Cards */}
         <div className="space-y-2">
-          <label className="block text-xs font-bold text-primary uppercase tracking-wider">
-            1. Select Your Role
+          <label className="block text-xs font-bold text-primary dark:text-sand-100 uppercase tracking-wider">
+            1. Select Your Role / Category
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Student Card */}
@@ -210,25 +210,25 @@ export const Register: React.FC = () => {
               onClick={() => handleRoleChange('registered_youth')}
               className={`p-3.5 rounded-xl border text-left transition-all active:scale-95 flex flex-col justify-between ${
                 accountType === 'registered_youth'
-                  ? 'bg-blue-50/90 border-blue-500 ring-2 ring-blue-500/20 shadow-warm-sm'
-                  : 'bg-sand-50 border-sand-300 hover:border-sand-400 text-textDark'
+                  ? 'bg-blue-50/90 dark:bg-blue-950/60 border-blue-500 dark:border-blue-400 ring-2 ring-blue-500/20 shadow-warm-sm'
+                  : 'bg-sand-50 dark:bg-sand-800/60 border-sand-300 dark:border-sand-700 hover:border-sand-400 dark:hover:border-sand-600 text-textDark dark:text-sand-200'
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xl">🎓</span>
-                {accountType === 'registered_youth' && <BadgeCheck className="w-4 h-4 text-blue-600" />}
+                {accountType === 'registered_youth' && <BadgeCheck className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
               </div>
               <div>
                 <div className="flex items-center gap-1">
-                  <span className="text-xs font-bold text-primary block">Student Defender</span>
+                  <span className="text-xs font-extrabold text-primary dark:text-sand-100 block">Student Category</span>
                 </div>
-                <span className="text-[10px] text-textMuted block leading-tight mt-0.5">School / College youth defense & peer circles</span>
+                <span className="text-[10px] text-textMuted dark:text-sand-400 block leading-tight mt-0.5">School & College Youth Protection</span>
               </div>
-              <div className="mt-2 pt-2 border-t border-sand-200/80 flex items-center justify-between gap-1 flex-wrap">
-                <span className="text-[9px] font-bold text-blue-700 uppercase tracking-wider bg-blue-100/80 px-1.5 py-0.5 rounded">
+              <div className="mt-2 pt-2 border-t border-sand-200/80 dark:border-sand-700/80 flex items-center justify-between gap-1 flex-wrap">
+                <span className="text-[9px] font-bold text-blue-700 dark:text-blue-300 uppercase tracking-wider bg-blue-100/80 dark:bg-blue-900/80 px-1.5 py-0.5 rounded">
                   Shield Level 1
                 </span>
-                <span className="text-[9px] font-bold text-emerald-800 bg-emerald-100/90 px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                <span className="text-[9px] font-bold text-emerald-800 dark:text-emerald-300 bg-emerald-100/90 dark:bg-emerald-950/80 px-1.5 py-0.5 rounded flex items-center gap-0.5">
                   🔒 100% Anonymous
                 </span>
               </div>
@@ -240,20 +240,20 @@ export const Register: React.FC = () => {
               onClick={() => handleRoleChange('parent_guardian')}
               className={`p-3.5 rounded-xl border text-left transition-all active:scale-95 flex flex-col justify-between ${
                 accountType === 'parent_guardian'
-                  ? 'bg-purple-50/90 border-purple-500 ring-2 ring-purple-500/20 shadow-warm-sm'
-                  : 'bg-sand-50 border-sand-300 hover:border-sand-400 text-textDark'
+                  ? 'bg-purple-50/90 dark:bg-purple-950/60 border-purple-500 dark:border-purple-400 ring-2 ring-purple-500/20 shadow-warm-sm'
+                  : 'bg-sand-50 dark:bg-sand-800/60 border-sand-300 dark:border-sand-700 hover:border-sand-400 dark:hover:border-sand-600 text-textDark dark:text-sand-200'
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xl">🛡️</span>
-                {accountType === 'parent_guardian' && <BadgeCheck className="w-4 h-4 text-purple-600" />}
+                {accountType === 'parent_guardian' && <BadgeCheck className="w-4 h-4 text-purple-600 dark:text-purple-400" />}
               </div>
               <div>
-                <span className="text-xs font-bold text-primary block">Parent / Guardian</span>
-                <span className="text-[10px] text-textMuted block leading-tight mt-0.5">Family safety oversight & statutory advisory</span>
+                <span className="text-xs font-bold text-primary dark:text-sand-100 block">Parent / Guardian</span>
+                <span className="text-[10px] text-textMuted dark:text-sand-400 block leading-tight mt-0.5">Family safety oversight & advisory</span>
               </div>
-              <div className="mt-2 pt-2 border-t border-sand-200/80">
-                <span className="text-[9px] font-bold text-purple-700 uppercase tracking-wider bg-purple-100/80 px-1.5 py-0.5 rounded">
+              <div className="mt-2 pt-2 border-t border-sand-200/80 dark:border-sand-700/80">
+                <span className="text-[9px] font-bold text-purple-700 dark:text-purple-300 uppercase tracking-wider bg-purple-100/80 dark:bg-purple-900/80 px-1.5 py-0.5 rounded">
                   Family Safe Mode
                 </span>
               </div>
@@ -265,20 +265,20 @@ export const Register: React.FC = () => {
               onClick={() => handleRoleChange('welfare_officer')}
               className={`p-3.5 rounded-xl border text-left transition-all active:scale-95 flex flex-col justify-between ${
                 accountType === 'welfare_officer'
-                  ? 'bg-amber-50/90 border-secondary ring-2 ring-secondary/30 shadow-warm-sm'
-                  : 'bg-sand-50 border-sand-300 hover:border-sand-400 text-textDark'
+                  ? 'bg-amber-50/90 dark:bg-amber-950/60 border-secondary dark:border-amber-400 ring-2 ring-secondary/30 shadow-warm-sm'
+                  : 'bg-sand-50 dark:bg-sand-800/60 border-sand-300 dark:border-sand-700 hover:border-sand-400 dark:hover:border-sand-600 text-textDark dark:text-sand-200'
               }`}
             >
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xl">⚖️</span>
-                {accountType === 'welfare_officer' && <BadgeCheck className="w-4 h-4 text-amber-700" />}
+                {accountType === 'welfare_officer' && <BadgeCheck className="w-4 h-4 text-amber-700 dark:text-amber-400" />}
               </div>
               <div>
-                <span className="text-xs font-bold text-primary block">Police Inspector</span>
-                <span className="text-[10px] text-textMuted block leading-tight mt-0.5">POCSO nodal officer & cyber forensic intake</span>
+                <span className="text-xs font-bold text-primary dark:text-sand-100 block">Police Inspector</span>
+                <span className="text-[10px] text-textMuted dark:text-sand-400 block leading-tight mt-0.5">POCSO nodal officer & cyber intake</span>
               </div>
-              <div className="mt-2 pt-2 border-t border-sand-200/80">
-                <span className="text-[9px] font-bold text-amber-800 uppercase tracking-wider bg-amber-100 px-1.5 py-0.5 rounded">
+              <div className="mt-2 pt-2 border-t border-sand-200/80 dark:border-sand-700/80">
+                <span className="text-[9px] font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider bg-amber-100 dark:bg-amber-900/80 px-1.5 py-0.5 rounded">
                   Level 3 Clearance
                 </span>
               </div>
@@ -297,15 +297,15 @@ export const Register: React.FC = () => {
         <form onSubmit={handleRegister} className="space-y-6">
           
           {/* Step 2: Role-Specific Identity Verification Section */}
-          <div className="p-4 sm:p-5 rounded-2xl bg-sand-100 border border-sand-300 space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-sand-200">
+          <div className="p-4 sm:p-5 rounded-2xl bg-sand-100 dark:bg-sand-900/90 border border-sand-300 dark:border-sand-800 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-sand-200 dark:border-sand-800">
               <div className="flex items-center gap-2">
                 <BadgeCheck className="w-4 h-4 text-secondary" />
-                <span className="text-xs font-bold text-primary uppercase tracking-wider">
+                <span className="text-xs font-bold text-primary dark:text-sand-100 uppercase tracking-wider">
                   2. Identity Verification & Clearance Check
                 </span>
               </div>
-              <span className="text-[10px] font-semibold text-textMuted bg-surface px-2 py-0.5 rounded-full border border-sand-300">
+              <span className="text-[10px] font-semibold text-textMuted dark:text-sand-400 bg-surface dark:bg-sand-800 px-2 py-0.5 rounded-full border border-sand-300 dark:border-sand-700">
                 Statutory Clearance Gate
               </span>
             </div>
@@ -314,23 +314,23 @@ export const Register: React.FC = () => {
             {accountType === 'registered_youth' && (
               <div className="space-y-3.5 text-xs">
                 {/* 100% Anonymous Identity Guarantee Banner */}
-                <div className="p-3.5 rounded-xl bg-blue-50 border-2 border-blue-400 text-blue-950 text-xs space-y-1 shadow-xs">
-                  <div className="flex items-center gap-2 font-extrabold text-blue-900">
-                    <Shield className="w-4 h-4 text-blue-600 flex-shrink-0 fill-blue-600" />
-                    <span>🔒 100% Anonymous Identity Protection Guarantee</span>
+                <div className="p-3.5 rounded-xl bg-blue-50 dark:bg-blue-950/80 border-2 border-blue-400 dark:border-blue-700 text-blue-950 dark:text-blue-100 text-xs space-y-1 shadow-xs">
+                  <div className="flex items-center gap-2 font-extrabold text-blue-900 dark:text-blue-200">
+                    <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0 fill-blue-600 dark:fill-blue-400" />
+                    <span>🔒 100% Anonymous Student Identity Protection Guarantee</span>
                   </div>
-                  <p className="text-[11px] text-blue-900/90 leading-relaxed">
+                  <p className="text-[11px] text-blue-900/90 dark:text-blue-300 leading-relaxed">
                     Your real name, phone number, and personal identity are <strong>NEVER disclosed, published, or stored on public reports</strong>. Your student roll ID is used strictly for institutional clearance. You will navigate CyberVigil under a <strong>secret custom alias</strong> with full zero-trace protection.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="space-y-1 sm:col-span-1">
-                    <label className="block font-bold text-primary">Class / Academic Level</label>
+                    <label className="block font-bold text-primary dark:text-sand-200">Class / Academic Level</label>
                     <select
                       value={educationLevel}
                       onChange={(e) => setEducationLevel(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-sand-300 bg-surface text-xs text-primary font-bold focus:ring-2 focus:ring-secondary/40"
+                      className="w-full px-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs text-primary dark:text-sand-100 font-bold focus:ring-2 focus:ring-secondary/40"
                     >
                       <option value="Class 4">Class 4</option>
                       <option value="Class 5">Class 5</option>
@@ -347,30 +347,30 @@ export const Register: React.FC = () => {
                   </div>
 
                   <div className="space-y-1 sm:col-span-1">
-                    <label className="block font-bold text-primary">School / College Institution</label>
+                    <label className="block font-bold text-primary dark:text-sand-200">School / College Institution</label>
                     <div className="relative">
-                      <Building className="w-3.5 h-3.5 text-textMuted absolute left-3 top-3" />
+                      <Building className="w-3.5 h-3.5 text-textMuted dark:text-sand-400 absolute left-3 top-3" />
                       <input
                         type="text"
                         value={schoolName}
                         onChange={(e) => setSchoolName(e.target.value)}
                         placeholder="e.g. Kendriya Vidyalaya / Delhi Public School"
-                        className="w-full pl-9 pr-3 py-2 rounded-xl border border-sand-300 bg-surface text-xs text-primary font-medium focus:ring-2 focus:ring-secondary/40"
+                        className="w-full pl-9 pr-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs text-primary dark:text-sand-100 font-medium focus:ring-2 focus:ring-secondary/40"
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1 sm:col-span-1">
-                    <label className="block font-bold text-primary">Student Roll / ID</label>
+                    <label className="block font-bold text-primary dark:text-sand-200">Student Roll / ID</label>
                     <div className="relative">
-                      <Hash className="w-3.5 h-3.5 text-textMuted absolute left-3 top-3" />
+                      <Hash className="w-3.5 h-3.5 text-textMuted dark:text-sand-400 absolute left-3 top-3" />
                       <input
                         type="text"
                         value={studentRollId}
                         onChange={(e) => setStudentRollId(e.target.value)}
                         placeholder="e.g. DPS-2026-X88"
-                        className="w-full pl-9 pr-3 py-2 rounded-xl border border-sand-300 bg-surface text-xs font-mono text-primary font-bold focus:ring-2 focus:ring-secondary/40"
+                        className="w-full pl-9 pr-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs font-mono text-primary dark:text-sand-100 font-bold focus:ring-2 focus:ring-secondary/40"
                         required
                       />
                     </div>
@@ -378,32 +378,32 @@ export const Register: React.FC = () => {
                 </div>
 
                 {/* Camouflage Customization Guidance Note */}
-                <div className="p-3.5 rounded-xl bg-amber-50/90 border border-amber-300 text-amber-950 text-xs space-y-1.5 shadow-xs">
-                  <div className="flex items-center gap-2 font-bold text-amber-900">
-                    <EyeOff className="w-4 h-4 text-amber-700 flex-shrink-0" />
+                <div className="p-3.5 rounded-xl bg-amber-50/90 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-700 text-amber-950 dark:text-amber-100 text-xs space-y-1.5 shadow-xs">
+                  <div className="flex items-center gap-2 font-bold text-amber-900 dark:text-amber-200">
+                    <EyeOff className="w-4 h-4 text-amber-700 dark:text-amber-400 flex-shrink-0" />
                     <span>💡 Panic Camouflage Mode Customization Note</span>
                   </div>
-                  <p className="text-[11px] text-amber-900/90 leading-relaxed">
-                    Selecting your <strong>Class / Academic Level ({educationLevel})</strong> automatically customizes your <strong>Panic Camouflage Disguise Overlay</strong> (e.g. Class 4 Math, Class 10 Physics, College Lecture Notes). If you are ever in panic or need to hide this site instantly from anyone nearby, press <kbd className="px-1.5 py-0.5 rounded bg-amber-200/90 font-mono text-[10px] font-bold text-amber-950">ESC</kbd> (or tap the Quick Exit Panic Switch) to access your customized harmless study disguise in a single click!
+                  <p className="text-[11px] text-amber-900/90 dark:text-amber-300 leading-relaxed">
+                    Selecting your <strong>Class / Academic Level ({educationLevel})</strong> automatically customizes your <strong>Panic Camouflage Disguise Overlay</strong> (e.g. Class 4 Math, Class 10 Physics, College Lecture Notes). If you are ever in panic or need to hide this site instantly from anyone nearby, press <kbd className="px-1.5 py-0.5 rounded bg-amber-200/90 dark:bg-amber-900 font-mono text-[10px] font-bold text-amber-950 dark:text-amber-100">ESC</kbd> (or tap the Quick Exit Panic Switch) to access your customized harmless study disguise in a single click!
                   </p>
                 </div>
 
-                <label className="flex items-start gap-2.5 p-3 rounded-xl bg-surface border border-sand-200 cursor-pointer hover:bg-sand-50 transition-colors">
+                <label className="flex items-start gap-2.5 p-3 rounded-xl bg-surface dark:bg-sand-800 border border-sand-200 dark:border-sand-700 cursor-pointer hover:bg-sand-50 dark:hover:bg-sand-700/60 transition-colors">
                   <input
                     type="checkbox"
                     checked={studentPledge}
                     onChange={(e) => setStudentPledge(e.target.checked)}
                     className="mt-0.5 rounded text-primary focus:ring-secondary"
                   />
-                  <span className="text-[11px] text-textMuted leading-relaxed">
-                    <strong className="text-primary block font-bold">Youth Defender Digital Safety Pledge</strong>
+                  <span className="text-[11px] text-textMuted dark:text-sand-300 leading-relaxed">
+                    <strong className="text-primary dark:text-sand-100 block font-bold">Youth Defender Digital Safety Pledge</strong>
                     I verify my institutional enrollment and pledge to defend peers from cyberbullying, respect victim confidentiality, and uphold ethical digital conduct.
                   </span>
                 </label>
 
                 {/* Clearance Tag */}
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-[11px]">
-                  <CheckCircle className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-blue-50 dark:bg-blue-950/80 border border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-200 text-[11px]">
+                  <CheckCircle className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                   <span>
                     Verification unlocks: <strong>Shield Level 1 Clearance</strong> (Anonymous Story Sharing, Doubt Upvoting, Verified Defender Badge).
                   </span>
@@ -416,26 +416,26 @@ export const Register: React.FC = () => {
               <div className="space-y-3.5 text-xs">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="block font-bold text-primary">Ward Case Reference PIN or Alias</label>
+                    <label className="block font-bold text-primary dark:text-sand-200">Ward Case Reference PIN or Alias</label>
                     <div className="relative">
-                      <KeyRound className="w-3.5 h-3.5 text-textMuted absolute left-3 top-3" />
+                      <KeyRound className="w-3.5 h-3.5 text-textMuted dark:text-sand-400 absolute left-3 top-3" />
                       <input
                         type="text"
                         value={wardPin}
                         onChange={(e) => setWardPin(e.target.value)}
                         placeholder="e.g. CV-1042 or Student-Arjun"
-                        className="w-full pl-9 pr-3 py-2 rounded-xl border border-sand-300 bg-surface text-xs font-mono text-primary font-bold focus:ring-2 focus:ring-secondary/40"
+                        className="w-full pl-9 pr-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs font-mono text-primary dark:text-sand-100 font-bold focus:ring-2 focus:ring-secondary/40"
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block font-bold text-primary">Relationship to Child</label>
+                    <label className="block font-bold text-primary dark:text-sand-200">Relationship to Child</label>
                     <select
                       value={guardianRelation}
                       onChange={(e) => setGuardianRelation(e.target.value as any)}
-                      className="w-full px-3 py-2 rounded-xl border border-sand-300 bg-surface text-xs text-primary font-medium focus:ring-2 focus:ring-secondary/40"
+                      className="w-full px-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs text-primary dark:text-sand-100 font-medium focus:ring-2 focus:ring-secondary/40"
                     >
                       <option value="Legal Guardian">Legal Guardian</option>
                       <option value="Mother">Mother</option>
@@ -445,22 +445,22 @@ export const Register: React.FC = () => {
                   </div>
                 </div>
 
-                <label className="flex items-start gap-2.5 p-3 rounded-xl bg-surface border border-sand-200 cursor-pointer hover:bg-sand-50 transition-colors">
+                <label className="flex items-start gap-2.5 p-3 rounded-xl bg-surface dark:bg-sand-800 border border-sand-200 dark:border-sand-700 cursor-pointer hover:bg-sand-50 dark:hover:bg-sand-700/60 transition-colors">
                   <input
                     type="checkbox"
                     checked={guardianDeclaration}
                     onChange={(e) => setGuardianDeclaration(e.target.checked)}
                     className="mt-0.5 rounded text-primary focus:ring-secondary"
                   />
-                  <span className="text-[11px] text-textMuted leading-relaxed">
-                    <strong className="text-primary block font-bold">Statutory Guardian Declaration</strong>
+                  <span className="text-[11px] text-textMuted dark:text-sand-300 leading-relaxed">
+                    <strong className="text-primary dark:text-sand-100 block font-bold">Statutory Guardian Declaration</strong>
                     I certify under statutory parental responsibility that I am the legal guardian for the specified ward, authorized to review child protection advisories.
                   </span>
                 </label>
 
                 {/* Clearance Tag */}
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-[11px]">
-                  <CheckCircle className="w-4 h-4 text-purple-600 flex-shrink-0" />
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/80 border border-purple-200 dark:border-purple-800 text-purple-900 dark:text-purple-200 text-[11px]">
+                  <CheckCircle className="w-4 h-4 text-purple-600 dark:text-purple-400 flex-shrink-0" />
                   <span>
                     Verification unlocks: <strong>Family Safe Mode Clearance</strong> (Direct Counselor Dispatch, Family Incident Alerts).
                   </span>
@@ -473,25 +473,25 @@ export const Register: React.FC = () => {
               <div className="space-y-3.5 text-xs">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="block font-bold text-primary">Departmental Gov Email</label>
+                    <label className="block font-bold text-primary dark:text-sand-200">Departmental Gov Email</label>
                     <input
                       type="email"
                       value={govEmail}
                       onChange={(e) => setGovEmail(e.target.value)}
                       placeholder="officer@police.gov.in"
-                      className="w-full px-3 py-2 rounded-xl border border-sand-300 bg-surface text-xs text-primary font-mono focus:ring-2 focus:ring-secondary/40"
+                      className="w-full px-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs text-primary dark:text-sand-100 font-mono focus:ring-2 focus:ring-secondary/40"
                       required
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block font-bold text-primary">Police Badge / Nodal Service ID</label>
+                    <label className="block font-bold text-primary dark:text-sand-200">Police Badge / Nodal Service ID</label>
                     <input
                       type="text"
                       value={officerBadge}
                       onChange={(e) => setOfficerBadge(e.target.value)}
                       placeholder="CPU-4 or POL-8812"
-                      className="w-full px-3 py-2 rounded-xl border border-sand-300 bg-surface text-xs text-primary font-mono font-bold focus:ring-2 focus:ring-secondary/40"
+                      className="w-full px-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs text-primary dark:text-sand-100 font-mono font-bold focus:ring-2 focus:ring-secondary/40"
                       required
                     />
                   </div>
@@ -499,46 +499,46 @@ export const Register: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="block font-bold text-primary">Police Station / Nodal Unit Jurisdiction</label>
+                    <label className="block font-bold text-primary dark:text-sand-200">Police Station / Nodal Unit Jurisdiction</label>
                     <input
                       type="text"
                       value={policeJurisdiction}
                       onChange={(e) => setPoliceJurisdiction(e.target.value)}
                       placeholder="POCSO Nodal Unit DL-04, Cyber Crime Cell"
-                      className="w-full px-3 py-2 rounded-xl border border-sand-300 bg-surface text-xs text-primary font-medium focus:ring-2 focus:ring-secondary/40"
+                      className="w-full px-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs text-primary dark:text-sand-100 font-medium focus:ring-2 focus:ring-secondary/40"
                       required
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block font-bold text-primary">2FA Verification Passkey / Token</label>
+                    <label className="block font-bold text-primary dark:text-sand-200">2FA Verification Passkey / Token</label>
                     <input
                       type="text"
                       value={securityToken}
                       onChange={(e) => setSecurityToken(e.target.value)}
                       placeholder="POCSO-7749-SEC"
-                      className="w-full px-3 py-2 rounded-xl border border-sand-300 bg-surface text-xs text-primary font-mono font-bold focus:ring-2 focus:ring-secondary/40"
+                      className="w-full px-3 py-2 rounded-xl border border-sand-300 dark:border-sand-700 bg-surface dark:bg-sand-800 text-xs text-primary dark:text-sand-100 font-mono font-bold focus:ring-2 focus:ring-secondary/40"
                       required
                     />
                   </div>
                 </div>
 
-                <label className="flex items-start gap-2.5 p-3 rounded-xl bg-surface border border-sand-200 cursor-pointer hover:bg-sand-50 transition-colors">
+                <label className="flex items-start gap-2.5 p-3 rounded-xl bg-surface dark:bg-sand-800 border border-sand-200 dark:border-sand-700 cursor-pointer hover:bg-sand-50 dark:hover:bg-sand-700/60 transition-colors">
                   <input
                     type="checkbox"
                     checked={statutoryOath}
                     onChange={(e) => setStatutoryOath(e.target.checked)}
                     className="mt-0.5 rounded text-primary focus:ring-secondary"
                   />
-                  <span className="text-[11px] text-textMuted leading-relaxed">
-                    <strong className="text-primary block font-bold">POCSO / IT Act Statutory Officer Certification</strong>
+                  <span className="text-[11px] text-textMuted dark:text-sand-300 leading-relaxed">
+                    <strong className="text-primary dark:text-sand-100 block font-bold">POCSO / IT Act Statutory Officer Certification</strong>
                     I certify sworn authority under the POCSO Act 2012 and IT Act Section 67B to access sealed case evidence and issue emergency takedown notices.
                   </span>
                 </label>
 
                 {/* Clearance Tag */}
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50 border border-secondary text-amber-950 text-[11px]">
-                  <CheckCircle className="w-4 h-4 text-secondary-dark flex-shrink-0" />
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-700 text-amber-950 dark:text-amber-200 text-[11px]">
+                  <CheckCircle className="w-4 h-4 text-amber-700 dark:text-amber-400 flex-shrink-0" />
                   <span>
                     Verification unlocks: <strong>Level 3 Clearance (POCSO Statutory)</strong> with full access to the Officer Case Portal, Forensic Exports, and Platform Takedown Dispatches.
                   </span>
@@ -549,13 +549,13 @@ export const Register: React.FC = () => {
 
           {/* Step 3: Account Credentials & Emblem */}
           <div className="space-y-4">
-            <span className="block text-xs font-bold text-primary uppercase tracking-wider">
+            <span className="block text-xs font-bold text-primary dark:text-sand-100 uppercase tracking-wider">
               3. Profile Identity & Access Key
             </span>
 
             {/* Avatar Selector */}
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-primary">Choose Profile Emblem:</label>
+              <label className="block text-xs font-bold text-primary dark:text-sand-200">Choose Profile Emblem:</label>
               <div className="flex flex-wrap gap-2.5">
                 {AVATARS.map((av) => (
                   <button
@@ -564,8 +564,8 @@ export const Register: React.FC = () => {
                     onClick={() => setSelectedAvatar(av)}
                     className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center border transition-all active:scale-95 ${
                       selectedAvatar === av
-                        ? 'bg-sand-200 border-secondary ring-2 ring-secondary scale-105 shadow-warm-sm'
-                        : 'bg-sand-100 border-sand-200 hover:bg-sand-200 shadow-xs'
+                        ? 'bg-sand-200 dark:bg-sand-700 border-secondary ring-2 ring-secondary scale-105 shadow-warm-sm'
+                        : 'bg-sand-100 dark:bg-sand-800 border-sand-200 dark:border-sand-700 hover:bg-sand-200 dark:hover:bg-sand-700 shadow-xs'
                     }`}
                   >
                     {av}
@@ -577,10 +577,10 @@ export const Register: React.FC = () => {
             {/* Display Alias */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label htmlFor="alias" className="block text-xs font-bold text-primary">
-                  {accountType === 'welfare_officer' ? 'Official Inspector Name / Designation' : 'Choose Your Secret Alias'}
+                <label htmlFor="alias" className="block text-xs font-bold text-primary dark:text-sand-200">
+                  {accountType === 'welfare_officer' ? 'Official Inspector Name / Designation' : 'Choose Your Secret Alias (100% Anonymous)'}
                 </label>
-                <span className="text-[11px] text-textMuted">
+                <span className="text-[11px] text-textMuted dark:text-sand-400">
                   {accountType === 'welfare_officer' ? 'Official Name' : 'No real names required'}
                 </span>
               </div>
@@ -598,25 +598,25 @@ export const Register: React.FC = () => {
                         ? 'Sunita M., Guardian_Safe...' 
                         : 'Inspector Sharma, Cyber Cell'
                   }
-                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-sand-300 bg-sand-50 focus:bg-surface focus:ring-2 focus:ring-secondary/40 text-sm font-bold text-primary"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-sand-300 dark:border-sand-700 bg-sand-50 dark:bg-sand-800 focus:bg-surface dark:focus:bg-sand-800 focus:ring-2 focus:ring-secondary/40 text-sm font-bold text-primary dark:text-sand-100"
                 />
               </div>
             </div>
 
             {/* Password */}
             <div className="space-y-1.5">
-              <label htmlFor="reg-pass" className="block text-xs font-bold text-primary">
+              <label htmlFor="reg-pass" className="block text-xs font-bold text-primary dark:text-sand-200">
                 Private Security Password
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-textMuted absolute left-3.5 top-3.5" />
+                <Lock className="w-4 h-4 text-textMuted dark:text-sand-400 absolute left-3.5 top-3.5" />
                 <input
                   id="reg-pass"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-sand-300 bg-sand-50 focus:bg-surface focus:ring-2 focus:ring-secondary/40 text-sm text-primary font-mono"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-sand-300 dark:border-sand-700 bg-sand-50 dark:bg-sand-800 focus:bg-surface dark:focus:bg-sand-800 focus:ring-2 focus:ring-secondary/40 text-sm text-primary dark:text-sand-100 font-mono"
                   required
                 />
               </div>
@@ -625,15 +625,15 @@ export const Register: React.FC = () => {
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-xl bg-primary hover:bg-primary-hover text-surface font-bold text-sm shadow-warm-sm hover:shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 group/btn"
+            className="w-full py-3.5 rounded-xl bg-primary dark:bg-secondary hover:bg-primary-hover dark:hover:bg-secondary-dark text-surface dark:text-primary font-bold text-sm shadow-warm-sm hover:shadow-md transition-all flex items-center justify-center gap-2 active:scale-95 group/btn"
           >
             <span>Verify Identity & Activate Clearance</span>
-            <ArrowRight className="w-4 h-4 text-secondary group-hover/btn:translate-x-0.5 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-secondary dark:text-primary group-hover/btn:translate-x-0.5 transition-transform" />
           </button>
         </form>
 
         <div className="text-center pt-2">
-          <Link to="/login" className="text-xs font-bold text-secondary-dark hover:underline">
+          <Link to="/login" className="text-xs font-bold text-secondary-dark dark:text-secondary hover:underline">
             Already verified? Sign In to your dashboard here
           </Link>
         </div>
