@@ -29,6 +29,10 @@ export const OrgPortal: React.FC = () => {
   const [filterSeverity, setFilterSeverity] = useState<'ALL' | 'HIGH'>('ALL');
   const [actionSuccessMessage, setActionSuccessMessage] = useState<string | null>(null);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 4;
+
   useEffect(() => {
     const list = localStore.getIncidents();
     setIncidents(list);
@@ -36,6 +40,10 @@ export const OrgPortal: React.FC = () => {
       setSelectedCase(list[0]);
     }
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterSeverity]);
 
   const handleSelectCase = (item: IncidentReport) => {
     setSelectedCase(item);
@@ -57,6 +65,9 @@ export const OrgPortal: React.FC = () => {
     if (filterSeverity === 'HIGH') return item.severityLevel === 'High' || item.severityLevel === 'Critical';
     return true;
   });
+
+  const totalPages = Math.ceil(filteredIncidents.length / itemsPerPage) || 1;
+  const paginatedIncidents = filteredIncidents.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div className="space-y-8 pb-16">
@@ -202,7 +213,7 @@ export const OrgPortal: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-sand-200 dark:divide-slate-800">
-                {filteredIncidents.map((inc) => {
+                {paginatedIncidents.map((inc) => {
                   const isSelected = selectedCase?.id === inc.id;
                   return (
                     <tr
@@ -248,6 +259,47 @@ export const OrgPortal: React.FC = () => {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Pagination Controls Bar */}
+          <div className="p-4 bg-sand-50 dark:bg-slate-900 border-t border-sand-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div className="text-textMuted dark:text-slate-400">
+              Showing <span className="font-bold text-primary dark:text-slate-100">{filteredIncidents.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</span> to <span className="font-bold text-primary dark:text-slate-100">{Math.min(currentPage * itemsPerPage, filteredIncidents.length)}</span> of <span className="font-bold text-primary dark:text-slate-100">{filteredIncidents.length}</span> active cases
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                className="px-3 py-1.5 rounded-lg border border-sand-300 dark:border-slate-700 bg-surface dark:bg-slate-800 text-primary dark:text-slate-200 font-bold disabled:opacity-40 hover:bg-sand-100 dark:hover:bg-slate-700 transition-colors"
+              >
+                Previous
+              </button>
+              
+              <div className="flex items-center gap-1 px-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-7 h-7 rounded-lg text-xs font-bold transition-all ${
+                      currentPage === pageNum
+                        ? 'bg-primary dark:bg-orange-600 text-white shadow-xs'
+                        : 'text-textMuted dark:text-slate-400 hover:bg-sand-200 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                className="px-3 py-1.5 rounded-lg border border-sand-300 dark:border-slate-700 bg-surface dark:bg-slate-800 text-primary dark:text-slate-200 font-bold disabled:opacity-40 hover:bg-sand-100 dark:hover:bg-slate-700 transition-colors"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </section>
 

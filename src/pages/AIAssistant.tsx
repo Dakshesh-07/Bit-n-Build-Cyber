@@ -309,29 +309,29 @@ export const AIAssistant: React.FC = () => {
       </section>
 
       {/* 3. Chat Thread Container */}
-      <section className="bg-sand-100/60 dark:bg-slate-900/90 rounded-2xl p-4 sm:p-6 border border-sand-300 dark:border-slate-800 shadow-warm-sm dark:shadow-2xl space-y-6 min-h-[420px] flex flex-col justify-between">
+      <section className="bg-[#0b1329] dark:bg-[#0b132b] rounded-2xl p-4 sm:p-6 border border-[#1c2d5c] shadow-2xl space-y-6 min-h-[420px] flex flex-col justify-between">
         <div className="space-y-6">
           {/* Header Bar with Ephemeral Session & AI Case Report Generator */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 border-b border-sand-200 dark:border-slate-800 pb-3">
-            <span className="px-3 py-1 rounded-full bg-sand-200 dark:bg-slate-800 text-[11px] font-semibold text-textMuted dark:text-slate-300 border border-sand-300 dark:border-slate-700">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-b border-[#1c2d5c] pb-4">
+            <span className="px-3.5 py-1.5 rounded-full bg-[#0e162a] text-[11px] font-medium text-slate-300 border border-[#1e294b] shadow-xs">
               Ephemeral Session Started • Zero Permanent Logs
             </span>
 
             <button
               onClick={handleGenerateAICaseReport}
-              className="px-3.5 py-1.5 rounded-xl bg-primary hover:bg-primary-hover dark:bg-orange-600 dark:hover:bg-orange-500 text-surface dark:text-white text-xs font-bold flex items-center gap-1.5 shadow-warm-sm dark:shadow-orange-600/20 transition-all active:scale-95"
+              className="px-4 py-2 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-orange-950/40 transition-all active:scale-95 cursor-pointer"
               title="Synthesize conversation into official incident report draft"
             >
-              <FileText className="w-3.5 h-3.5 text-secondary dark:text-white" />
+              <FileText className="w-4 h-4 text-white" />
               <span>Generate AI Case Report Draft</span>
             </button>
           </div>
 
           {messages.length === 0 ? (
             <div className="text-center py-16 space-y-3">
-              <Bot className="w-12 h-12 text-sand-400 dark:text-slate-600 mx-auto" />
-              <p className="text-sm font-semibold text-primary dark:text-slate-200">Your conversation is completely clear.</p>
-              <p className="text-xs text-textMuted dark:text-slate-400 max-w-md mx-auto">
+              <Bot className="w-12 h-12 text-slate-600 mx-auto" />
+              <p className="text-sm font-semibold text-slate-200">Your conversation is completely clear.</p>
+              <p className="text-xs text-slate-400 max-w-md mx-auto">
                 Type what happened or choose a prompt chip above to get calm, step-by-step protective instructions.
               </p>
             </div>
@@ -341,62 +341,62 @@ export const AIAssistant: React.FC = () => {
                 key={msg.id}
                 className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'} space-y-1.5`}
               >
-                <div className="flex items-center gap-2 text-[11px] text-textMuted dark:text-slate-400 px-1">
-                  <span className="font-bold text-primary dark:text-orange-400">
+                <div className="flex items-center gap-2 text-[11px] text-slate-400 px-1">
+                  <span className="font-bold text-orange-400">
                     {msg.sender === 'user' ? 'You' : 'Guardian AI'}
                   </span>
                   <span>• {msg.timestamp}</span>
                 </div>
 
                 {msg.sender === 'user' ? (
-                  <div className="bg-primary text-surface dark:bg-orange-600 dark:text-white p-4 rounded-2xl rounded-tr-none text-sm max-w-lg leading-relaxed shadow-warm-sm dark:shadow-orange-600/20">
+                  <div className="bg-[#ea580c] text-white p-4 rounded-2xl rounded-tr-none text-sm max-w-lg leading-relaxed shadow-md shadow-orange-950/30">
                     {msg.text}
                   </div>
                 ) : (
-                  <div className="bg-surface border border-sand-300 dark:bg-slate-900 dark:border-slate-800 dark:border-l-4 dark:border-l-orange-500 p-5 sm:p-6 rounded-2xl rounded-tl-none max-w-2xl space-y-4 shadow-warm-card dark:shadow-xl">
+                  <div className="bg-[#101935] border border-[#1c2d5c] p-5 sm:p-6 rounded-2xl rounded-tl-none max-w-2xl space-y-4 shadow-xl">
                     {/* Threat Classification Badge */}
                     {msg.detectedThreat && msg.detectedThreat !== 'Conversational' && (
                       <div className="flex items-center gap-2 flex-wrap pb-1">
                         <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border flex items-center gap-1 ${
                           msg.detectedThreat === 'Online Grooming'
-                            ? 'bg-purple-50 text-purple-800 border-purple-300 dark:bg-purple-950/80 dark:text-purple-300 dark:border-purple-500/40'
+                            ? 'bg-purple-950/80 text-purple-300 border-purple-500/40'
                             : msg.detectedThreat === 'Harmful Acts'
-                            ? 'bg-rose-50 text-rose-800 border-rose-300 dark:bg-rose-950/80 dark:text-rose-300 dark:border-rose-500/40'
+                            ? 'bg-rose-950/80 text-rose-300 border-rose-500/40'
                             : msg.detectedThreat === 'Phishing'
-                            ? 'bg-amber-50 text-amber-800 border-amber-300 dark:bg-amber-950/80 dark:text-amber-300 dark:border-amber-500/40'
-                            : 'bg-sky-50 text-sky-800 border-sky-300 dark:bg-sky-950/80 dark:text-sky-300 dark:border-sky-500/40'
+                            ? 'bg-amber-950/80 text-amber-300 border-amber-500/40'
+                            : 'bg-sky-950/80 text-sky-300 border-sky-500/40'
                         }`}>
                           <ShieldAlert className="w-3.5 h-3.5" />
                           <span>Threat: {msg.detectedThreat}</span>
                           {msg.threatSeverity && <span className="opacity-80 font-normal">({msg.threatSeverity})</span>}
                         </span>
-                        <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-semibold dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-500/40">
+                        <span className="text-[10px] text-emerald-300 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-500/40 font-semibold">
                           🛡️ Unblocked Guardrails Active
                         </span>
                       </div>
                     )}
 
                     {msg.empathyNote && (
-                      <div className="p-3 rounded-lg bg-sand-100 border border-sand-200 dark:bg-slate-800/80 dark:border-slate-700 text-xs text-primary dark:text-slate-200 font-medium flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-safeGreen dark:text-emerald-400 flex-shrink-0" />
+                      <div className="p-3 rounded-xl bg-[#142147] border border-[#1e2f5f] text-xs text-[#a5f3fc] font-semibold flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
                         <span>{msg.empathyNote}</span>
                       </div>
                     )}
 
-                    <p className="text-sm text-textDark dark:text-slate-100 leading-relaxed">{msg.text}</p>
+                    <p className="text-sm text-slate-100 leading-relaxed font-normal">{msg.text}</p>
 
                     {msg.steps && msg.steps.length > 0 && (
-                      <div className="space-y-2 pt-2 border-t border-sand-200 dark:border-slate-800">
-                        <span className="text-xs font-bold text-primary dark:text-orange-400 uppercase tracking-wider block">
-                          Immediate Protective Guardrails:
+                      <div className="space-y-2.5 pt-2 border-t border-[#1c2d5c]">
+                        <span className="text-xs font-extrabold text-white uppercase tracking-wider block">
+                          IMMEDIATE PROTECTIVE GUARDRAILS:
                         </span>
                         <div className="space-y-2">
                           {msg.steps.map((step, sIdx) => (
-                            <div key={sIdx} className="p-3 rounded-xl bg-sand-100 border border-sand-200 dark:bg-slate-800/60 dark:border-slate-700/80 flex items-start gap-3">
-                              <span className="w-6 h-6 rounded-full bg-secondary text-primary dark:bg-orange-600 dark:text-white font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <div key={sIdx} className="p-3.5 rounded-xl bg-[#132042] border border-[#1c2d5c] flex items-start gap-3">
+                              <span className="w-6 h-6 rounded-full bg-[#ea580c] text-white font-extrabold text-xs flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
                                 {sIdx + 1}
                               </span>
-                              <span className="text-xs text-textDark dark:text-slate-200 leading-relaxed">{step}</span>
+                              <span className="text-xs text-slate-200 leading-relaxed font-medium">{step}</span>
                             </div>
                           ))}
                         </div>
@@ -408,24 +408,24 @@ export const AIAssistant: React.FC = () => {
                       {msg.actionLink && (
                         <Link
                           to={msg.actionLink.url}
-                          className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover dark:bg-orange-600 dark:hover:bg-orange-500 text-surface dark:text-white text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-warm-sm hover:shadow-md active:scale-95 group/btn"
+                          className="px-4 py-2.5 rounded-xl bg-[#ea580c] hover:bg-[#c2410c] text-white text-xs font-bold transition-all inline-flex items-center gap-2 shadow-sm active:scale-95 group/btn"
                         >
                           <span>{msg.actionLink.text}</span>
-                          <ArrowRight className="w-3.5 h-3.5 text-secondary dark:text-white group-hover/btn:translate-x-0.5 transition-transform" />
+                          <ArrowRight className="w-3.5 h-3.5 text-white group-hover/btn:translate-x-0.5 transition-transform" />
                         </Link>
                       )}
                       <a
                         href="tel:1098"
-                        className="px-4 py-2 rounded-xl border border-sand-300 bg-surface hover:bg-sand-100 text-primary dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-xs hover:shadow-sm active:scale-95"
+                        className="px-4 py-2.5 rounded-xl bg-[#142147] hover:bg-[#192a59] border border-[#1e2f5f] text-white text-xs font-bold transition-all inline-flex items-center gap-2 shadow-xs active:scale-95"
                       >
-                        <PhoneCall className="w-3.5 h-3.5 text-errorRed dark:text-rose-400" />
+                        <PhoneCall className="w-3.5 h-3.5 text-rose-400" />
                         <span>Call Childline 1098</span>
                       </a>
                       <a
                         href="tel:1930"
-                        className="px-4 py-2 rounded-xl border border-sand-300 bg-surface hover:bg-sand-100 text-primary dark:bg-slate-800 dark:hover:bg-slate-700 dark:border-slate-700 dark:text-slate-200 text-xs font-bold transition-all inline-flex items-center gap-1.5 shadow-xs hover:shadow-sm active:scale-95"
+                        className="px-4 py-2.5 rounded-xl bg-[#142147] hover:bg-[#192a59] border border-[#1e2f5f] text-white text-xs font-bold transition-all inline-flex items-center gap-2 shadow-xs active:scale-95"
                       >
-                        <PhoneCall className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                        <PhoneCall className="w-3.5 h-3.5 text-sky-400" />
                         <span>Cyber Helpline 1930</span>
                       </a>
                     </div>
@@ -437,9 +437,9 @@ export const AIAssistant: React.FC = () => {
 
           {/* Live Thinking Indicator */}
           {isThinking && (
-            <div className="flex items-center gap-3 p-4 bg-surface border border-sand-300 dark:bg-slate-900 dark:border-slate-800 rounded-2xl max-w-sm animate-pulse">
-              <Loader2 className="w-5 h-5 text-secondary dark:text-orange-400 animate-spin" />
-              <span className="text-xs font-bold text-primary dark:text-slate-200">
+            <div className="flex items-center gap-3 p-4 bg-[#101935] border border-[#1c2d5c] rounded-2xl max-w-sm animate-pulse">
+              <Loader2 className="w-5 h-5 text-orange-400 animate-spin" />
+              <span className="text-xs font-bold text-slate-200">
                 Analyzing threat pattern & preparing child protection guardrails...
               </span>
             </div>
@@ -447,7 +447,7 @@ export const AIAssistant: React.FC = () => {
         </div>
 
         {/* 4. Safety Handoff Bar */}
-        <div className="p-4 rounded-xl bg-surface border border-sand-300 dark:bg-slate-900 dark:border-slate-800 shadow-warm-sm flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
+        <div className="p-4 rounded-xl bg-[#101935] border border-[#1c2d5c] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 mt-4">
           <div className="flex items-center gap-2.5">
             <ShieldAlert className="w-5 h-5 text-secondary dark:text-orange-400" />
             <span className="text-xs font-semibold text-textDark dark:text-slate-200">
