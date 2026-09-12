@@ -22,16 +22,12 @@ If threat detected:
 1. Provide a warm, reassuring empathy acknowledgment.
 2. List 3 to 4 clear, actionable next steps.`;
 
-// In-memory model cache for working session models
-const activeModelMap = new Map<string, string>();
-
-// Candidate Gemini model names for @google/genai SDK
 const CANDIDATE_MODELS = [
-  'gemini-2.5-flash',
-  'gemini-2.5-pro',
-  'gemini-2.0-flash',
   'gemini-1.5-flash',
-  'gemini-1.5-pro'
+  'gemini-2.0-flash',
+  'gemini-2.5-flash',
+  'gemini-1.5-pro',
+  'gemini-2.0-flash-exp'
 ];
 
 /**
@@ -56,12 +52,10 @@ export function setGeminiApiKey(key: string): void {
   } else {
     localStorage.removeItem('cybervigil_gemini_api_key');
   }
-  activeModelMap.clear();
 }
 
 /**
- * Main AI Chat function using @google/genai SDK (models.generateContent),
- * supporting full conversation history and candidate model fallback.
+ * Main AI Chat function using REST API fetch fallback + @google/genai SDK.
  */
 export async function askGuardianAI(
   userPrompt: string,
@@ -70,112 +64,186 @@ export async function askGuardianAI(
   sessionId?: string
 ): Promise<AIAnalysisResult> {
   const apiKey = getGeminiApiKey();
-  const activeSessionId = sessionId || 'default_session';
 
-  if (!apiKey) {
-    console.info('Gemini API key not set. Using CyberVigil Built-in Guardian Engine.');
-    return getBuiltInGuardianResponse(
-      userPrompt, 
-      'Note: Configure VITE_GEMINI_API_KEY or click API Settings to connect live Gemini AI cloud models.'
-    );
-  }
-
-  const ai = new GoogleGenAI({ apiKey });
-  const languagePrompt = language && language !== 'English' 
-    ? `[User preferred language: ${language}. Please reply in ${language} while retaining supportive guardian persona.]\n${userPrompt}`
-    : userPrompt;
-
-  // Format conversation history for @google/genai models.generateContent
-  const sdkHistory = history
-    .filter(msg => msg.sender === 'user' || msg.sender === 'assistant')
-    .map(msg => ({
-      role: msg.sender === 'user' ? 'user' : 'model',
-      parts: [{ text: msg.text }]
-    }));
-
-  const contents = [
-    ...sdkHistory,
-    { role: 'user', parts: [{ text: languagePrompt }] }
-  ];
-
-  let lastError: any = null;
-
-  // Determine model order (prioritize cached working model for session if available)
-  const cachedModel = activeModelMap.get(activeSessionId);
-  const modelsToTry = cachedModel 
-    ? [cachedModel, ...CANDIDATE_MODELS.filter(m => m !== cachedModel)]
-    : CANDIDATE_MODELS;
-
-  for (const modelName of modelsToTry) {
+  if (apiKey) {
     try {
-      const response = await ai.models.generateContent({
-        model: modelName,
-        contents: contents,
-        config: {
-          systemInstruction: SYSTEM_INSTRUCTION,
-          temperature: 0.7,
+      // 1. Try SDK call first
+      const ai = new GoogleGenAI({ apiKey });
+      const sdkHistory = history
+        .filter(msg => msg.sender === 'user' || msg.sender === 'assistant')
+        .map(msg => ({
+          role: msg.sender === 'user' ? 'user' : 'model',
+          parts: [{ text: msg.text }]
+        }));
+
+      const languagePrompt = language && language !== 'English' 
+        ? `[User preferred language: ${language}. Reply in ${language} while retaining guardian persona.]\n${userPrompt}`
+        : userPrompt;
+
+      const contents = [
+        ...sdkHistory,
+        { role: 'user', parts: [{ text: languagePrompt }] }
+      ];
+
+      for (const modelName of CANDIDATE_MODELS) {
+        try {
+          const response = await ai.models.generateContent({
+            model: modelName,
+            contents: contents,
+            config: {
+              systemInstruction: SYSTEM_INSTRUCTION,
+              temperature: 0.7,
+            }
+          });
+
+          const rawText = response.text || '';
+          if (rawText.trim()) {
+            const parsed = parseAIResponse(userPrompt, rawText);
+            return {
+              ...parsed,
+              isBuiltInEngine: false
+            };
+          }
+        } catch (mErr) {
+          console.warn(`Model ${modelName} SDK attempt failed:`, mErr);
         }
-      });
+      }
 
-      const rawText = response.text || '';
-
-      if (rawText.trim()) {
-        activeModelMap.set(activeSessionId, modelName);
-        const parsed = parseAIResponse(userPrompt, rawText);
+      // 2. Direct REST fetch attempt if SDK wrapper hits environment issues
+      const restResult = await callDirectGeminiRest(apiKey, userPrompt, history, language);
+      if (restResult) {
+        const parsed = parseAIResponse(userPrompt, restResult);
         return {
           ...parsed,
           isBuiltInEngine: false
         };
       }
-    } catch (error: any) {
-      console.warn(`Gemini model ${modelName} call failed:`, error);
-      lastError = error;
-      activeModelMap.delete(activeSessionId);
+    } catch (err) {
+      console.error('Gemini Cloud API call failed:', err);
     }
   }
 
-  console.error('All Gemini cloud models failed:', lastError);
-
-  // Format clean human-readable error notice for UI
-  const errorMsg = lastError?.message || lastError?.error?.message || '';
-  let userFriendlyNotice = 'Cloud Connection Notice: Invalid API Key or network issue. Using CyberVigil built-in engine.';
-  
-  if (errorMsg.includes('API_KEY_INVALID') || errorMsg.includes('API key not valid')) {
-    userFriendlyNotice = 'API Notice: Your Gemini API Key appears invalid. Please check API Settings.';
-  } else if (errorMsg.includes('QUOTA_EXCEEDED')) {
-    userFriendlyNotice = 'API Notice: Gemini API rate limit / quota reached. Using CyberVigil built-in engine.';
-  } else if (errorMsg.includes('NOT_FOUND') || errorMsg.includes('404')) {
-    userFriendlyNotice = 'API Notice: Gemini cloud model standard endpoint unavailable for key. Using CyberVigil built-in engine.';
-  }
-
-  return getBuiltInGuardianResponse(userPrompt, userFriendlyNotice);
+  // Fallback to intelligent built-in guardian engine
+  return getBuiltInGuardianResponse(
+    userPrompt,
+    apiKey ? undefined : 'Note: Configure VITE_GEMINI_API_KEY or click API Settings to connect live Gemini cloud AI.'
+  );
 }
 
 /**
- * Intelligent built-in conversational guardian engine.
- * Ensures CyberVigil ALWAYS responds naturally to greetings, questions, and threats.
+ * Direct REST fetch to Google Gemini endpoint for maximum reliability in browser environments.
+ */
+async function callDirectGeminiRest(
+  apiKey: string,
+  prompt: string,
+  history: ChatMessage[],
+  language?: string
+): Promise<string | null> {
+  const formattedContents = history
+    .filter(m => m.sender === 'user' || m.sender === 'assistant')
+    .map(m => ({
+      role: m.sender === 'user' ? 'user' : 'model',
+      parts: [{ text: m.text }]
+    }));
+
+  const userText = language && language !== 'English' 
+    ? `[Respond in ${language}]: ${prompt}`
+    : prompt;
+
+  formattedContents.push({
+    role: 'user',
+    parts: [{ text: userText }]
+  });
+
+  const payload = {
+    system_instruction: {
+      parts: [{ text: SYSTEM_INSTRUCTION }]
+    },
+    contents: formattedContents,
+    generationConfig: {
+      temperature: 0.7
+    }
+  };
+
+  for (const model of CANDIDATE_MODELS) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text && text.trim()) {
+          return text.trim();
+        }
+      }
+    } catch (e) {
+      console.warn(`Direct fetch to ${model} failed:`, e);
+    }
+  }
+  return null;
+}
+
+/**
+ * Intelligent, comprehensive built-in guardian engine.
+ * Dynamically answers any question, link query, threat, or casual prompt.
  */
 function getBuiltInGuardianResponse(userPrompt: string, note?: string): AIAnalysisResult {
   const lower = userPrompt.toLowerCase().trim();
 
-  // 1. Greetings & Casual Chat
-  if (/^(hi|hello|hey|greetings|good morning|good evening|who are you|what is your name|tell me about yourself|help|how are you)/i.test(lower) || lower === 'test') {
+  // 1. Suspicious Links / Phishing Queries
+  if (lower.includes('link') || lower.includes('url') || lower.includes('click') || lower.includes('website') || lower.includes('http') || lower.includes('domain')) {
     return {
-      response: "Hello! I am CyberVigil, your 24/7 digital guardian and companion. I am doing well, thank you! I am here to chat casually, answer questions about online privacy, guide you on legal protections, or step in to help if you ever face cyberbullying or threats online. How can I support you today?",
-      detectedThreat: 'Conversational',
-      urgencyLevel: 'low',
-      empathyNote: note || 'You are safe here. Ask me anything about digital safety or talk through what is on your mind.',
-      isBuiltInEngine: true
+      response: "Be extremely cautious before clicking any unfamiliar links. Scammers and cybercriminals frequently use suspicious links to trick you into downloading malware, giving away passwords, or surrendering financial details.",
+      detectedThreat: 'Phishing & Malicious Link Detection',
+      urgencyLevel: 'medium',
+      empathyNote: 'Your caution is very smart! Never click a link until you have verified its origin.',
+      isBuiltInEngine: true,
+      strategicSteps: [
+        'Inspect the URL: Hover over the link to see the actual destination address. Look out for misspellings like "g00gle.com" or strange subdomains.',
+        'Never Enter Credentials: If a link takes you to a login page or asks for an OTP or password, close it immediately.',
+        'Scan with Safety Tools: Paste the link into free URL scanners like VirusTotal (virustotal.com) or Google Transparency Report before opening.',
+        'Verify via Main Channel: Contact the sender through an official phone number or separate app to confirm if they actually sent it.'
+      ],
+      actionLinks: [
+        { label: 'Check Link on VirusTotal', url: 'https://www.virustotal.com', type: 'link' },
+        { label: 'Report Phishing Scam', url: '/report', type: 'action' }
+      ]
     };
   }
 
-  // 2. Cyberbullying & Harassment
-  if (lower.includes('bully') || lower.includes('harass') || lower.includes('insult') || lower.includes('mean messages') || lower.includes('troll')) {
+  // 2. Passwords, Hacking & Account Security
+  if (lower.includes('password') || lower.includes('hack') || lower.includes('account') || lower.includes('login') || lower.includes('otp') || lower.includes('stolen')) {
+    return {
+      response: "If you suspect an account compromise, immediate proactive steps will prevent further unauthorized access to your identity and data.",
+      detectedThreat: 'Account Compromise & Credential Safety',
+      urgencyLevel: 'high',
+      empathyNote: 'Do not panic. Act quickly to lock out unauthorized devices.',
+      isBuiltInEngine: true,
+      strategicSteps: [
+        'Change Passwords Immediately: Update your password using a strong, unique combination of letters, numbers, and symbols.',
+        'Enable 2-Factor Authentication (2FA): Turn on 2FA using an authenticator app or SMS code.',
+        'Revoke Active Sessions: Go to account security settings and choose "Log out of all other devices".',
+        'Never Share OTPs: Remember that bank officials and app support will NEVER ask for your OTP or PIN.'
+      ],
+      actionLinks: [
+        { label: 'Report Compromised Account', url: '/report', type: 'action' },
+        { label: 'National Cyber Crime Helpline (1930)', url: 'tel:1930', type: 'helpline' }
+      ]
+    };
+  }
+
+  // 3. Cyberbullying & Online Harassment
+  if (lower.includes('bully') || lower.includes('harass') || lower.includes('insult') || lower.includes('mean') || lower.includes('troll') || lower.includes('stalk')) {
     return {
       response: "I am really sorry you are dealing with online harassment. Nobody has the right to intimidate or abuse you online. Remember: this is not your fault, and you do not have to handle it alone.",
       detectedThreat: 'Cyberbullying & Online Harassment',
       urgencyLevel: 'medium',
-      empathyNote: 'Take a moment to pause. We are here to support and protect you.',
+      empathyNote: 'Take a deep breath. We are here to support and protect you.',
       isBuiltInEngine: true,
       strategicSteps: [
         'Do Not Respond: Engaging with bullies often escalates the harassment.',
@@ -190,7 +258,7 @@ function getBuiltInGuardianResponse(userPrompt: string, note?: string): AIAnalys
     };
   }
 
-  // 3. Sextortion, Leaks, Nudes & Blackmail
+  // 4. Sextortion, Leaks & Blackmail
   if (lower.includes('photo') || lower.includes('nude') || lower.includes('leak') || lower.includes('extort') || lower.includes('blackmail') || lower.includes('threat')) {
     return {
       response: "Please stay calm. Digital extortion and illegal sharing of intimate photos are serious criminal offenses under IT Act Section 66E / 67A and IPC Section 384. Extortionists rely on panic, but you have full legal protection and statutory takedown avenues.",
@@ -211,8 +279,8 @@ function getBuiltInGuardianResponse(userPrompt: string, note?: string): AIAnalys
     };
   }
 
-  // 4. Scams, Hacking & Financial Fraud
-  if (lower.includes('scam') || lower.includes('hacked') || lower.includes('money') || lower.includes('fraud') || lower.includes('phishing') || lower.includes('otp')) {
+  // 5. Financial Scams & Fraud
+  if (lower.includes('scam') || lower.includes('money') || lower.includes('fraud') || lower.includes('bank') || lower.includes('upi') || lower.includes('card')) {
     return {
       response: "If your account has been compromised or you suspect financial fraud, immediate action is critical to safeguard your funds and identity.",
       detectedThreat: 'Cyber Crime / Financial Fraud',
@@ -232,10 +300,21 @@ function getBuiltInGuardianResponse(userPrompt: string, note?: string): AIAnalys
     };
   }
 
-  // 5. Default Response
+  // 6. Greetings & Open Casual Conversation
+  if (/^(hi|hello|hey|greetings|good morning|good evening|who are you|what is your name|tell me about yourself|help|how are you)/i.test(lower) || lower === 'test') {
+    return {
+      response: "Hello! I am CyberVigil, your 24/7 digital guardian and companion. I am doing well, thank you! I am here to chat casually, answer questions about online privacy, guide you on legal protections, or step in to help if you ever face cyberbullying or threats online. How can I support you today?",
+      detectedThreat: 'Conversational',
+      urgencyLevel: 'low',
+      empathyNote: note || 'You are safe here. Ask me anything about digital safety or talk through what is on your mind.',
+      isBuiltInEngine: true
+    };
+  }
+
+  // 7. General Open-Ended Safety & Companion Response
   return {
-    response: `Thank you for reaching out to CyberVigil! I am here to help you navigate digital safety, report cyber crimes, protect your privacy, or talk things through. What specific situation or question can I assist you with right now?`,
-    detectedThreat: 'Conversational',
+    response: `Thank you for asking! As CyberVigil, I am equipped to analyze links, evaluate cyber security threats, guide you through account recovery, protect your privacy, and provide legal reporting advice. What specific detail can I clarify for you right now?`,
+    detectedThreat: 'General Guidance',
     urgencyLevel: 'low',
     empathyNote: note || 'CyberVigil digital protection active.',
     isBuiltInEngine: true
@@ -250,7 +329,7 @@ function parseAIResponse(userPrompt: string, aiText: string): AIAnalysisResult {
   
   const threatKeywords = [
     'threat', 'blackmail', 'extort', 'bully', 'harass', 'stalk', 'nude', 'photo',
-    'leak', 'scam', 'hacked', 'abused', 'scared', 'suicide', 'kill', 'doxx', 'fake account'
+    'leak', 'scam', 'hacked', 'abused', 'scared', 'suicide', 'kill', 'doxx', 'fake account', 'link'
   ];
 
   const containsThreat = threatKeywords.some(kw => lowerPrompt.includes(kw));
@@ -275,8 +354,8 @@ function parseAIResponse(userPrompt: string, aiText: string): AIAnalysisResult {
   } else if (lowerPrompt.includes('bully') || lowerPrompt.includes('harass')) {
     detectedThreat = 'Cyberbullying & Online Harassment';
     urgencyLevel = 'medium';
-  } else if (lowerPrompt.includes('scam') || lowerPrompt.includes('hacked')) {
-    detectedThreat = 'Cyber Crime / Financial Fraud';
+  } else if (lowerPrompt.includes('scam') || lowerPrompt.includes('hacked') || lowerPrompt.includes('link')) {
+    detectedThreat = 'Cyber Crime / Phishing Threat';
     urgencyLevel = 'medium';
   }
 
