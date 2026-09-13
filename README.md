@@ -76,19 +76,19 @@ Pressing <kbd>ESC</kbd> or clicking the stealth toggle instantly conceals CyberV
 
 ---
 
-### 3. Role-Based Access Control (RBAC) & Test Credentials
+### 3. Role-Based Access Control (RBAC) Clearance Levels
 
-CyberVigil supports 5 distinct access personas. For instant demonstration and testing, use the pre-configured credentials below (these bypass the 2FA OTP requirement automatically):
+CyberVigil features granular clearance tiers and permissions designed to enforce strict role separation and protect sensitive child safety workflows:
 
-| Role / Persona | Category Tab | Email / Identifier | Password | Identity / Roll / Badge | Access Scope |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Student** | Student Category | `student@cybervigil.org` | `student123` | `DPS-2026-X88` | Shield Level 1 (Institutional Verified) |
-| **Youth Defender** | Youth Defender | `defender@cybervigil.org` | `defender123` | `KV-2026-DEF` | Shield Level 1 (Peer Defender Verified) |
-| **Parent / Guardian** | Parent / Guardian | `parent@cybervigil.org` | `parent123` | Ward PIN: `CV-1042` | Family Safe Mode (Verified) |
-| **Police Inspector** | Police Inspector | `officer@cybervigil.gov.in` | `officer123` | Badge: `#CPU-4` | Level 3 Clearance (POCSO Statutory) |
-| **Anonymous User** | Case Reference PIN | N/A | N/A | Ticket PIN: `CV-9021` | Ephemeral Incident Tracking |
+| Role / Persona | Clearance Tier | Access Scope & Permissions |
+| :--- | :--- | :--- |
+| **Student** | Shield Level 1 (Institutional Verified) | Digital resilience modules, community stories access, confidential incident intake |
+| **Youth Defender** | Shield Level 1 (Peer Defender Verified) | Peer community moderation, survivor story publishing, digital safety advocacy |
+| **Parent / Guardian** | Family Safe Mode (Verified) | Ward incident tracking, family protection advisories, direct counselor liaison |
+| **Police Inspector** | Level 3 Clearance (POCSO Statutory) | Statutory incident triage, platform takedown dispatch, forensic dossier exports |
+| **Anonymous Minor** | Ephemeral Session | Zero-PII evidence preservation, one-time Case Reference PIN tracking |
 
-> **Note on 2FA Email OTP**: Non-test emails or phone numbers trigger a simulated 6-digit Email OTP modal with a 60-second resend countdown.
+> **Two-Factor Authentication (2FA)**: Account registration and login workflows incorporate an automated 6-digit Email OTP verification protocol to safeguard accounts against unauthorized access.
 
 ---
 
