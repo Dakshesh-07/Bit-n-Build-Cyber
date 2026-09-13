@@ -1,82 +1,125 @@
-# 🛡️ CyberVigil: Trauma-Informed Child Cyber Defense Ecosystem
+# CyberVigil: Trauma-Informed Child Cyber Defense Ecosystem
 
-[![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.4-purple.svg)](https://vitejs.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue.svg)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC.svg)](https://tailwindcss.com/)
-[![Gemini API](https://img.shields.io/badge/Google_Gemini-3.6_Flash-orange.svg)](https://ai.google.dev/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FDakshesh-07%2FCyberVigil&env=VITE_GEMINI_API_KEY,VITE_GEMINI_MODEL&envDescription=Enter%20your%20Google%20Gemini%20API%20Key%20and%20Model)
+<p align="center">
+  <img src="public/cybervigil-banner.png" alt="CyberVigil Banner" width="100%" style="border-radius: 16px; max-width: 800px;" />
+</p>
 
-**CyberVigil** is a trauma-informed, privacy-first digital defense web application engineered to protect children, adolescents, and young adults against online threats, cyberbullying, sexual extortion, grooming, impersonation, and phishing scams.
-
-CyberVigil combines client-side zero-knowledge evidence preservation, unblocked real-time AI safety triage via Google Gemini, statutory Childline 1098 escalation protocols, and an explorable multi-persona camouflage mode for emergency privacy.
+<p align="center">
+  <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-18.3-blue.svg?logo=react" alt="React 18" /></a>
+  <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-6.0-646CFF.svg?logo=vite" alt="Vite 6" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.6-3178C6.svg?logo=typescript" alt="TypeScript 5.6" /></a>
+  <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/TailwindCSS-3.4-38B2AC.svg?logo=tailwindcss" alt="Tailwind CSS 3.4" /></a>
+  <a href="https://ai.google.dev/"><img src="https://img.shields.io/badge/Google_Gemini-3.6_Flash-FFA800.svg?logo=google" alt="Google Gemini" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License MIT" /></a>
+  <a href="https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FDakshesh-07%2FCyberVigil&env=VITE_GEMINI_API_KEY,VITE_GEMINI_MODEL&envDescription=Enter%20your%20Google%20Gemini%20API%20Key%20and%20Model"><img src="https://vercel.com/button" alt="Deploy with Vercel" /></a>
+</p>
 
 ---
 
-## 🌟 Key Features
+## Overview
 
-### 1. Five Integrated Safety Gateways
-- **Digital Resilience Academy (`/learn`)**: Practical, interactive self-defense modules covering password security, catfish detection, predator red flags, and digital boundaries with progress tracking.
-- **Brave Community Stories (`/stories`)**: Moderated, community-contributed peer stories from youth who survived cyber extortion and harassment. Users can publish stories anonymously or with secret aliases.
-- **Guardian AI Assistant (`/assistant`)**: Powered by `gemini-3.6-flash` with trauma-informed child protection prompts and unblocked safety guardrails specifically calibrated to identify:
-  - Cyberbullying & peer targeted abuse
-  - Online grooming & predator manipulation
-  - Extortion, sextortion & blackmail threats
-  - Phishing scams & account hijacking
-- **Verified Incident Reporting (`/report`)**: A secure intake pipeline with:
-  - Client-side EXIF/GPS metadata stripping
-  - SHA-256 cryptographic evidence checksum generation (court-admissible under Section 65B)
-  - Compulsory evidence attachment & statutory safety check verification
-  - Victim-safe mode with 100% anonymous reporting
-- **SafeConnect Circles (`/safeconnect`)**: Direct connection to accredited adolescent psychologists, POCSO nodal officers, and school counselors.
+**CyberVigil** is a trauma-informed, privacy-first digital defense web application engineered to protect children, adolescents, students, and young adults against online harms, including cyberbullying, sexual extortion (sextortion), grooming, unauthorized impersonation, and phishing scams.
+
+Built for both immediate victim assistance and long-term resilience, CyberVigil combines:
+- **Client-side zero-knowledge evidence preservation** (EXIF stripping and SHA-256 hashing)
+- **Unblocked real-time AI safety triage** powered by Google Gemini
+- **Role-based statutory portals** for Students, Youth Defenders, Parents, and Police Inspectors
+- **Instant Two-Factor (2FA) Email OTP Verification** with test-bypass credentials
+- **Statutory Identity Proof Verification** to prevent impersonation in restricted roles
+- **Live synchronized incident reporting** with a POCSO Law Enforcement Triage Desk
+- **Multi-Persona Quick Escape Camouflage Mode** (<kbd>ESC</kbd>) for emergency privacy
+
+---
+
+## Key Features
+
+### 1. Safety Gateways
+
+- **Guardian AI Assistant (`/assistant`)**:
+  - Powered by Google Gemini (`gemini-3.6-flash`) with calibrated trauma-informed safety prompts.
+  - Context-aware assistance for cyberbullying, online grooming, blackmail, and phishing detection.
+  - Automated safety handoff banners connecting immediately to Childline 1098 and Cyber Crime 1930.
+
+- **Forensic Incident Reporting (`/report`)**:
+  - Client-side EXIF/GPS metadata stripping from attached photos before storage.
+  - Real-time SHA-256 cryptographic evidence checksum calculation (court-admissible under Section 65B of the Indian Evidence Act).
+  - 100% anonymous reporting option with instant 6-character Case Reference PIN tracking.
+  - Automatically synchronizes with the Officer Portal in real-time.
+
+- **POCSO Child Welfare & Police Officer Portal (`/portal`)**:
+  - Restricted law-enforcement triage desk for sworn police inspectors and nodal officers.
+  - Live incident pipeline: view reports, update status (`Under Review`, `Active Investigation`, `FIR Registered`, `Resolved`), assign officers, and generate takedown advisories.
+  - Instant forensic dossier and evidence checksum inspection.
+
+- **Brave Community Stories (`/stories`)**:
+  - Peer-driven survivor support forum for youth to read and publish brave recovery stories.
+  - Anonymous or alias authoring with verified role badges (`Student`, `Youth Defender`, `Parent`, `Inspector`).
+  - Recent-first dynamic sorting and interactive community support upvoting.
+
+- **Digital Resilience Academy (`/learn`)**:
+  - Interactive self-defense learning modules with scenario simulations, progress tracking, and knowledge quizzes covering password security, catfishing, digital boundaries, and scam evasion.
+
+- **SafeConnect Circles (`/safeconnect`)**:
+  - Verified directory of accredited adolescent psychologists, POCSO legal aid desks, and institutional youth counselors.
 
 ---
 
 ### 2. Multi-Persona Quick Escape (Camouflage Mode)
-Pressing <kbd>ESC</kbd> or clicking the stealth toggle instantly replaces the active interface with a lifelike, explorable study screen to safeguard users from over-the-shoulder monitoring:
-- **🧸 Class 4 Primary School**: NCERT Looking Around EVS & Math-Magic chapters with interactive kid quizzes and reward stars.
-- **🔬 Class 10 High School**: CBSE digital textbook covering respiration biology, Ohm's law, and quadratic equations.
-- **🎓 College / University LMS**: B.Tech CS301 syllabus featuring Dijkstra's algorithm, lecture slides, and an interactive terminal sandbox that compiles test cases in real-time.
-- **📺 YouTube Study Stream**: Complete video player interface with play/pause controls, dynamic likes counter, interactive comments section, and recommended video switching.
-- **Stealth Resume Control**: The resume trigger is discreetly nested inside an academic student profile dropdown to maintain absolute security.
+
+Pressing <kbd>ESC</kbd> or clicking the stealth toggle instantly conceals CyberVigil behind realistic, fully interactive educational disguises to protect users from over-the-shoulder monitoring:
+
+- **Class 4 Primary School**: NCERT *Looking Around* EVS and *Math-Magic* interactive kid quizzes.
+- **Class 10 High School**: CBSE digital science textbook covering respiration biology and Ohm's law.
+- **College / University LMS**: B.Tech CS301 syllabus featuring Dijkstra's algorithm and an interactive code terminal sandbox that compiles test cases in real-time.
+- **YouTube Study Stream**: Functional video player layout with play/pause, dynamic likes counter, comments feed, and recommended video switching.
+- **Discreet Resume Control**: The resume toggle is hidden inside the academic student profile dropdown to maintain absolute operational security.
 
 ---
 
-### 3. Role-Based Access Control (RBAC)
-CyberVigil features granular clearance levels:
-| Role | Clearance | Description |
-| :--- | :---: | :--- |
-| **Anonymous Minor** | Level 1 | Ephemeral session, zero identity logs, Case PIN tracking |
-| **Registered Youth** | Level 2 | Custom avatar, saved learning progress, anonymous story submissions |
-| **Parent / Guardian** | Level 2+ | Family safety oversight, educational guides |
-| **Child Welfare Officer** | Level 3 | Case triage dashboard, platform takedown dispatch, forensic dossier exports |
+### 3. Role-Based Access Control (RBAC) & Test Credentials
+
+CyberVigil supports 5 distinct access personas. For instant demonstration and testing, use the pre-configured credentials below (these bypass the 2FA OTP requirement automatically):
+
+| Role / Persona | Category Tab | Email / Identifier | Password | Identity / Roll / Badge | Access Scope |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Student** | Student Category | `student@cybervigil.org` | `student123` | `DPS-2026-X88` | Shield Level 1 (Institutional Verified) |
+| **Youth Defender** | Youth Defender | `defender@cybervigil.org` | `defender123` | `KV-2026-DEF` | Shield Level 1 (Peer Defender Verified) |
+| **Parent / Guardian** | Parent / Guardian | `parent@cybervigil.org` | `parent123` | Ward PIN: `CV-1042` | Family Safe Mode (Verified) |
+| **Police Inspector** | Police Inspector | `officer@cybervigil.gov.in` | `officer123` | Badge: `#CPU-4` | Level 3 Clearance (POCSO Statutory) |
+| **Anonymous User** | Case Reference PIN | N/A | N/A | Ticket PIN: `CV-9021` | Ephemeral Incident Tracking |
+
+> **Note on 2FA Email OTP**: Non-test emails or phone numbers trigger a simulated 6-digit Email OTP modal with a 60-second resend countdown.
 
 ---
 
-### 4. Forensic Security & Privacy Hub (`/security`)
-- **Client-Side EXIF Scrubbing**: Device serial numbers, GPS coordinates, and camera metadata are scrubbed locally in the browser before transmission.
-- **SHA-256 Integrity Verification**: An interactive Web Crypto API tool demonstrating how forensic evidence is permanently sealed.
-- **Emergency Session Purge**: 1-click irreversible purging of all local browser cache, tokens, drafts, and tickets for shared or monitored family computers.
+### 4. Statutory Identity Proof Verification
+
+To ensure random individuals cannot register or log in to restricted positions, both [`Register.tsx`](src/pages/Register.tsx) and [`Login.tsx`](src/pages/Login.tsx) enforce mandatory identity proof verification:
+
+- **Police Inspector**: Requires Police Service ID Card / POCSO Statutory Nodal Desk Card number and department verification.
+- **Parent / Guardian**: Requires Government Photo ID (Aadhaar, Voter ID, Passport, Driving License) and linked Ward PIN.
+- **Student Defender**: Requires Student Defender Accreditation ID or Institutional Peer Defense Card.
+- **Student**: Requires School / College Photo ID or Institutional Enrollment number.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Frontend**: React 18 with TypeScript
-- **Bundler & Dev Server**: Vite 6
-- **Styling**: Vanilla Tailwind CSS with custom Alabaster Sand design tokens
+- **Build Tool**: Vite 6
+- **Styling**: Tailwind CSS 3.4 with warm slate & amber design system tokens
 - **Icons**: Lucide React
-- **AI Intelligence**: Google Gemini API (`gemini-3.6-flash`)
-- **State & Local Persistence**: Custom zero-leak LocalStore engine & React Context
+- **AI Intelligence**: Google Gemini API (`gemini-3.6-flash` via `@google/genai`)
+- **Backend / Database**: Supabase JS client integration (`@supabase/supabase-js`) & local synchronized persistence engine
+- **Deployment**: Vercel ready with client-side SPA routing (`vercel.json`)
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-- Node.js (v18.0.0 or later)
-- npm (v9.0.0 or later)
+- **Node.js**: v18.0.0 or higher
+- **npm**: v9.0.0 or higher
 
 ### Installation
 
@@ -92,108 +135,121 @@ CyberVigil features granular clearance levels:
    ```
 
 3. **Configure Environment Variables:**
-   Copy the example environment file and add your Google Gemini API key:
+   Copy the example environment configuration template:
    ```bash
    cp .env.example .env
    ```
-   Edit `.env`:
+   Edit `.env` and add your Google Gemini API key:
    ```env
-   VITE_GEMINI_API_KEY=your_gemini_api_key_here
+   VITE_GEMINI_API_KEY=your_google_gemini_api_key_here
    VITE_GEMINI_MODEL=gemini-3.6-flash
    ```
 
-4. **Run the local development server:**
+4. **Start Local Development Server:**
    ```bash
    npm run dev
    ```
-   The application will be available at `http://localhost:5173`.
+   Open your browser at `http://localhost:5173`.
 
-5. **Build for production:**
+5. **Typecheck & Build for Production:**
    ```bash
+   # Run TypeScript compilation check
+   npx tsc --noEmit
+
+   # Create production build in dist/
    npm run build
+
+   # Preview the production bundle locally
+   npm run preview
    ```
 
 ---
 
-## 🌐 Deploying to Vercel
-
-CyberVigil is configured for deployment on Vercel out of the box with zero additional setup.
-
-### Option 1: 1-Click Instant Deploy
-Click the button below to deploy your own instance of CyberVigil to Vercel:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FDakshesh-07%2FCyberVigil&env=VITE_GEMINI_API_KEY,VITE_GEMINI_MODEL&envDescription=Enter%20your%20Google%20Gemini%20API%20Key%20and%20Model)
-
-### Option 2: Connect via Vercel Dashboard
-1. Go to [vercel.com/new](https://vercel.com/new).
-2. Select or import your GitHub repository: **`Dakshesh-07/CyberVigil`**.
-3. Under **Build and Output Settings**, Vercel will automatically detect:
-   - **Framework Preset**: `Vite`
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-4. Under **Environment Variables**, add:
-   - `VITE_GEMINI_API_KEY` = your Google Gemini API key
-   - `VITE_GEMINI_MODEL` = `gemini-3.6-flash`
-5. Click **Deploy**. Vercel will build and assign you a secure production domain (e.g., `cybervigil.vercel.app`).
-6. Single Page Application (SPA) routing is handled automatically by the included [`vercel.json`](./vercel.json).
-
----
-
-## 📂 Project Architecture
+## Project Structure
 
 ```
 CyberVigil/
 ├── public/
-│   └── shield.svg                # Application Favicon
+│   ├── cybervigil-banner.png     # Brand banner asset
+│   ├── cybervigil-shield.png     # Brand shield asset
+│   ├── favicon.ico               # Browser favicon
+│   ├── shield.svg                # Vector shield logo
+│   └── stories/                  # Community story cover images
 ├── src/
 │   ├── components/
-│   │   ├── auth/                 # Protected route & role authorization gates
+│   │   ├── auth/
+│   │   │   ├── EmailOTPModal.tsx     # 2FA Email OTP modal with resend countdown
+│   │   │   └── ProtectedRoute.tsx    # Role-based route authorization guards
 │   │   └── layout/
-│   │       ├── CamouflageOverlay.tsx # 4-Persona Quick Escape disguises
-│   │       ├── EmergencyBanner.tsx   # Direct 1098 & 1930 helplines
-│   │       ├── Footer.tsx            # Legal disclosures & helpline bar
-│   │       └── Navbar.tsx            # Decluttered responsive navigation & RBAC switcher
+│   │       ├── CamouflageOverlay.tsx # 4-Persona Quick Escape emergency overlay
+│   │       ├── EmergencyBanner.tsx   # Top banner with Childline 1098 hotline
+│   │       ├── Footer.tsx            # Footer navigation and legal disclosures
+│   │       └── Navbar.tsx            # Dynamic navbar with role and page context
 │   ├── context/
-│   │   └── AuthContext.tsx       # RBAC auth state & session lifecycle
+│   │   └── AuthContext.tsx       # RBAC auth state, credentials & identity proof
 │   ├── lib/
-│   │   └── gemini.ts             # Google Gemini API integration with unblocked safety
+│   │   ├── gemini.ts             # Google Gemini AI client integration
+│   │   └── supabase.ts           # Supabase client connector
 │   ├── pages/
 │   │   ├── AIAssistant.tsx       # Trauma-informed Guardian AI chat interface
-│   │   ├── BraveStories.tsx      # Moderated anonymous community courage stories
-│   │   ├── Home.tsx              # Safety Gateways & interactive scenario simulator
-│   │   ├── Learn.tsx             # Digital resilience academy & micro-lessons
-│   │   ├── Login.tsx             # Multi-tab sign-in, case PIN tracking & officer clearance
-│   │   ├── OrgPortal.tsx         # POCSO officer investigation & platform takedown desk
-│   │   ├── Register.tsx          # Zero-PII account activation
-│   │   ├── ReportIncident.tsx    # Compulsory evidence intake with EXIF scrubbing
-│   │   ├── SafeConnect.tsx       # Verified psychological and legal counselors
-│   │   └── SecurityHub.tsx       # Cryptographic hashing & emergency cache purge
-│   ├── utils/
-│   │   └── localStore.ts         # Encrypted browser session store
+│   │   ├── BraveStories.tsx      # Community recovery stories & authoring
+│   │   ├── Home.tsx              # Interactive safety gateways & simulator
+│   │   ├── LandingPage.tsx       # Public showcase & feature introduction
+│   │   ├── Learn.tsx             # Digital resilience academy modules
+│   │   ├── Login.tsx             # Multi-tab login with identity credentials
+│   │   ├── OrgPortal.tsx         # POCSO officer investigation portal
+│   │   ├── Register.tsx          # Multi-category registration with identity proof
+│   │   ├── ReportIncident.tsx    # Forensic incident intake & EXIF scrubbing
+│   │   ├── SafeConnect.tsx       # Accredited counselor directory
+│   │   └── SecurityHub.tsx       # SHA-256 evidence hasher & session purge
 │   ├── types/
-│   │   └── index.ts              # TypeScript type contracts & data schemas
+│   │   └── index.ts              # Global TypeScript interfaces & data models
+│   ├── utils/
+│   │   └── localStore.ts         # Resilient browser session storage
 │   ├── App.tsx                   # Top-level routing & layout shell
+│   ├── index.css                 # Tailwind design tokens & dark mode classes
 │   └── main.tsx                  # Application entry point
-├── .env.example                  # Environment configuration template
+├── .env.example                  # Environment variable template
 ├── .gitignore                    # Git ignore file for secrets and dependencies
-├── package.json
-├── tailwind.config.js
-├── tsconfig.json
-└── vite.config.ts
+├── LICENSE                       # MIT License
+├── package.json                  # Dependencies and build scripts
+├── tailwind.config.js            # Custom color schemes & font config
+├── tsconfig.json                 # TypeScript compiler configuration
+├── vercel.json                   # Vercel SPA rewrite rules
+└── vite.config.ts                # Vite dev server and proxy configuration
 ```
 
 ---
 
-## 🤝 Contributing
+## Deployment on Vercel
 
-Contributions that bolster child safety, enhance trauma-informed UX, or expand language accessibility are welcome. Please open an issue or submit a pull request with details on your proposed enhancements.
+CyberVigil includes a [`vercel.json`](vercel.json) file that automatically configures Single Page Application (SPA) routing.
+
+### 1-Click Deploy
+Click the button below to deploy your own instance to Vercel:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FDakshesh-07%2FCyberVigil&env=VITE_GEMINI_API_KEY,VITE_GEMINI_MODEL&envDescription=Enter%20your%20Google%20Gemini%20API%20Key%20and%20Model)
+
+### Manual Deployment via Vercel Dashboard
+1. Push your repository to GitHub.
+2. Import the repository into [Vercel](https://vercel.com/new).
+3. Under **Environment Variables**, add:
+   - `VITE_GEMINI_API_KEY`: Your Google Gemini API Key
+   - `VITE_GEMINI_MODEL`: `gemini-3.6-flash`
+4. Click **Deploy**.
 
 ---
 
-## ⚖️ Statutory Notice & Ethics
+## Statutory Notice & Emergency Helplines
 
-CyberVigil is dedicated to child welfare and cybersecurity defense. In cases of immediate life-threatening physical peril, self-harm, or child sexual abuse material (CSAM), report directly to:
-- **Childline India**: `1098`
-- **National Cyber Crime Portal**: `1930` or [cybercrime.gov.in](https://cybercrime.gov.in)
+CyberVigil is an educational and digital first-aid resource. If you or someone you know is in immediate physical danger or encountering Child Sexual Abuse Material (CSAM), immediately contact official statutory authorities:
 
+- **Childline India**: `1098` (Toll-Free, 24/7)
+- **National Cyber Crime Reporting Portal**: `1930` or [cybercrime.gov.in](https://cybercrime.gov.in)
+- **National Commission for Protection of Child Rights (NCPCR)**: [ncpcr.gov.in](https://ncpcr.gov.in)
 
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
