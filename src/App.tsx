@@ -182,6 +182,10 @@ const AppContent: React.FC = () => {
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/officer-portal" 
+            element={<Navigate to="/portal" replace />} 
+          />
 
           {/* Catch-all route */}
           <Route 

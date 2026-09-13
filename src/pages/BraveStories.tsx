@@ -27,7 +27,7 @@ import {
   Send
 } from 'lucide-react';
 import { BraveStory, CommunityEntryType, StoryReply } from '../types';
-import { localStore } from '../lib/supabase';
+import { localStore, formatTimeAgo, sortStoriesByMostRecent } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 
 // Category Filters
@@ -58,9 +58,51 @@ export const BraveStories: React.FC = () => {
   const [isAnonymousShare, setIsAnonymousShare] = useState(true);
   const [submittedMessage, setSubmittedMessage] = useState(false);
 
+  // Load & listen for real-time community updates across roles & browser tabs
   useEffect(() => {
+    // 1. Initial synchronous load from local store
     setStories(localStore.getStories());
-  }, []);
+
+    // 2. Background sync with local API endpoint (merges any stories submitted across different browser profiles/incognito)
+    localStore.syncWithServer().then(serverStories => {
+      if (serverStories && serverStories.length > 0) {
+        setStories(serverStories);
+      }
+    });
+
+    // 3. Listener for in-app / same-window updates
+    const handleStoriesUpdated = () => {
+      setStories(localStore.getStories());
+    };
+    window.addEventListener('cybervigil_stories_updated', handleStoriesUpdated);
+
+    // 4. Listener for cross-tab localStorage updates
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'cybervigil_stories_store' || !e.key) {
+        setStories(localStore.getStories());
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+
+    // 5. BroadcastChannel listener for instant cross-tab live synchronization
+    let bc: BroadcastChannel | null = null;
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        bc = new BroadcastChannel('cybervigil_channel');
+        bc.onmessage = (msg) => {
+          if (msg.data?.type === 'STORIES_UPDATED') {
+            setStories(localStore.getStories());
+          }
+        };
+      } catch (e) {}
+    }
+
+    return () => {
+      window.removeEventListener('cybervigil_stories_updated', handleStoriesUpdated);
+      window.removeEventListener('storage', handleStorageChange);
+      if (bc) bc.close();
+    };
+  }, [user?.id, user?.role]);
 
   const handleSupport = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
@@ -143,32 +185,39 @@ export const BraveStories: React.FC = () => {
     if (!title.trim() || !storyText.trim()) return;
 
     let finalAuthor = 'Anonymous Defender';
-    if (!isAnonymousShare && authorAlias.trim()) {
-      finalAuthor = authorAlias.trim();
-    } else if (!isAnonymousShare && user && !user.isAnonymous) {
-      finalAuthor = user.alias;
+    if (!isAnonymousShare) {
+      if (authorAlias.trim()) {
+        finalAuthor = authorAlias.trim();
+      } else if (user && !user.isAnonymous && user.alias) {
+        finalAuthor = user.alias;
+      } else {
+        finalAuthor = 'Community Defender';
+      }
     } else {
       finalAuthor = `🛡️ Anonymous Defender #${Math.floor(100 + Math.random() * 900)}`;
     }
 
+    const now = Date.now();
     const newEntry: BraveStory = {
-      id: `${entryType}-${Date.now()}`,
+      id: `${entryType}-${now}`,
       entryType,
-      title,
+      title: title.trim(),
       category,
       authorAlias: finalAuthor,
-      storyText,
+      authorRole: user?.role || 'registered_youth',
+      storyText: storyText.trim(),
       timeAgo: 'Just now',
+      createdAt: now,
       supportCount: 1,
-      userSupported: true,
-      votesCount: 1,
+      userSupported: false,
+      votesCount: entryType === 'grievance' ? 1 : 0,
       userVoted: false,
       tags: [category, entryType === 'grievance' ? 'Community Doubt' : 'Brave Survivor'],
       isAnonymous: isAnonymousShare,
       duration: entryType === 'grievance' ? `Doubt #${Math.floor(100 + Math.random() * 400)}` : '0:25',
       pillBadge: entryType === 'grievance' ? `Grievance • ${category.split(' ')[0]}` : `Brave Story • ${category.split(' ')[0]}`,
       captionEmoji: captionEmoji || (entryType === 'grievance' ? 'Community Query ❓' : 'Courage Story 💙'),
-      isSaved: true,
+      isSaved: false,
       urgency: entryType === 'grievance' ? 'Needs Guidance' : undefined,
       answersCount: entryType === 'grievance' ? 0 : undefined,
       verifiedAdvice: entryType === 'grievance' ? 'Official counselor review is pending. In immediate peril, dial Childline 1098 or 1930.' : undefined,
@@ -197,39 +246,41 @@ export const BraveStories: React.FC = () => {
     setTimeout(() => setCopiedNotification(false), 2000);
   };
 
-  // Filter items by active tab and category
+  // Filter items by active tab
   const filteredItems = stories.filter(item => {
     if (activeTab === 'saves' && !item.isSaved) return false;
     if (activeTab === 'stories' && item.entryType !== 'story') return false;
     if (activeTab === 'grievances' && item.entryType !== 'grievance') return false;
-    if (activeCategory !== 'All' && item.category !== activeCategory) return false;
     return true;
   });
+
+  // Chronologically sort all items so the newest submissions are always at the top
+  const sortedItems = sortStoriesByMostRecent(filteredItems);
 
   const storiesCount = stories.filter(s => s.entryType === 'story').length;
   const grievancesCount = stories.filter(s => s.entryType === 'grievance').length;
   const savedCount = stories.filter(s => s.isSaved).length;
 
   return (
-    <div className="space-y-6 pb-28 min-h-screen">
+    <div className="space-y-6 pb-20 min-h-screen">
       
-      {/* 1. Header & Section Navigation Tabs (Pinterest Style) */}
+      {/* 1. Header & Primary Navigation Tabs */}
       <section className="space-y-4 pt-2">
         
-        {/* Main Section Tabs: All Ideas | Brave Stories | Grievances & Doubts | All Saves */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-sand-300 pb-3">
+        {/* Main Section Tabs: Explore All | Brave Stories | Grievances & Doubts | All Saves */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-sand-300 dark:border-slate-800 pb-3">
           <div className="flex items-center gap-5 sm:gap-8 overflow-x-auto no-scrollbar">
             <button
               onClick={() => setActiveTab('all')}
               className={`text-sm sm:text-base font-bold transition-all relative pb-2 whitespace-nowrap ${
                 activeTab === 'all'
-                  ? 'text-slate-900 font-extrabold'
-                  : 'text-textMuted hover:text-slate-700'
+                  ? 'text-slate-900 dark:text-white font-extrabold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
             >
               <span>Explore All</span>
               {activeTab === 'all' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900 rounded-full animate-in fade-in" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-600 dark:bg-amber-500 rounded-full animate-in fade-in" />
               )}
             </button>
 
@@ -237,16 +288,16 @@ export const BraveStories: React.FC = () => {
               onClick={() => setActiveTab('stories')}
               className={`text-sm sm:text-base font-bold transition-all relative pb-2 flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === 'stories'
-                  ? 'text-slate-900 font-extrabold'
-                  : 'text-textMuted hover:text-slate-700'
+                  ? 'text-slate-900 dark:text-white font-extrabold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
             >
               <span>🛡️ Brave Stories</span>
-              <span className="text-[11px] px-1.5 py-0.2 rounded-full bg-sand-200 text-slate-800 font-mono font-bold">
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-sand-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono font-bold">
                 {storiesCount}
               </span>
               {activeTab === 'stories' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900 rounded-full animate-in fade-in" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-600 dark:bg-amber-500 rounded-full animate-in fade-in" />
               )}
             </button>
 
@@ -254,16 +305,16 @@ export const BraveStories: React.FC = () => {
               onClick={() => setActiveTab('grievances')}
               className={`text-sm sm:text-base font-bold transition-all relative pb-2 flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === 'grievances'
-                  ? 'text-slate-900 font-extrabold'
-                  : 'text-textMuted hover:text-slate-700'
+                  ? 'text-slate-900 dark:text-white font-extrabold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
             >
               <span>💬 Grievances & Doubts</span>
-              <span className="text-[11px] px-1.5 py-0.2 rounded-full bg-sand-200 text-slate-800 font-mono font-bold">
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-sand-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-mono font-bold">
                 {grievancesCount}
               </span>
               {activeTab === 'grievances' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900 rounded-full animate-in fade-in" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-600 dark:bg-amber-500 rounded-full animate-in fade-in" />
               )}
             </button>
 
@@ -271,18 +322,18 @@ export const BraveStories: React.FC = () => {
               onClick={() => setActiveTab('saves')}
               className={`text-sm sm:text-base font-bold transition-all relative pb-2 flex items-center gap-1.5 whitespace-nowrap ${
                 activeTab === 'saves'
-                  ? 'text-slate-900 font-extrabold'
-                  : 'text-textMuted hover:text-slate-700'
+                  ? 'text-slate-900 dark:text-white font-extrabold'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
               }`}
             >
               <span>⭐ All saves</span>
               {savedCount > 0 && (
-                <span className="text-[11px] px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 font-mono font-bold">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-mono font-bold">
                   {savedCount}
                 </span>
               )}
               {activeTab === 'saves' && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-slate-900 rounded-full animate-in fade-in" />
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-600 dark:bg-amber-500 rounded-full animate-in fade-in" />
               )}
             </button>
           </div>
@@ -291,198 +342,177 @@ export const BraveStories: React.FC = () => {
             <button
               onClick={() => {
                 setEntryType('story');
+                if (user && !user.isAnonymous && user.alias) {
+                  setAuthorAlias(user.alias);
+                }
                 setIsShareModalOpen(true);
               }}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all active:scale-95 shadow-sm"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 text-xs sm:text-sm font-bold transition-all active:scale-95 shadow-sm"
             >
-              <Plus className="w-4 h-4 text-secondary" />
+              <Plus className="w-4 h-4 text-secondary dark:text-slate-950" />
               <span>Share / Post</span>
             </button>
           </div>
         </div>
-
-        {/* 3 Main Focus Pillar Badges & Category Filters */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-1">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-xs font-semibold w-full">
-            {FILTER_CATEGORIES.map(cat => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-full transition-all whitespace-nowrap active:scale-95 ${
-                  activeCategory === cat
-                    ? 'bg-slate-900 text-white font-bold shadow-xs'
-                    : 'bg-sand-200/80 hover:bg-sand-300 text-textDark border border-sand-300/60'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </div>
       </section>
 
-      {/* 2. Visual Masonry Card Grid (Pinterest Aesthetic) */}
-      {filteredItems.length === 0 ? (
-        <div className="text-center py-20 bg-surface rounded-3xl border border-sand-300 p-8 space-y-3">
+      {/* 2. Organized Stories & Grievances Cards Grid */}
+      {sortedItems.length === 0 ? (
+        <div className="text-center py-20 bg-surface dark:bg-[#151e2e] rounded-3xl border border-sand-300 dark:border-slate-800 p-8 space-y-3">
           <Bookmark className="w-12 h-12 text-sand-400 mx-auto stroke-[1.5]" />
-          <h3 className="text-lg font-bold text-primary">No items found in this filter</h3>
-          <p className="text-xs text-textMuted max-w-sm mx-auto">
+          <h3 className="text-lg font-bold text-primary dark:text-slate-100">No items found in this section</h3>
+          <p className="text-xs text-textMuted dark:text-slate-400 max-w-sm mx-auto">
             Switch tabs or explore all brave stories and community grievances regarding cyber threats.
           </p>
           <button
-            onClick={() => { setActiveTab('all'); setActiveCategory('All'); }}
-            className="px-4 py-2 rounded-full bg-primary text-white text-xs font-bold hover:bg-primary-hover active:scale-95"
+            onClick={() => setActiveTab('all')}
+            className="px-4 py-2 rounded-full bg-primary dark:bg-amber-500 text-white dark:text-slate-950 text-xs font-bold hover:bg-primary-hover dark:hover:bg-amber-600 active:scale-95"
           >
-            Reset Filters
+            Show All
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 items-stretch">
-          {filteredItems.map((item) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
+          {sortedItems.map((item) => {
             const isGrievance = item.entryType === 'grievance';
 
             return (
               <article
                 key={item.id}
                 onClick={() => setSelectedItem(item)}
-                className="group flex flex-col cursor-pointer transition-all duration-300 h-full"
+                className="group relative w-full rounded-2xl sm:rounded-3xl p-5 sm:p-6 transition-all duration-200 flex flex-col justify-between border bg-surface dark:bg-[#151e2e] border-sand-300 dark:border-slate-800 hover:border-orange-500 dark:hover:border-orange-500 shadow-warm-card cursor-pointer overflow-hidden h-full min-h-[260px]"
               >
-                {/* Visual Card Container (Spacious layout, min-height 250px, rich dark/light styling) */}
-                <div 
-                  className="relative w-full rounded-2xl sm:rounded-3xl p-5 sm:p-6 transition-all duration-200 flex flex-col justify-between border bg-surface dark:bg-slate-900/90 border-sand-300 dark:border-slate-800 hover:border-amber-400 dark:hover:border-orange-500 shadow-warm-card hover:shadow-warm-elevated group-hover:-translate-y-1 overflow-hidden h-full min-h-[250px]"
-                >
-                  {/* Top Row: Category Pill, Doubt Voting & Star Button */}
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    <div className="flex flex-wrap items-center gap-1.5 min-w-0">
-                      {item.pillBadge && (
-                        <span className={`px-2.5 py-1 rounded-lg text-white font-extrabold text-[10px] sm:text-[11px] shadow-xs tracking-wide ${
-                          isGrievance ? 'bg-amber-600' : 'bg-sky-600'
-                        }`}>
-                          {item.pillBadge}
-                        </span>
-                      )}
+                {/* Top Row: Category Pill, Doubt Voting & Star Button */}
+                <div className="flex items-start justify-between gap-2 mb-3">
+                  <div className="flex flex-wrap items-center gap-1.5 min-w-0">
+                    {item.pillBadge && (
+                      <span className={`px-2.5 py-1 rounded-lg text-white font-extrabold text-[10px] sm:text-[11px] shadow-xs tracking-wide ${
+                        isGrievance ? 'bg-amber-600' : 'bg-sky-600'
+                      }`}>
+                        {item.pillBadge}
+                      </span>
+                    )}
 
-                      {isGrievance && (
-                        <button
-                          onClick={(e) => handleVote(item.id, e)}
-                          className={`inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-2.5 py-1 rounded-full font-bold transition-all active:scale-90 border ${
-                            item.userVoted
-                              ? 'bg-amber-500/20 text-amber-600 dark:text-amber-300 border-amber-500/40 shadow-xs'
-                              : 'bg-sand-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border-sand-300 dark:border-slate-700'
-                          }`}
-                          title="Upvote / I have this doubt too"
-                        >
-                          <ChevronUp className={`w-3.5 h-3.5 stroke-[2.5] ${item.userVoted ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400'}`} />
-                          <span>{item.votesCount || 0} Votes</span>
-                        </button>
-                      )}
+                    {isGrievance && (
+                      <button
+                        onClick={(e) => handleVote(item.id, e)}
+                        className={`inline-flex items-center gap-1 text-[10px] sm:text-[11px] px-2.5 py-1 rounded-full font-bold transition-all duration-200 border group-hover:scale-105 group-hover:-translate-y-0.5 group-hover:shadow-md ${
+                          item.userVoted
+                            ? 'bg-amber-500/20 text-amber-600 dark:text-amber-300 border-amber-500/40 shadow-xs'
+                            : 'bg-sand-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border-sand-300 dark:border-slate-700'
+                        }`}
+                        title="Upvote / I have this doubt too"
+                      >
+                        <ChevronUp className={`w-3.5 h-3.5 stroke-[2.5] ${item.userVoted ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400'}`} />
+                        <span>{item.votesCount || 0} Votes</span>
+                      </button>
+                    )}
 
-                      {item.urgency === 'Critical' && (
-                        <span className="px-2.5 py-1 rounded-full bg-rose-500/10 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-[10px] font-bold flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
-                          Critical Alert
-                        </span>
-                      )}
-                    </div>
+                    {item.urgency === 'Critical' && (
+                      <span className="px-2.5 py-1 rounded-full bg-rose-500/10 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-[10px] font-bold flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                        Critical Alert
+                      </span>
+                    )}
+                  </div>
 
-                    {/* Star Button in Top-Right */}
-                    <button
-                      onClick={(e) => handleToggleSave(item.id, e)}
-                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90 flex-shrink-0 ${
+                  {/* Star Button in Top-Right with pop effect on hover */}
+                  <button
+                    onClick={(e) => handleToggleSave(item.id, e)}
+                    className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 flex-shrink-0 group-hover:scale-110 group-hover:-translate-y-0.5 group-hover:shadow-md ${
+                      item.isSaved
+                        ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-500 hover:bg-amber-200 dark:hover:bg-amber-900/80 shadow-xs'
+                        : 'bg-sand-200/80 dark:bg-slate-800 hover:bg-sand-300 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                    }`}
+                    title={item.isSaved ? "Saved in All Saves" : "Save Story"}
+                    aria-label="Toggle Save"
+                  >
+                    <Star
+                      className={`w-4 h-4 ${
                         item.isSaved
-                          ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-500 hover:bg-amber-200 dark:hover:bg-amber-900/80'
-                          : 'bg-sand-200/80 dark:bg-slate-800 hover:bg-sand-300 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                          ? 'fill-amber-400 text-amber-400 stroke-amber-400'
+                          : 'stroke-[2]'
                       }`}
-                      title={item.isSaved ? "Saved in All Saves" : "Save Story"}
-                      aria-label="Toggle Save"
-                    >
-                      <Star
-                        className={`w-4 h-4 ${
-                          item.isSaved
-                            ? 'fill-amber-400 text-amber-400 stroke-amber-400'
-                            : 'stroke-[2]'
-                        }`}
-                      />
-                    </button>
+                    />
+                  </button>
+                </div>
+
+                {/* Narrative Content Area */}
+                <div className="space-y-2.5 my-2 flex-1 flex flex-col justify-start">
+                  <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-slate-100 leading-snug line-clamp-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 line-clamp-3 leading-relaxed font-normal italic">
+                    "{item.storyText}"
+                  </p>
+
+                  {/* Tags / Guidance Badge */}
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1.5 mt-auto">
+                    {isGrievance && item.verifiedAdvice && (
+                      <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-950/50 border border-amber-500/30 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                        <Shield className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+                        Verified Guidance
+                      </span>
+                    )}
+                    {item.tags.slice(0, 2).map((tag, tIdx) => (
+                      <span
+                        key={tIdx}
+                        className="text-[10px] px-2.5 py-0.5 rounded-md bg-sand-200/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 font-medium"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
                   </div>
+                </div>
 
-                  {/* Narrative Content Area */}
-                  <div className="space-y-2.5 my-2 flex-1 flex flex-col justify-start">
-                    <h3 className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-slate-100 leading-snug line-clamp-2 group-hover:text-amber-600 dark:group-hover:text-orange-400 transition-colors">
-                      {item.title}
-                    </h3>
-
-                    <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 line-clamp-3 leading-relaxed font-normal italic">
-                      "{item.storyText}"
-                    </p>
-
-                    {/* Tags / Guidance Badge */}
-                    <div className="flex flex-wrap items-center gap-1.5 pt-1.5 mt-auto">
-                      {isGrievance && item.verifiedAdvice && (
-                        <span className="text-[10px] font-bold text-amber-800 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-950/50 border border-amber-500/30 px-2 py-0.5 rounded-md inline-flex items-center gap-1">
-                          <Shield className="w-3 h-3 text-amber-600 dark:text-amber-400" />
-                          Verified Guidance
-                        </span>
+                {/* Footer Author & Action Bar */}
+                <div className="pt-3.5 mt-3 border-t border-sand-200 dark:border-slate-800 flex items-center justify-between gap-2">
+                  <div className="space-y-0.5 flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      {isGrievance ? (
+                        <HelpCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                      ) : (
+                        <ShieldCheck className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 flex-shrink-0" />
                       )}
-                      {item.tags.slice(0, 2).map((tag, tIdx) => (
-                        <span
-                          key={tIdx}
-                          className="text-[10px] px-2.5 py-0.5 rounded-md bg-sand-200/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 font-medium"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
+                      <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 truncate leading-snug">
+                        {item.captionEmoji || item.title}
+                      </p>
+                    </div>
+                    
+                    <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-textMuted dark:text-slate-400 font-medium flex-wrap">
+                      <span className="truncate max-w-[120px]">{item.authorAlias}</span>
+                      <span>•</span>
+                      <span>{formatTimeAgo(item.createdAt, item.timeAgo)}</span>
                     </div>
                   </div>
 
-                  {/* Footer Author & Action Bar */}
-                  <div className="pt-3.5 mt-3 border-t border-sand-200 dark:border-slate-800 flex items-center justify-between gap-2">
-                    <div className="space-y-0.5 flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        {isGrievance ? (
-                          <HelpCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
-                        ) : (
-                          <ShieldCheck className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 flex-shrink-0" />
-                        )}
-                        <p className="text-xs sm:text-sm font-bold text-slate-900 dark:text-slate-100 truncate leading-snug">
-                          {item.captionEmoji || item.title}
-                        </p>
-                      </div>
-                      
-                      <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] text-textMuted dark:text-slate-400 font-medium flex-wrap">
-                        <span className="truncate max-w-[120px]">{item.authorAlias}</span>
-                        <span>•</span>
-                        <span>{item.timeAgo}</span>
-                      </div>
-                    </div>
+                  {/* Actions: Replies + Heart Support with Pop out effect on hover */}
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedItem(item);
+                      }}
+                      className="flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full bg-sand-100 dark:bg-slate-800 hover:bg-sand-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all duration-200 group-hover:scale-105 group-hover:-translate-y-0.5 group-hover:shadow-md font-medium"
+                      title="View & post replies"
+                    >
+                      <MessageSquare className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                      <span>{item.replies?.length || item.answersCount || 0}</span>
+                    </button>
 
-                    {/* Actions: Replies + Heart Support */}
-                    <div className="flex items-center gap-1.5 flex-shrink-0">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedItem(item);
-                        }}
-                        className="flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full bg-sand-100 dark:bg-slate-800 hover:bg-sand-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-all active:scale-90 font-medium"
-                        title="View & post replies"
-                      >
-                        <MessageSquare className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
-                        <span>{item.replies?.length || item.answersCount || 0}</span>
-                      </button>
-
-                      <button
-                        onClick={(e) => handleSupport(item.id, e)}
-                        className={`flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full transition-all active:scale-90 flex-shrink-0 ${
-                          item.userSupported
-                            ? 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 font-bold'
-                            : 'text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                        }`}
-                        title="Send Solidarity & Support"
-                      >
-                        <Heart className={`w-3.5 h-3.5 ${item.userSupported ? 'fill-rose-600 dark:fill-rose-400' : ''}`} />
-                        <span className="font-semibold">{item.supportCount}</span>
-                      </button>
-                    </div>
+                    <button
+                      onClick={(e) => handleSupport(item.id, e)}
+                      className={`flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full transition-all duration-200 flex-shrink-0 group-hover:scale-105 group-hover:-translate-y-0.5 group-hover:shadow-md ${
+                        item.userSupported
+                          ? 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 font-bold border border-rose-500/30'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      }`}
+                      title="Send Solidarity & Support"
+                    >
+                      <Heart className={`w-3.5 h-3.5 ${item.userSupported ? 'fill-rose-600 dark:fill-rose-400 text-rose-600 dark:text-rose-400' : ''}`} />
+                      <span className="font-semibold">{item.supportCount}</span>
+                    </button>
                   </div>
                 </div>
               </article>
@@ -490,46 +520,6 @@ export const BraveStories: React.FC = () => {
           })}
         </div>
       )}
-
-      {/* 3. Floating Bottom Toolbar (Faithful to Screenshot Pill with Organise, Add, More ideas) */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 text-white px-5 py-2.5 rounded-full shadow-2xl backdrop-blur-xl border border-white/10 flex items-center gap-7 sm:gap-9 text-xs font-semibold select-none animate-in slide-in-from-bottom-4 duration-300">
-        <button
-          onClick={() => {
-            const nextIdx = (FILTER_CATEGORIES.indexOf(activeCategory) + 1) % FILTER_CATEGORIES.length;
-            setActiveCategory(FILTER_CATEGORIES[nextIdx]);
-          }}
-          className="flex flex-col sm:flex-row items-center gap-1 hover:text-amber-400 transition-colors active:scale-95"
-          title="Cycle Categories"
-        >
-          <Layers className="w-4 h-4" />
-          <span className="text-[11px]">Organise</span>
-        </button>
-
-        <button
-          onClick={() => setIsShareModalOpen(true)}
-          className="flex flex-col sm:flex-row items-center gap-1 hover:text-amber-400 transition-colors active:scale-95"
-          title="Share Story or Post Grievance"
-        >
-          <Plus className="w-4 h-4 text-secondary" />
-          <span className="text-[11px]">Add</span>
-        </button>
-
-        <button
-          onClick={() => {
-            if (activeTab === 'all') setActiveTab('stories');
-            else if (activeTab === 'stories') setActiveTab('grievances');
-            else if (activeTab === 'grievances') setActiveTab('saves');
-            else setActiveTab('all');
-          }}
-          className="flex flex-col sm:flex-row items-center gap-1 hover:text-amber-400 transition-colors active:scale-95"
-          title="Switch Views"
-        >
-          <Sparkles className="w-4 h-4 text-amber-400" />
-          <span className="text-[11px]">
-            {activeTab === 'stories' ? 'Stories' : activeTab === 'grievances' ? 'Grievances' : activeTab === 'saves' ? 'Saves' : 'All Ideas'}
-          </span>
-        </button>
-      </div>
 
       {/* 4. Full Story & Grievance Reader Modal */}
       {selectedItem && (
@@ -857,16 +847,16 @@ export const BraveStories: React.FC = () => {
       {/* 5. Add / Share Modal (Supports Both Brave Stories AND Grievances) */}
       {isShareModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-in fade-in duration-200">
-          <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-sand-300 shadow-2xl space-y-5 my-8 animate-in zoom-in-95 duration-200">
+          <div className="bg-white dark:bg-[#151e2e] rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-sand-300 dark:border-slate-800 shadow-2xl space-y-5 my-8 animate-in zoom-in-95 duration-200 text-slate-900 dark:text-slate-100">
             
-            <div className="flex items-center justify-between border-b border-sand-200 pb-3">
+            <div className="flex items-center justify-between border-b border-sand-200 dark:border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-secondary" />
-                <h3 className="font-bold text-lg text-primary">Community Voice</h3>
+                <h3 className="font-bold text-lg text-primary dark:text-slate-100">Community Voice</h3>
               </div>
               <button
                 onClick={() => setIsShareModalOpen(false)}
-                className="p-1 rounded-lg text-textMuted hover:text-primary transition-colors"
+                className="p-1 rounded-lg text-textMuted dark:text-slate-400 hover:text-primary dark:hover:text-white transition-colors"
                 aria-label="Close"
               >
                 <X className="w-5 h-5" />
@@ -876,10 +866,10 @@ export const BraveStories: React.FC = () => {
             {submittedMessage ? (
               <div className="text-center py-8 space-y-2">
                 <CheckCircle2 className="w-12 h-12 text-safeGreen mx-auto animate-bounce" />
-                <h4 className="font-bold text-lg text-primary">
+                <h4 className="font-bold text-lg text-primary dark:text-slate-100">
                   {entryType === 'grievance' ? 'Grievance / Doubt Submitted Safely!' : 'Brave Story Published Safely!'}
                 </h4>
-                <p className="text-xs text-textMuted">
+                <p className="text-xs text-textMuted dark:text-slate-400">
                   {entryType === 'grievance' 
                     ? 'Your inquiry has been pinned anonymously. Advocates and counselors will review guidance shortly.' 
                     : 'Your journey has been pinned to inspire and empower other defenders.'}
@@ -889,7 +879,7 @@ export const BraveStories: React.FC = () => {
               <form onSubmit={handleCreateEntry} className="space-y-4">
                 
                 {/* Entry Type Selector: Brave Story vs Grievance / Doubt */}
-                <div className="grid grid-cols-2 gap-2 p-1.5 bg-sand-200 rounded-2xl">
+                <div className="grid grid-cols-2 gap-2 p-1.5 bg-sand-200 dark:bg-slate-800/80 rounded-2xl">
                   <button
                     type="button"
                     onClick={() => {
@@ -898,8 +888,8 @@ export const BraveStories: React.FC = () => {
                     }}
                     className={`py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                       entryType === 'story'
-                        ? 'bg-white text-slate-900 shadow-sm'
-                        : 'text-textMuted hover:text-slate-800'
+                        ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-amber-400 shadow-sm font-extrabold'
+                        : 'text-textMuted dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                     }`}
                   >
                     <span>🛡️ Brave Story</span>
@@ -913,8 +903,8 @@ export const BraveStories: React.FC = () => {
                     }}
                     className={`py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                       entryType === 'grievance'
-                        ? 'bg-white text-amber-900 shadow-sm'
-                        : 'text-textMuted hover:text-slate-800'
+                        ? 'bg-white dark:bg-slate-900 text-amber-900 dark:text-amber-400 shadow-sm font-extrabold'
+                        : 'text-textMuted dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
                     }`}
                   >
                     <span>💬 Grievance / Doubt</span>
@@ -922,13 +912,13 @@ export const BraveStories: React.FC = () => {
                 </div>
 
                 {/* Anonymous Protection Toggle */}
-                <div className="p-3.5 rounded-2xl bg-sand-100 border border-sand-300 space-y-2">
+                <div className="p-3.5 rounded-2xl bg-sand-100 dark:bg-slate-800/50 border border-sand-300 dark:border-slate-700 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-primary flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-primary dark:text-slate-200 flex items-center gap-1.5">
                       <EyeOff className="w-4 h-4 text-secondary" />
                       Victim Anonymous Shield
                     </span>
-                    <span className="text-[10px] font-bold text-safeGreen bg-safeGreenContainer px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-bold text-safeGreen bg-safeGreenContainer dark:bg-emerald-950/60 dark:text-emerald-400 px-2 py-0.5 rounded">
                       Zero Retaliation Risk
                     </span>
                   </div>
@@ -936,20 +926,49 @@ export const BraveStories: React.FC = () => {
                     <input
                       type="checkbox"
                       checked={isAnonymousShare}
-                      onChange={(e) => setIsAnonymousShare(e.target.checked)}
-                      className="mt-0.5 rounded border-sand-300 text-primary focus:ring-secondary w-4 h-4"
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setIsAnonymousShare(checked);
+                        if (!checked && !authorAlias && user?.alias) {
+                          setAuthorAlias(user.alias);
+                        }
+                      }}
+                      className="mt-0.5 rounded border-sand-300 dark:border-slate-600 text-primary focus:ring-secondary w-4 h-4"
                     />
-                    <span className="text-xs text-textDark leading-relaxed">
-                      <strong>Post 100% anonymously</strong> — Strips real handles and assigns a randomized protective alias.
+                    <span className="text-xs text-textDark dark:text-slate-300 leading-relaxed">
+                      <strong>Post anonymously</strong> — Hides real identity and assigns a protective alias.
                     </span>
                   </label>
                 </div>
 
-
+                {/* Custom Alias if not posting anonymously */}
+                {!isAnonymousShare && (
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-bold text-primary dark:text-slate-200">Display Author Handle</label>
+                      {user && !user.isAnonymous && (
+                        <button
+                          type="button"
+                          onClick={() => setAuthorAlias(user.alias)}
+                          className="text-[11px] text-amber-600 dark:text-amber-400 hover:underline font-semibold"
+                        >
+                          Use my profile ({user.alias})
+                        </button>
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      value={authorAlias}
+                      onChange={(e) => setAuthorAlias(e.target.value)}
+                      placeholder={user?.alias || "e.g. Arjun_Shield"}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-sand-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-xs sm:text-sm focus:ring-2 focus:ring-amber-500/40"
+                    />
+                  </div>
+                )}
 
                 {/* Title Input */}
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-primary">
+                  <label className="block text-xs font-bold text-primary dark:text-slate-200">
                     {entryType === 'grievance' ? 'Doubt / Question Headline' : 'Story Title'}
                   </label>
                   <input
@@ -961,7 +980,7 @@ export const BraveStories: React.FC = () => {
                         ? 'e.g. Someone is demanding money on UPI threatening to leak my photos. If I block, will they leak it?'
                         : 'e.g. How I Stopped an Extortionist without Paying a Rupee'
                     }
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-sand-300 text-xs sm:text-sm focus:ring-2 focus:ring-secondary/40"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-sand-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-xs sm:text-sm focus:ring-2 focus:ring-amber-500/40"
                     required
                   />
                 </div>
@@ -969,11 +988,11 @@ export const BraveStories: React.FC = () => {
                 {/* Category & Caption */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-primary">Threat Category</label>
+                    <label className="block text-xs font-bold text-primary dark:text-slate-200">Threat Category</label>
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-sand-300 text-xs sm:text-sm bg-surface"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-sand-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 text-xs sm:text-sm"
                     >
                       {FILTER_CATEGORIES.filter(c => c !== 'All').map((cat) => (
                         <option key={cat} value={cat}>{cat}</option>
@@ -982,20 +1001,20 @@ export const BraveStories: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-xs font-bold text-primary">Emoji Caption</label>
+                    <label className="block text-xs font-bold text-primary dark:text-slate-200">Badge / Caption</label>
                     <input
                       type="text"
                       value={captionEmoji}
                       onChange={(e) => setCaptionEmoji(e.target.value)}
                       placeholder={entryType === 'grievance' ? 'Extortion Query ❓' : 'Overcame Extortion 🛡️'}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-sand-300 text-xs sm:text-sm"
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-sand-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-xs sm:text-sm"
                     />
                   </div>
                 </div>
 
                 {/* Detailed Text Area */}
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-primary">
+                  <label className="block text-xs font-bold text-primary dark:text-slate-200">
                     {entryType === 'grievance' ? 'Explain Your Situation & Questions' : 'Your Experience & Advice for Others'}
                   </label>
                   <textarea
@@ -1007,31 +1026,18 @@ export const BraveStories: React.FC = () => {
                         ? 'Describe what happened: what platform, what demands or threats were made, and what specific questions you need answered...'
                         : 'Tell what cyber threat happened, how you broke their leverage, and what advice you would give to another young person...'
                     }
-                    className="w-full p-3.5 rounded-xl border border-sand-300 text-xs sm:text-sm focus:ring-2 focus:ring-secondary/40 resize-none leading-relaxed"
+                    className="w-full p-3.5 rounded-xl border border-sand-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 text-xs sm:text-sm focus:ring-2 focus:ring-amber-500/40 resize-none leading-relaxed"
                     required
                   />
                 </div>
 
-                {!isAnonymousShare && (
-                  <div className="space-y-1">
-                    <label className="block text-xs font-bold text-primary">Custom Display Alias</label>
-                    <input
-                      type="text"
-                      value={authorAlias}
-                      onChange={(e) => setAuthorAlias(e.target.value)}
-                      placeholder="e.g. Arjun_Shield"
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-sand-300 text-xs sm:text-sm"
-                    />
-                  </div>
-                )}
-
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-3.5 rounded-xl bg-primary hover:bg-primary-hover text-surface text-xs sm:text-sm font-bold shadow-warm-sm hover:shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
+                    className="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-amber-500 dark:hover:bg-amber-600 text-white dark:text-slate-950 text-xs sm:text-sm font-bold shadow-warm-sm hover:shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
                   >
                     <span>{entryType === 'grievance' ? 'Submit Grievance / Doubt Safely' : 'Publish Brave Story Safely'}</span>
-                    <ArrowRight className="w-4 h-4 text-secondary" />
+                    <ArrowRight className="w-4 h-4 text-secondary dark:text-slate-950" />
                   </button>
                 </div>
               </form>

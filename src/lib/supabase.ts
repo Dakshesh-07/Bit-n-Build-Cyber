@@ -12,6 +12,8 @@ export const isSupabaseConfigured = Boolean(
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+const BASE_TIME = Date.now();
+
 // Initial Seed Data for Instant Local Persistence
 const INITIAL_INCIDENTS: IncidentReport[] = [
   {
@@ -27,6 +29,7 @@ const INITIAL_INCIDENTS: IncidentReport[] = [
     status: 'Under Review',
     piiScrubbed: true,
     createdAt: '18 mins ago',
+    createdTimestamp: BASE_TIME - 18 * 60 * 1000,
     assignedOfficer: 'Inspector Sharma',
     distressLevel: 88,
     evidenceFiles: [
@@ -46,6 +49,7 @@ const INITIAL_INCIDENTS: IncidentReport[] = [
     status: 'Platform Notice Drafted',
     piiScrubbed: true,
     createdAt: '45 mins ago',
+    createdTimestamp: BASE_TIME - 45 * 60 * 1000,
     assignedOfficer: 'Child Welfare Desk',
     distressLevel: 55,
     evidenceFiles: [
@@ -65,6 +69,7 @@ const INITIAL_INCIDENTS: IncidentReport[] = [
     status: 'Escalated 1098',
     piiScrubbed: true,
     createdAt: '2 hours ago',
+    createdTimestamp: BASE_TIME - 2 * 3600 * 1000,
     assignedOfficer: 'Childline Nodal Desk',
     distressLevel: 75,
     evidenceFiles: [
@@ -84,6 +89,7 @@ const INITIAL_INCIDENTS: IncidentReport[] = [
     status: 'Under Review',
     piiScrubbed: true,
     createdAt: '3 hours ago',
+    createdTimestamp: BASE_TIME - 3 * 3600 * 1000,
     assignedOfficer: 'Inspector Rao',
     distressLevel: 94,
     evidenceFiles: [
@@ -104,6 +110,7 @@ const INITIAL_STORIES: BraveStory[] = [
     authorAlias: 'GamerShield_15',
     storyText: 'When someone I played with for months said they had photoshopped synthetic pictures of me and demanded $50 or they would leak it to my classmates, my world stopped. My hands were shaking. I found CyberVigil and Childline. Following the golden advice to NEVER pay and taking screenshots before blocking saved me. Within 2 days, their account was suspended across platforms.',
     timeAgo: '2 days ago',
+    createdAt: BASE_TIME - 50 * 3600 * 1000,
     supportCount: 42,
     userSupported: false,
     votesCount: 38,
@@ -146,6 +153,7 @@ const INITIAL_STORIES: BraveStory[] = [
     authorAlias: 'Ananya_Defends',
     storyText: 'A cyber harasser created a clone profile with my name, bio, and stolen photos to send obscene DMs to my school friends and run gift card scams. I thought I had to confront them directly. Instead, our counselor helped me preserve cryptographic hashes and file an emergency takedown through Indian IT Act protocols. It was dismantled in under 4 hours.',
     timeAgo: '4 days ago',
+    createdAt: BASE_TIME - 96 * 3600 * 1000,
     supportCount: 89,
     userSupported: true,
     votesCount: 65,
@@ -177,6 +185,7 @@ const INITIAL_STORIES: BraveStory[] = [
     authorAlias: 'SilentKnight',
     storyText: 'An anonymous stranger threatened that if I did not follow their commands or if I told my parents, they would ruin my life. I felt cornered and isolated until an advocate explained that predators manufacture fake urgency. We gathered chat logs, pressed block, and dialed 1098 together. Saying that single word "HALT" broke their power.',
     timeAgo: '1 week ago',
+    createdAt: BASE_TIME - 168 * 3600 * 1000,
     supportCount: 114,
     userSupported: false,
     votesCount: 92,
@@ -208,6 +217,7 @@ const INITIAL_STORIES: BraveStory[] = [
     authorAlias: 'SketchArt_Maya',
     storyText: 'When a toxic grade chat started circulating cruel memes and excluding me, drawing was my refuge. I quietly archived every abusive message with timestamps, reported the instigators with parental support, and founded an anti-cyberbullying art circle. Bullies lose all authority the moment you stop suffering in silence.',
     timeAgo: '3 days ago',
+    createdAt: BASE_TIME - 75 * 3600 * 1000,
     supportCount: 67,
     userSupported: false,
     votesCount: 45,
@@ -238,6 +248,7 @@ const INITIAL_STORIES: BraveStory[] = [
     authorAlias: 'Rohan_Suraksha',
     storyText: 'During a crowded festival night, an unknown account attempted social engineering to extract our live location via Snap Map links and fake event passes. We immediately disabled location sharing and ran all group photos through CyberVigil’s EXIF scrubber. Enjoy social celebrations, but protect your physical GPS coordinates!',
     timeAgo: '5 days ago',
+    createdAt: BASE_TIME - 120 * 3600 * 1000,
     supportCount: 95,
     userSupported: true,
     votesCount: 78,
@@ -269,6 +280,7 @@ const INITIAL_STORIES: BraveStory[] = [
     authorAlias: 'CyberAngel_Kavya',
     storyText: 'Facing an online predator in a gaming lobby taught me the early red flags: excessive secret gifts, emotional manipulation, and attempts to isolate you from family. Today, our community mentors youth on setting firm digital boundaries and reporting grooming before harm occurs.',
     timeAgo: '6 days ago',
+    createdAt: BASE_TIME - 144 * 3600 * 1000,
     supportCount: 132,
     userSupported: true,
     votesCount: 104,
@@ -304,6 +316,7 @@ const INITIAL_STORIES: BraveStory[] = [
     authorAlias: 'Scared_Student_16',
     storyText: 'Someone on Instagram DM sent me an AI-generated photo with my face pasted on an explicit body, demanding 5,000 INR on UPI within 6 hours or they threaten to message it to all my school followers. I haven\'t replied. If I block them right now without paying, will they actually send it to everyone? Please help me understand!',
     timeAgo: '4 hours ago',
+    createdAt: BASE_TIME - 4 * 3600 * 1000,
     supportCount: 58,
     userSupported: true,
     votesCount: 84,
@@ -360,6 +373,7 @@ const INITIAL_STORIES: BraveStory[] = [
     authorAlias: 'Anonymous_Class9',
     storyText: 'An anonymous confession account run by students in my school is leaking private messages and posting humiliating memes about me. School principal says because it happened on Instagram outside school hours, they cannot intervene. What are my legal rights and what can I do?',
     timeAgo: '1 day ago',
+    createdAt: BASE_TIME - 24 * 3600 * 1000,
     supportCount: 76,
     userSupported: false,
     votesCount: 61,
@@ -404,6 +418,7 @@ const INITIAL_STORIES: BraveStory[] = [
     authorAlias: 'Creator_Dev',
     storyText: 'I got an official-looking DM claiming copyright violation with a countdown link to avoid account suspension. I panicked and entered my credentials. Immediately, the attacker changed my recovery email and activated an authenticator app. Now they are asking my followers for emergency money transfers. Can I recover it?',
     timeAgo: '2 days ago',
+    createdAt: BASE_TIME - 48 * 3600 * 1000,
     supportCount: 39,
     userSupported: false,
     votesCount: 47,
@@ -447,6 +462,7 @@ const INITIAL_STORIES: BraveStory[] = [
     authorAlias: 'GamerKid_12',
     storyText: 'Someone I met in an online game has been giving me skins and game currency for 2 months. Now they asked for a private video call late at night and said "keep it secret from your parents, it\'s our private gamer code". If I refuse or block them, can they ban my game account or charge my parents?',
     timeAgo: '3 days ago',
+    createdAt: BASE_TIME - 72 * 3600 * 1000,
     supportCount: 104,
     userSupported: true,
     votesCount: 96,
@@ -484,7 +500,79 @@ const INITIAL_STORIES: BraveStory[] = [
   }
 ];
 
-// Local Repository for Instant Interactivity
+// Helper to extract or estimate timestamp for chronological sorting
+export function getStoryTimestamp(story: BraveStory): number {
+  if (typeof story.createdAt === 'number' && !isNaN(story.createdAt) && story.createdAt > 0) {
+    return story.createdAt;
+  }
+  const idMatch = story.id.match(/\b\d{12,14}\b/);
+  if (idMatch) {
+    const parsed = parseInt(idMatch[0], 10);
+    if (!isNaN(parsed) && parsed > 1700000000000) return parsed;
+  }
+  const text = (story.timeAgo || '').toLowerCase();
+  const now = Date.now();
+  if (text.includes('just now')) return now;
+  const numMatch = text.match(/\d+/);
+  const num = numMatch ? parseInt(numMatch[0], 10) : 1;
+  if (text.includes('min') || text.includes('m ago')) return now - num * 60 * 1000;
+  if (text.includes('hour') || text.includes('h ago')) return now - num * 3600 * 1000;
+  if (text.includes('day') || text.includes('d ago')) return now - num * 86400 * 1000;
+  if (text.includes('week') || text.includes('w ago')) return now - num * 7 * 86400 * 1000;
+  if (text.includes('month')) return now - num * 30 * 86400 * 1000;
+  return now - 30 * 86400 * 1000;
+}
+
+// Helper to extract or estimate timestamp for incidents
+export function getIncidentTimestamp(incident: IncidentReport): number {
+  if (typeof incident.createdTimestamp === 'number' && !isNaN(incident.createdTimestamp) && incident.createdTimestamp > 0) {
+    return incident.createdTimestamp;
+  }
+  const idMatch = incident.id.match(/\b\d{12,14}\b/);
+  if (idMatch) {
+    const parsed = parseInt(idMatch[0], 10);
+    if (!isNaN(parsed) && parsed > 1700000000000) return parsed;
+  }
+  const text = (incident.createdAt || '').toLowerCase();
+  const now = Date.now();
+  if (text.includes('just now')) return now;
+  const numMatch = text.match(/\d+/);
+  const num = numMatch ? parseInt(numMatch[0], 10) : 1;
+  if (text.includes('min') || text.includes('m ago')) return now - num * 60 * 1000;
+  if (text.includes('hour') || text.includes('h ago')) return now - num * 3600 * 1000;
+  if (text.includes('day') || text.includes('d ago')) return now - num * 86400 * 1000;
+  if (text.includes('week') || text.includes('w ago')) return now - num * 7 * 86400 * 1000;
+  return now - 30 * 86400 * 1000;
+}
+
+// Exportable sort function ensuring newest incidents are always first
+export function sortIncidentsByMostRecent(incidents: IncidentReport[]): IncidentReport[] {
+  return [...incidents].sort((a, b) => getIncidentTimestamp(b) - getIncidentTimestamp(a));
+}
+
+// Exportable sort function ensuring newest items are always first
+export function sortStoriesByMostRecent(stories: BraveStory[]): BraveStory[] {
+  return [...stories].sort((a, b) => getStoryTimestamp(b) - getStoryTimestamp(a));
+}
+
+// Dynamic user-friendly relative time formatter
+export function formatTimeAgo(timestamp?: number, fallbackStr?: string): string {
+  if (!timestamp) return fallbackStr || 'Recently';
+  const diff = Date.now() - timestamp;
+  if (diff < 0) return 'Just now';
+  if (diff < 60 * 1000) return 'Just now';
+  const mins = Math.floor(diff / (60 * 1000));
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(diff / (3600 * 1000));
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(diff / (86400 * 1000));
+  if (days < 7) return `${days}d ago`;
+  const weeks = Math.floor(days / 7);
+  if (weeks < 5) return `${weeks}w ago`;
+  return new Date(timestamp).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+}
+
+// Local Repository for Instant Interactivity & Multi-Role Persistence
 class LocalStore {
   private incidentsKey = 'cybervigil_incidents_store';
   private storiesKey = 'cybervigil_stories_store';
@@ -492,17 +580,64 @@ class LocalStore {
   getIncidents(): IncidentReport[] {
     const saved = localStorage.getItem(this.incidentsKey);
     if (!saved) {
-      localStorage.setItem(this.incidentsKey, JSON.stringify(INITIAL_INCIDENTS));
-      return INITIAL_INCIDENTS;
+      const initialSorted = sortIncidentsByMostRecent(INITIAL_INCIDENTS);
+      localStorage.setItem(this.incidentsKey, JSON.stringify(initialSorted));
+      return initialSorted;
     }
-    return JSON.parse(saved);
+    try {
+      const parsed: IncidentReport[] = JSON.parse(saved);
+      const sanitized = parsed.map(inc => ({
+        ...inc,
+        createdTimestamp: getIncidentTimestamp(inc)
+      }));
+      return sortIncidentsByMostRecent(sanitized);
+    } catch (err) {
+      console.error('Error loading incidents from localStore:', err);
+      const initialSorted = sortIncidentsByMostRecent(INITIAL_INCIDENTS);
+      localStorage.setItem(this.incidentsKey, JSON.stringify(initialSorted));
+      return initialSorted;
+    }
   }
 
   saveIncident(incident: IncidentReport): IncidentReport {
+    const now = incident.createdTimestamp || Date.now();
+    const incidentWithTimestamp: IncidentReport = {
+      ...incident,
+      createdTimestamp: now,
+      createdAt: incident.createdAt || 'Just now',
+    };
+
     const current = this.getIncidents();
-    const updated = [incident, ...current];
+    const updated = sortIncidentsByMostRecent([
+      incidentWithTimestamp,
+      ...current.filter(i => i.id !== incident.id)
+    ]);
     localStorage.setItem(this.incidentsKey, JSON.stringify(updated));
-    return incident;
+
+    // Multi-tab and in-tab live event broadcast
+    if (typeof window !== 'undefined') {
+      try {
+        window.dispatchEvent(new CustomEvent('cybervigil_incidents_updated', { detail: incidentWithTimestamp }));
+      } catch (e) {}
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const bc = new BroadcastChannel('cybervigil_channel');
+          bc.postMessage({ type: 'INCIDENTS_UPDATED', incident: incidentWithTimestamp });
+          bc.close();
+        }
+      } catch (e) {}
+    }
+
+    // Sync with local server API (for cross-browser / incognito dev synchronization)
+    if (typeof fetch !== 'undefined') {
+      fetch('/api/incidents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
+      }).catch(() => {});
+    }
+
+    return incidentWithTimestamp;
   }
 
   updateIncident(id: string, updates: Partial<IncidentReport>): IncidentReport | null {
@@ -510,36 +645,188 @@ class LocalStore {
     const index = current.findIndex(item => item.id === id);
     if (index === -1) return null;
     current[index] = { ...current[index], ...updates };
-    localStorage.setItem(this.incidentsKey, JSON.stringify(current));
-    return current[index];
+    const updated = sortIncidentsByMostRecent(current);
+    localStorage.setItem(this.incidentsKey, JSON.stringify(updated));
+
+    const updatedIncident = current[index];
+
+    // Multi-tab and in-tab live event broadcast
+    if (typeof window !== 'undefined') {
+      try {
+        window.dispatchEvent(new CustomEvent('cybervigil_incidents_updated', { detail: updatedIncident }));
+      } catch (e) {}
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const bc = new BroadcastChannel('cybervigil_channel');
+          bc.postMessage({ type: 'INCIDENTS_UPDATED', incident: updatedIncident });
+          bc.close();
+        }
+      } catch (e) {}
+    }
+
+    // Sync with local server API
+    if (typeof fetch !== 'undefined') {
+      fetch('/api/incidents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
+      }).catch(() => {});
+    }
+
+    return updatedIncident;
+  }
+
+  async syncIncidentsWithServer(): Promise<IncidentReport[]> {
+    if (typeof fetch === 'undefined') return this.getIncidents();
+    try {
+      const res = await fetch('/api/incidents');
+      if (!res.ok) return this.getIncidents();
+      const serverIncidents: IncidentReport[] = await res.json();
+      if (!Array.isArray(serverIncidents) || serverIncidents.length === 0) {
+        const current = this.getIncidents();
+        fetch('/api/incidents', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(current)
+        }).catch(() => {});
+        return current;
+      }
+
+      const local = this.getIncidents();
+      const mergedMap = new Map<string, IncidentReport>();
+      for (const item of local) {
+        mergedMap.set(item.id, item);
+      }
+      for (const item of serverIncidents) {
+        if (!mergedMap.has(item.id)) {
+          mergedMap.set(item.id, item);
+        } else {
+          const existing = mergedMap.get(item.id)!;
+          mergedMap.set(item.id, { ...existing, ...item });
+        }
+      }
+      const sorted = sortIncidentsByMostRecent(Array.from(mergedMap.values()));
+      localStorage.setItem(this.incidentsKey, JSON.stringify(sorted));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cybervigil_incidents_updated'));
+      }
+      return sorted;
+    } catch (e) {
+      return this.getIncidents();
+    }
   }
 
   getStories(): BraveStory[] {
     const saved = localStorage.getItem(this.storiesKey);
     if (!saved) {
-      localStorage.setItem(this.storiesKey, JSON.stringify(INITIAL_STORIES));
-      return INITIAL_STORIES;
+      const initialSorted = sortStoriesByMostRecent(INITIAL_STORIES);
+      localStorage.setItem(this.storiesKey, JSON.stringify(initialSorted));
+      return initialSorted;
     }
     try {
       const parsed: BraveStory[] = JSON.parse(saved);
-      // Ensure all stories have initialized arrays without overwriting user created items
+      // Ensure all stories have initialized arrays and timestamps
       const sanitized = parsed.map(s => ({
         ...s,
+        createdAt: getStoryTimestamp(s),
         replies: s.replies || []
       }));
-      return sanitized;
+      // Sort descending by most recent
+      const sorted = sortStoriesByMostRecent(sanitized);
+      return sorted;
     } catch (err) {
       console.error('Error loading stories from localStore:', err);
-      localStorage.setItem(this.storiesKey, JSON.stringify(INITIAL_STORIES));
-      return INITIAL_STORIES;
+      const initialSorted = sortStoriesByMostRecent(INITIAL_STORIES);
+      localStorage.setItem(this.storiesKey, JSON.stringify(initialSorted));
+      return initialSorted;
     }
   }
 
   saveStory(story: BraveStory): BraveStory {
+    const now = story.createdAt || Date.now();
+    const storyWithTimestamp: BraveStory = {
+      ...story,
+      createdAt: now,
+      timeAgo: story.timeAgo || 'Just now',
+      replies: story.replies || []
+    };
+
     const current = this.getStories();
-    const updated = [story, ...current];
+    // Filter out existing copy if any (e.g. edit/update) and place new story at the top sorted
+    const updated = sortStoriesByMostRecent([
+      storyWithTimestamp,
+      ...current.filter(s => s.id !== story.id)
+    ]);
     localStorage.setItem(this.storiesKey, JSON.stringify(updated));
-    return story;
+
+    // Multi-tab and in-tab live event broadcast
+    if (typeof window !== 'undefined') {
+      try {
+        window.dispatchEvent(new CustomEvent('cybervigil_stories_updated', { detail: storyWithTimestamp }));
+      } catch (e) {}
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const bc = new BroadcastChannel('cybervigil_channel');
+          bc.postMessage({ type: 'STORIES_UPDATED', story: storyWithTimestamp });
+          bc.close();
+        }
+      } catch (e) {}
+    }
+
+    // Sync with local server API (for cross-browser / incognito dev synchronization)
+    if (typeof fetch !== 'undefined') {
+      fetch('/api/stories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
+      }).catch(() => {});
+    }
+
+    return storyWithTimestamp;
+  }
+
+  async syncWithServer(): Promise<BraveStory[]> {
+    if (typeof fetch === 'undefined') return this.getStories();
+    try {
+      const res = await fetch('/api/stories');
+      if (!res.ok) return this.getStories();
+      const serverStories: BraveStory[] = await res.json();
+      if (!Array.isArray(serverStories) || serverStories.length === 0) {
+        // Push local stories to server if server is empty
+        const current = this.getStories();
+        fetch('/api/stories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(current)
+        }).catch(() => {});
+        return current;
+      }
+
+      // Merge server stories with local stories preserving user submissions
+      const local = this.getStories();
+      const mergedMap = new Map<string, BraveStory>();
+      for (const item of local) {
+        mergedMap.set(item.id, item);
+      }
+      for (const item of serverStories) {
+        if (!mergedMap.has(item.id)) {
+          mergedMap.set(item.id, item);
+        } else {
+          const existing = mergedMap.get(item.id)!;
+          if ((item.replies?.length || 0) >= (existing.replies?.length || 0)) {
+            mergedMap.set(item.id, { ...existing, ...item });
+          }
+        }
+      }
+      const sorted = sortStoriesByMostRecent(Array.from(mergedMap.values()));
+      localStorage.setItem(this.storiesKey, JSON.stringify(sorted));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new CustomEvent('cybervigil_stories_updated'));
+      }
+      return sorted;
+    } catch (e) {
+      return this.getStories();
+    }
   }
 
   toggleStorySupport(id: string): BraveStory | null {
@@ -549,6 +836,7 @@ class LocalStore {
     story.userSupported = !story.userSupported;
     story.supportCount += story.userSupported ? 1 : -1;
     localStorage.setItem(this.storiesKey, JSON.stringify(current));
+    this.broadcastUpdate(story);
     return story;
   }
 
@@ -559,6 +847,7 @@ class LocalStore {
     story.userVoted = !story.userVoted;
     story.votesCount = (story.votesCount || 0) + (story.userVoted ? 1 : -1);
     localStorage.setItem(this.storiesKey, JSON.stringify(current));
+    this.broadcastUpdate(story);
     return story;
   }
 
@@ -580,6 +869,7 @@ class LocalStore {
     story.replies = [newReply, ...(story.replies || [])];
     story.answersCount = story.replies.length;
     localStorage.setItem(this.storiesKey, JSON.stringify(current));
+    this.broadcastUpdate(story);
     return story;
   }
 
@@ -592,6 +882,7 @@ class LocalStore {
     reply.userVoted = !reply.userVoted;
     reply.votesCount += reply.userVoted ? 1 : -1;
     localStorage.setItem(this.storiesKey, JSON.stringify(current));
+    this.broadcastUpdate(story);
     return story;
   }
 
@@ -601,7 +892,31 @@ class LocalStore {
     if (!story) return null;
     story.isSaved = !story.isSaved;
     localStorage.setItem(this.storiesKey, JSON.stringify(current));
+    this.broadcastUpdate(story);
     return story;
+  }
+
+  private broadcastUpdate(story: BraveStory) {
+    if (typeof window !== 'undefined') {
+      try {
+        window.dispatchEvent(new CustomEvent('cybervigil_stories_updated', { detail: story }));
+      } catch (e) {}
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const bc = new BroadcastChannel('cybervigil_channel');
+          bc.postMessage({ type: 'STORIES_UPDATED', story });
+          bc.close();
+        }
+      } catch (e) {}
+    }
+    const current = this.getStories();
+    if (typeof fetch !== 'undefined') {
+      fetch('/api/stories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(current)
+      }).catch(() => {});
+    }
   }
 }
 

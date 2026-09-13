@@ -65,9 +65,16 @@ html.dark .text-slate-500 {
   color: #94a3b8 !important;
 }
 
-html.dark header, html.dark nav {
-  background-color: #0f172a !important;
+html.dark header {
+  background-color: #0b1120 !important;
   border-color: #1e293b !important;
+}
+
+nav {
+  background: transparent !important;
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
 }
 
 html.dark input, html.dark textarea, html.dark select {
@@ -113,19 +120,25 @@ article, .shadow-warm-card {
 
 article:hover, .shadow-warm-card:hover {
   transform: translateY(-2px);
+  border-color: #f97316 !important;
+  box-shadow: none !important;
 }
 
 html.dark article,
-html.dark .shadow-warm-card {
+html.dark .shadow-warm-card,
+html.dark .shadow-warm-elevated,
+html.dark .shadow-warm-sm {
   background-color: #0f172a;
   border-color: #1e293b;
+  box-shadow: none !important;
 }
 
 html.dark article:hover,
-html.dark .shadow-warm-card:hover {
-  background-color: #1e293b !important;
+html.dark .shadow-warm-card:hover,
+html.dark .shadow-warm-elevated:hover {
+  background-color: #151e2e !important;
   border-color: #f97316 !important;
-  box-shadow: 0 10px 25px -5px rgba(249, 115, 22, 0.2), 0 8px 10px -6px rgba(249, 115, 22, 0.1) !important;
+  box-shadow: none !important;
 }
 
 /* ============================================================================== */

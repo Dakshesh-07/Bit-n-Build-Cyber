@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Shield, 
   Menu, 
@@ -26,6 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const currentRole = user?.role || 'anonymous_user';
   const currentRoleInfo = ROLE_DEFINITIONS[currentRole];
@@ -101,37 +102,37 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
   return (
     <header className="bg-white dark:bg-[#0b1120] border-b border-slate-200 dark:border-slate-800/80 sticky top-0 z-40 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 sm:h-18">
+        <div className="flex justify-between items-center h-20 sm:h-22">
           
           {/* Brand Identity - CyberVigil Emblem & Typography */}
-          <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
+          <Link to="/" className="flex items-center gap-3 group flex-shrink-0">
             <img 
               src="/cybervigil-shield.png" 
               alt="CyberVigil Shield" 
-              className="w-10 h-10 object-contain transition-transform duration-200 group-hover:scale-105 filter drop-shadow-sm" 
+              className="w-11 h-11 sm:w-12 sm:h-12 object-contain transition-transform duration-200 group-hover:scale-105 filter drop-shadow-sm" 
             />
             <div className="flex flex-col">
-              <span className="font-extrabold text-xl tracking-tight text-slate-900 dark:text-slate-100 leading-none">
+              <span className="font-extrabold text-2xl sm:text-[26px] tracking-tight text-slate-900 dark:text-slate-100 leading-none">
                 Cyber<span className="text-secondary">Vigil</span>
               </span>
-              <span className="text-[9px] tracking-wider uppercase font-bold text-slate-400 dark:text-slate-400 mt-0.5">
+              <span className="text-[10px] sm:text-[11px] tracking-wider uppercase font-bold text-slate-400 dark:text-slate-400 mt-1">
                 Secure Reporting Partner
               </span>
             </div>
           </Link>
 
-          {/* Center Navigation Links - Only displayed once logged into the website */}
+          {/* Center Navigation Links - Pure inline links, seamless with header background */}
           {user && (
-            <nav className="hidden lg:flex items-center gap-7 xl:gap-9 bg-transparent">
+            <nav className="hidden lg:flex items-center gap-8 xl:gap-10">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.path}
                   to={link.path}
                   className={({ isActive }) =>
-                    `text-sm tracking-normal transition-all py-1 border-b-2 bg-transparent ${
+                    `text-[15px] sm:text-base tracking-normal transition-all py-1.5 px-1 border-b-2 ${
                       isActive
                         ? 'text-amber-600 dark:text-amber-500 border-amber-600 dark:border-amber-500 font-bold'
-                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-transparent font-medium'
+                        : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-transparent font-semibold'
                     }`
                   }
                 >
@@ -141,41 +142,41 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
             </nav>
           )}
 
-          {/* Right Actions - Sleek Circular Icon Buttons like INFIPRE */}
-          <div className="flex items-center gap-2.5">
+          {/* Right Actions - Sleek Circular Icon Buttons */}
+          <div className="flex items-center gap-3">
             
             {/* Dark Mode Toggle Button */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-all active:scale-95 shadow-xs"
+              className="w-11 h-11 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-all active:scale-95 shadow-xs"
               title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
               aria-label="Toggle Dark Mode"
             >
-              {darkMode ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-slate-600 dark:text-slate-300" />}
+              {darkMode ? <Sun className="w-5 h-5 text-amber-500" /> : <Moon className="w-5 h-5 text-slate-600 dark:text-slate-300" />}
             </button>
 
             {/* Quick Camouflage Toggle (Circular Button) */}
             {user && onTriggerCamouflage && (
               <button
                 onClick={onTriggerCamouflage}
-                className="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-all active:scale-95 shadow-xs"
+                className="w-11 h-11 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 transition-all active:scale-95 shadow-xs"
                 title="Quick Exit to study notes (ESC)"
                 aria-label="Quick Exit Camouflage Mode"
               >
-                <EyeOff className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+                <EyeOff className="w-5 h-5 text-slate-600 dark:text-slate-300" />
               </button>
             )}
 
-            {/* Profile / Account Trigger or Sign In Button */}
+            {/* Profile / Account Trigger or Log In Button */}
             {user ? (
               <div className="relative">
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-primary text-xs font-bold transition-all active:scale-95 shadow-xs"
+                  className="w-11 h-11 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-primary text-sm font-bold transition-all active:scale-95 shadow-xs"
                   title={`Logged in as: ${user?.alias}`}
                   aria-label="Account Settings & Role Switcher"
                 >
-                  <span className="text-base">{user?.alias ? user.alias.slice(0, 2) : '👤'}</span>
+                  <span className="text-lg">{user?.alias ? user.alias.slice(0, 2) : '👤'}</span>
                 </button>
 
                 {/* Minimal Profile Dropdown with RBAC Controls */}
@@ -263,30 +264,39 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
 
                       <button
                         onClick={handleSignOut}
-                        className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 text-rose-600 font-bold transition-colors text-left"
+                        className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-600 dark:text-rose-400 font-bold transition-colors text-left"
                       >
                         <LogOut className="w-3.5 h-3.5 text-rose-500" />
-                        <span>Sign Out (Direct to Login)</span>
+                        <span>Log Out</span>
                       </button>
                     </div>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link
-                  to="/login"
-                  className="text-xs font-bold px-3.5 py-2 rounded-xl bg-primary dark:bg-secondary hover:bg-primary-hover dark:hover:bg-secondary-dark text-surface dark:text-primary flex items-center gap-1.5 transition-all shadow-warm-sm active:scale-95"
-                >
-                  <User className="w-3.5 h-3.5 text-secondary dark:text-primary" />
-                  <span>Sign In</span>
-                </Link>
-                <Link
-                  to="/register"
-                  className="text-xs font-bold px-3.5 py-2 rounded-xl border border-sand-300 dark:border-sand-700 hover:bg-sand-100 dark:hover:bg-sand-800 text-primary dark:text-sand-100 flex items-center gap-1 transition-all shadow-xs active:scale-95"
-                >
-                  <span>Register</span>
-                </Link>
+              <div className="flex items-center gap-2.5">
+                {location.pathname !== '/login' && (
+                  <Link
+                    to="/login"
+                    className={`text-sm font-bold px-4 py-2 rounded-xl flex items-center gap-1.5 transition-all shadow-xs active:scale-95 ${
+                      location.pathname === '/register'
+                        ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold shadow-sm'
+                        : 'border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-100'
+                    }`}
+                  >
+                    <User className={`w-4 h-4 ${location.pathname === '/register' ? 'text-slate-950' : 'text-amber-500'}`} />
+                    <span>Log In</span>
+                  </Link>
+                )}
+
+                {location.pathname !== '/register' && (
+                  <Link
+                    to="/register"
+                    className="text-sm font-extrabold px-4 py-2 rounded-xl flex items-center gap-1 transition-all bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-sm active:scale-95"
+                  >
+                    <span>Register</span>
+                  </Link>
+                )}
               </div>
             )}
 
@@ -294,10 +304,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
             {user && (
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-1.5 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
+                className="lg:hidden w-11 h-11 flex items-center justify-center rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 aria-label="Toggle navigation menu"
               >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             )}
           </div>
@@ -306,34 +316,34 @@ export const Navbar: React.FC<NavbarProps> = ({ onTriggerCamouflage }) => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && user && (
-        <div className="lg:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 space-y-2 shadow-sm">
+        <div className="lg:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] px-4 pt-3 pb-6 space-y-2 shadow-sm">
           {navLinks.map((link) => (
             <NavLink
               key={link.path}
               to={link.path}
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
-                `block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                `block px-3 py-2 rounded-lg text-base font-semibold transition-colors ${
                   isActive
-                    ? 'text-sky-600 font-bold bg-sky-50'
-                    : 'text-slate-700 hover:bg-slate-50'
+                    ? 'text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950/40'
+                    : 'text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800'
                 }`
               }
             >
               {link.name}
             </NavLink>
           ))}
-          <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
             <div className="space-y-2">
-              <div className="px-3 py-1.5 bg-slate-50 rounded-lg text-xs">
-                <p className="font-bold text-slate-800">{user.alias}</p>
-                <p className="text-[10px] text-slate-500">{currentRoleInfo.clearance}</p>
+              <div className="px-3 py-1.5 bg-slate-50 dark:bg-slate-800/80 rounded-lg text-xs">
+                <p className="font-bold text-slate-800 dark:text-slate-100">{user.alias}</p>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">{currentRoleInfo.clearance}</p>
               </div>
               <button
                 onClick={handleSignOut}
-                className="w-full text-center py-2 rounded-lg border border-rose-200 text-xs font-bold text-rose-600 hover:bg-rose-50"
+                className="w-full text-center py-2.5 rounded-lg border border-rose-200 dark:border-rose-900/50 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40"
               >
-                Sign Out (Direct to Login)
+                Log Out
               </button>
             </div>
           </div>

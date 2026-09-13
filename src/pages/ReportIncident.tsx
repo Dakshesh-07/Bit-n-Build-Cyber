@@ -197,6 +197,7 @@ export const ReportIncident: React.FC = () => {
         status: 'Pending Intake',
         piiScrubbed: true,
         createdAt: 'Just now',
+        createdTimestamp: Date.now(),
         evidenceFiles: evidenceFiles.length > 0 ? evidenceFiles : [{ name: 'Digital_Screenshot_Intake.png', size: '2.1 MB', status: 'Metadata Scrubbed (SHA-256)' }],
         isAnonymousReporter: isAnonymousMode,
         reporterAlias: isAnonymousMode ? 'Anonymous Victim (Zero PII Logged)' : (user?.alias || 'Verified Reporter'),
@@ -326,9 +327,10 @@ export const ReportIncident: React.FC = () => {
       ? customPlatformName.trim()
       : selectedPlatform;
 
+    const now = Date.now();
     const caseNumber = `#BG-${Math.floor(1000 + Math.random() * 9000)}`;
     const newIncident: IncidentReport = {
-      id: `inc-${Date.now()}`,
+      id: `inc-${now}`,
       caseNumber,
       category: selectedCategory,
       platform: finalPlatformName as IncidentPlatform,
@@ -336,10 +338,11 @@ export const ReportIncident: React.FC = () => {
       immediateDanger: isImmediateDanger,
       severityLevel: threatScore > 75 ? 'High' : threatScore > 50 ? 'Moderate' : 'Low',
       threatScore,
-      evidenceSha256: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+      evidenceSha256: aiAnalysisResult?.evidenceHash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
       status: 'Pending Intake',
       piiScrubbed: true,
       createdAt: 'Just now',
+      createdTimestamp: now,
       distressLevel: threatScore > 70 ? 85 : 50,
       evidenceFiles,
       isAnonymousReporter: isAnonymousMode,
@@ -432,7 +435,7 @@ export const ReportIncident: React.FC = () => {
               {submittedCase.caseNumber}
             </p>
             <p className="text-xs text-textMuted">
-              Save this Case ID! You can track progress anytime completely anonymously at the sign in page without needing an account.
+              Save this Case ID! You can track progress anytime completely anonymously at the login page without needing an account.
             </p>
           </div>
 
@@ -651,7 +654,7 @@ export const ReportIncident: React.FC = () => {
                   tabIndex={0}
                   className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer flex flex-col items-center justify-center transition-all focus:outline-hidden ${
                   evidenceFiles.length === 0
-                    ? 'border-rose-500/60 bg-rose-500/5 hover:border-rose-500 dark:bg-rose-950/20 dark:border-rose-500/40 dark:hover:border-rose-400'
+                    ? 'border-amber-500/60 bg-amber-500/5 hover:border-amber-500 dark:bg-amber-950/20 dark:border-amber-500/40 dark:hover:border-amber-400'
                     : 'border-sand-300 dark:border-slate-700 hover:border-primary dark:hover:border-orange-400 bg-sand-100 dark:bg-slate-900'
                 }`}>
                   <input
@@ -762,10 +765,10 @@ export const ReportIncident: React.FC = () => {
               <div className="p-5 rounded-2xl bg-sand-100 border border-sand-300 dark:bg-slate-900 dark:border-slate-800 space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <span className="text-xs font-extrabold text-primary dark:text-slate-100 uppercase tracking-wider">
-                    5. Safety Check & Compulsory Verification <span className="text-errorRed dark:text-rose-400">*</span>
+                    5. Safety Check & Compulsory Verification <span className="text-secondary-dark dark:text-amber-400">*</span>
                   </span>
-                  <span className="text-xs text-errorRed dark:text-rose-400 font-bold flex items-center gap-1 bg-rose-500/10 px-2.5 py-1 rounded-full border border-rose-500/30">
-                    <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                  <span className="text-xs text-secondary-dark dark:text-amber-400 font-bold flex items-center gap-1 bg-secondary-container dark:bg-amber-950/50 px-2.5 py-1 rounded-full border border-secondary/40 dark:border-amber-500/40">
+                    <AlertTriangle className="w-3.5 h-3.5 text-secondary-dark dark:text-amber-400" />
                     Statutory Protocol
                   </span>
                 </div>
@@ -791,8 +794,8 @@ export const ReportIncident: React.FC = () => {
                     onClick={() => setIsImmediateDanger(true)}
                     className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95 cursor-pointer ${
                       isImmediateDanger
-                        ? 'bg-rose-600 text-white shadow-warm-sm hover:shadow-md'
-                        : 'bg-surface dark:bg-slate-800 border border-rose-300 dark:border-rose-900/60 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40'
+                        ? 'bg-secondary text-primary font-bold shadow-warm-sm hover:shadow-md'
+                        : 'bg-surface dark:bg-slate-800 border border-secondary/40 dark:border-amber-500/40 text-secondary-dark dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40'
                     }`}
                   >
                     Yes (Emergency 1098 Escalation)

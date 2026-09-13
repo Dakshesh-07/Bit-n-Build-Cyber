@@ -97,9 +97,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ requiredPermissi
 
             <Link
               to="/login"
-              className="block w-full py-3 rounded-xl border border-sand-300 bg-surface hover:bg-sand-100 text-primary text-xs font-bold transition-colors text-center"
+              className="block w-full py-3 rounded-xl border border-sand-300 dark:border-slate-700 bg-surface dark:bg-slate-800 hover:bg-sand-100 dark:hover:bg-slate-700 text-primary dark:text-slate-100 text-xs font-bold transition-colors text-center"
             >
-              Sign In with Certified Police Badge
+              Log In with Certified Police Badge
             </Link>
           </div>
         </div>

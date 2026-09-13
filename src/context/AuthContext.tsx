@@ -6,6 +6,8 @@ export interface VerificationMetadata {
   verificationId?: string;
   verificationType?: 'student_institutional_id' | 'guardian_ward_link' | 'inspector_pocso_nodal';
   institutionOrJurisdiction?: string;
+  identityProofNumber?: string;
+  identityProofType?: string;
 }
 
 interface AuthContextType {
@@ -105,6 +107,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       verificationId: verificationMeta?.verificationId || (role === 'welfare_officer' ? badgeNumber : undefined),
       verificationType: verificationMeta?.verificationType,
       institutionOrJurisdiction: verificationMeta?.institutionOrJurisdiction,
+      identityProofNumber: verificationMeta?.identityProofNumber,
+      identityProofType: verificationMeta?.identityProofType,
       verifiedAt: new Date().toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' }),
     };
     setUser(authUser);

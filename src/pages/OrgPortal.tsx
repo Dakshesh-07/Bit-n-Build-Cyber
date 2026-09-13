@@ -1,27 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
-  Shield, 
-  Inbox, 
+  ShieldAlert, 
   AlertTriangle, 
-  Send, 
-  PhoneCall, 
-  FileCheck, 
-  Fingerprint, 
+  CheckCircle2, 
+  Clock, 
+  ArrowUpRight, 
   Search, 
   Filter, 
-  RefreshCw, 
+  FileSpreadsheet, 
   Download, 
-  CheckCircle2, 
-  Lock,
-  ChevronRight,
-  UserCheck,
-  Scale,
-  X,
-  User,
-  Sparkles
+  Send, 
+  Inbox, 
+  Fingerprint, 
+  Eye, 
+  Lock, 
+  ChevronRight, 
+  UserCheck, 
+  Scale, 
+  X, 
+  User, 
+  Sparkles,
+  Shield,
+  PhoneCall
 } from 'lucide-react';
 import { IncidentReport } from '../types';
-import { localStore } from '../lib/supabase';
+import { localStore, formatTimeAgo, sortIncidentsByMostRecent } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { CyberEvidenceDocket } from '../components/CyberEvidenceDocket';
 
@@ -52,12 +55,21 @@ export const OrgPortal: React.FC = () => {
   const [assignedCounselorsMap, setAssignedCounselorsMap] = useState<Record<string, string>>({});
   const [takedownDispatchedMap, setTakedownDispatchedMap] = useState<Record<string, boolean>>({});
 
-  useEffect(() => {
+  const loadIncidents = useCallback(() => {
     const list = localStore.getIncidents();
     setIncidents(list);
-    if (list.length > 0 && !selectedCase) {
-      setSelectedCase(list[0]);
-    }
+    setSelectedCase(prev => {
+      if (!prev) return list[0] || null;
+      const found = list.find(item => item.id === prev.id);
+      return found || list[0] || null;
+    });
+  }, []);
+
+  useEffect(() => {
+    loadIncidents();
+    localStore.syncIncidentsWithServer().then(() => {
+      loadIncidents();
+    });
 
     // Load saved counselor & takedown mappings from localStorage
     try {
@@ -68,7 +80,34 @@ export const OrgPortal: React.FC = () => {
     } catch (e) {
       console.error('Error loading saved intervention state:', e);
     }
-  }, []);
+
+    const handleIncidentUpdate = () => {
+      loadIncidents();
+    };
+
+    window.addEventListener('cybervigil_incidents_updated', handleIncidentUpdate);
+    window.addEventListener('storage', handleIncidentUpdate);
+
+    let bc: BroadcastChannel | null = null;
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        bc = new BroadcastChannel('cybervigil_channel');
+        bc.onmessage = (event) => {
+          if (event.data?.type === 'INCIDENTS_UPDATED') {
+            loadIncidents();
+          }
+        };
+      }
+    } catch (e) {}
+
+    return () => {
+      window.removeEventListener('cybervigil_incidents_updated', handleIncidentUpdate);
+      window.removeEventListener('storage', handleIncidentUpdate);
+      if (bc) {
+        bc.close();
+      }
+    };
+  }, [loadIncidents]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -79,9 +118,9 @@ export const OrgPortal: React.FC = () => {
     setActionSuccessMessage(null);
   };
 
-  const handleUpdateStatus = (newStatus: IncidentReport['status'], actionText: string) => {
+  const handleUpdateStatus = (newStatus: IncidentReport['status'], actionText: string, extraUpdates?: Partial<IncidentReport>) => {
     if (!selectedCase) return;
-    const updated = localStore.updateIncident(selectedCase.id, { status: newStatus });
+    const updated = localStore.updateIncident(selectedCase.id, { status: newStatus, ...extraUpdates });
     if (updated) {
       setSelectedCase(updated);
       setIncidents(localStore.getIncidents());
@@ -108,7 +147,7 @@ export const OrgPortal: React.FC = () => {
 
     setShowCounselorModal(false);
     setCustomCounselorName('');
-    handleUpdateStatus('Escalated 1098', `Assigned Trauma Counselor (${nameToAssign}) to Case #${selectedCase.caseNumber}!`);
+    handleUpdateStatus('Escalated 1098', `Assigned Trauma Counselor (${nameToAssign}) to Case #${selectedCase.caseNumber}!`, { assignedOfficer: nameToAssign });
   };
 
   const filteredIncidents = incidents.filter(item => {
@@ -260,50 +299,61 @@ export const OrgPortal: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-sand-200 dark:divide-slate-800">
-                {paginatedIncidents.map((inc) => {
-                  const isSelected = selectedCase?.id === inc.id;
-                  return (
-                    <tr
-                      key={inc.id}
-                      onClick={() => handleSelectCase(inc)}
-                      className={`cursor-pointer transition-colors ${
-                        isSelected
-                          ? 'bg-sand-200 dark:bg-slate-800 font-semibold border-l-4 border-secondary dark:border-orange-500'
-                          : 'hover:bg-sand-100 dark:hover:bg-slate-800/80'
-                      }`}
-                    >
-                      <td className="py-4 px-4 font-mono font-bold text-primary dark:text-slate-100">
-                        {inc.caseNumber}
-                      </td>
-                      <td className="py-4 px-4">
-                        <span className="font-bold text-primary dark:text-slate-100 block">{inc.category}</span>
-                        <span className="text-[11px] text-textMuted dark:text-slate-400">{inc.platform} • {inc.createdAt}</span>
-                      </td>
-                      <td className="py-4 px-4">
-                        <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
-                          inc.severityLevel === 'High' || inc.severityLevel === 'Critical'
-                            ? 'bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border border-secondary dark:border-amber-500'
-                            : 'bg-sand-200 dark:bg-slate-800 text-textDark dark:text-slate-300'
-                        }`}>
-                          {inc.severityLevel}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 dark:bg-blue-950/70 text-blue-900 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                          {inc.status}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4 text-right">
-                        <span className={`text-xs font-bold inline-flex items-center gap-1 ${
-                          isSelected ? 'text-secondary-dark dark:text-orange-400' : 'text-textMuted dark:text-slate-400'
-                        }`}>
-                          {isSelected ? 'Viewing' : 'Select'}
-                          <ChevronRight className="w-3.5 h-3.5" />
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
+                {paginatedIncidents.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-12 text-center text-textMuted dark:text-slate-400">
+                      <Inbox className="w-8 h-8 mx-auto mb-2 opacity-40 text-primary dark:text-slate-400" />
+                      <p className="font-semibold text-xs">No incidents match current filter criteria.</p>
+                    </td>
+                  </tr>
+                ) : (
+                  paginatedIncidents.map((inc) => {
+                    const isSelected = selectedCase?.id === inc.id;
+                    return (
+                      <tr
+                        key={inc.id}
+                        onClick={() => handleSelectCase(inc)}
+                        className={`cursor-pointer transition-colors ${
+                          isSelected
+                            ? 'bg-sand-200 dark:bg-slate-800 font-semibold border-l-4 border-secondary dark:border-orange-500'
+                            : 'hover:bg-sand-100 dark:hover:bg-slate-800/80'
+                        }`}
+                      >
+                        <td className="py-4 px-4 font-mono font-bold text-primary dark:text-slate-100">
+                          {inc.caseNumber}
+                        </td>
+                        <td className="py-4 px-4">
+                          <span className="font-bold text-primary dark:text-slate-100 block">{inc.category}</span>
+                          <span className="text-[11px] text-textMuted dark:text-slate-400">
+                            {inc.platform} • {formatTimeAgo(inc.createdTimestamp, inc.createdAt)}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4">
+                          <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] ${
+                            inc.severityLevel === 'High' || inc.severityLevel === 'Critical'
+                              ? 'bg-amber-100 dark:bg-amber-950/70 text-amber-900 dark:text-amber-300 border border-secondary dark:border-amber-500'
+                              : 'bg-sand-200 dark:bg-slate-800 text-textDark dark:text-slate-300'
+                          }`}>
+                            {inc.severityLevel}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 dark:bg-blue-950/70 text-blue-900 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                            {inc.status}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-right">
+                          <span className={`text-xs font-bold inline-flex items-center gap-1 ${
+                            isSelected ? 'text-secondary-dark dark:text-orange-400' : 'text-textMuted dark:text-slate-400'
+                          }`}>
+                            {isSelected ? 'Viewing' : 'Select'}
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
@@ -362,7 +412,7 @@ export const OrgPortal: React.FC = () => {
                     </span>
                   </div>
                   <p className="text-xs text-sand-300 mt-1">
-                    Ingested {selectedCase.createdAt} • Child Custody Protocol Active
+                    Ingested {formatTimeAgo(selectedCase.createdTimestamp, selectedCase.createdAt)} • Child Custody Protocol Active
                   </p>
                 </div>
                 <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-secondary text-primary">

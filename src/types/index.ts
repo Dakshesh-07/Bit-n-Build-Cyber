@@ -19,6 +19,8 @@ export interface UserProfile {
   verificationId?: string;
   verificationType?: 'student_institutional_id' | 'guardian_ward_link' | 'inspector_pocso_nodal';
   institutionOrJurisdiction?: string;
+  identityProofNumber?: string;
+  identityProofType?: string;
   educationLevel?: string;
   verifiedAt?: string;
 }
@@ -63,6 +65,7 @@ export interface IncidentReport {
   status: IncidentStatus;
   piiScrubbed: boolean;
   createdAt: string;
+  createdTimestamp?: number;
   assignedOfficer?: string;
   distressLevel?: number;
   evidenceFiles: { name: string; size: string; status: string }[];
@@ -91,8 +94,10 @@ export interface BraveStory {
   category: string;
   entryType?: CommunityEntryType;
   authorAlias: string;
+  authorRole?: UserRole | string;
   storyText: string;
   timeAgo: string;
+  createdAt?: number;
   supportCount: number;
   userSupported?: boolean;
   votesCount?: number;

@@ -68,55 +68,98 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div className="space-y-16 pb-16">
-      {/* 1. Hero Section - Spacious, Calm, Nurturing */}
-      <section className="relative overflow-hidden rounded-2xl bg-surface border border-sand-300 p-8 sm:p-12 lg:p-16 shadow-warm-card">
+    <div className="space-y-10 pb-12">
+      {/* 1. Hero Section - Balanced, Trustworthy, Cohesive */}
+      <section className="relative overflow-hidden rounded-2xl bg-surface border border-sand-300 p-6 sm:p-8 lg:p-10 shadow-warm-card">
         <div className="absolute -right-20 -top-20 w-96 h-96 bg-secondary/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="relative z-10 max-w-3xl space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sand-200 border border-sand-300 text-xs font-semibold text-textDark">
-            <img src="/cybervigil-shield.png" alt="CyberVigil" className="w-4 h-4 object-contain" />
-            <span>CyberVigil Zero-Knowledge Safe Space: No Personal Tracking</span>
+        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Left: Reassurance, Headline & Actions */}
+          <div className="lg:col-span-7 xl:col-span-8 space-y-5">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sand-200 border border-sand-300 text-xs font-semibold text-textDark">
+              <img src="/cybervigil-shield.png" alt="CyberVigil" className="w-4 h-4 object-contain" />
+              <span>CyberVigil Zero-Knowledge Safe Space: No Personal Tracking</span>
+            </div>
+
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-primary tracking-tight leading-tight">
+              Hey! You are in a safe space.
+            </h1>
+
+            <p className="text-base sm:text-lg text-textMuted leading-relaxed">
+              How can CyberVigil protect you today? Learn digital self-defense, speak with trauma-informed AI, share peer journeys, submit confidential reports, or reach verified advocates in minutes.
+            </p>
+
+            {/* Quick Immediate Actions */}
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              <Link
+                to="/report"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-errorRed hover:bg-red-700 text-white font-bold text-sm shadow-warm-sm hover:shadow-md transition-all active:scale-95"
+              >
+                <AlertTriangle className="w-4 h-4" />
+                <span>Report an Online Threat</span>
+              </Link>
+
+              <Link
+                to="/assistant"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary hover:bg-primary-hover text-surface font-bold text-sm shadow-warm-sm hover:shadow-md transition-all active:scale-95"
+              >
+                <Bot className="w-4 h-4 text-secondary" />
+                <span>Chat with Guardian AI</span>
+              </Link>
+
+              <Link
+                to="/learn"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-sand-200 hover:bg-sand-300 border border-sand-300 text-primary font-bold text-sm shadow-warm-sm hover:shadow-md transition-all active:scale-95"
+              >
+                <School className="w-4 h-4 text-primary" />
+                <span>Explore Safety Guide</span>
+              </Link>
+            </div>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-primary tracking-tight leading-tight">
-            Hey! You are in a safe space.
-          </h1>
+          {/* Right: Protection Telemetry & Reassuring Trust Highlights */}
+          <div className="lg:col-span-5 xl:col-span-4 bg-sand-100 dark:bg-slate-900/90 border border-sand-300 dark:border-slate-800 rounded-2xl p-5 space-y-3.5 shadow-warm-sm">
+            <div className="flex items-center justify-between border-b border-sand-200 dark:border-slate-800 pb-3">
+              <span className="text-xs font-bold text-primary dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                <ShieldCheck className="w-4 h-4 text-safeGreen" />
+                Protective Guardrails
+              </span>
+              <span className="flex items-center gap-1 text-[10px] font-bold text-safeGreen bg-safeGreenContainer px-2 py-0.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-safeGreen animate-pulse"></span>
+                Active 24/7
+              </span>
+            </div>
 
-          <p className="text-base sm:text-lg text-textMuted leading-relaxed">
-            How can CyberVigil protect you today? Learn digital self-defense, speak with trauma-informed AI, share peer journeys, submit confidential reports, or reach verified advocates in minutes.
-          </p>
+            <div className="space-y-2.5 text-xs">
+              <div className="flex items-start gap-3 p-2.5 rounded-xl bg-surface dark:bg-slate-800/80 border border-sand-200 dark:border-slate-700/80">
+                <Lock className="w-4 h-4 text-secondary-dark flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-primary dark:text-slate-200">Zero-Retention Privacy</p>
+                  <p className="text-[11px] text-textMuted dark:text-slate-400">Client-side cryptographic hashing with zero personal data logging.</p>
+                </div>
+              </div>
 
-          {/* Quick Immediate Actions */}
-          <div className="pt-2 flex flex-wrap items-center gap-3">
-            <Link
-              to="/report"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-errorRed hover:bg-red-700 text-white font-bold text-sm shadow-warm-sm hover:shadow-md transition-all active:scale-95"
-            >
-              <AlertTriangle className="w-4 h-4" />
-              <span>Report an Online Threat</span>
-            </Link>
+              <div className="flex items-start gap-3 p-2.5 rounded-xl bg-surface dark:bg-slate-800/80 border border-sand-200 dark:border-slate-700/80">
+                <PhoneCall className="w-4 h-4 text-errorRed flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-primary dark:text-slate-200">National Crisis Link</p>
+                  <p className="text-[11px] text-textMuted dark:text-slate-400">Direct dispatch to Childline 1098 & Cyber Crime Cell 1930.</p>
+                </div>
+              </div>
 
-            <Link
-              to="/assistant"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary hover:bg-primary-hover text-surface font-bold text-sm shadow-warm-sm hover:shadow-md transition-all active:scale-95"
-            >
-              <Bot className="w-4 h-4 text-secondary" />
-              <span>Chat with Guardian AI</span>
-            </Link>
-
-            <Link
-              to="/learn"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-sand-200 hover:bg-sand-300 border border-sand-300 text-primary font-bold text-sm shadow-warm-sm hover:shadow-md transition-all active:scale-95"
-            >
-              <School className="w-4 h-4 text-primary" />
-              <span>Explore Safety Guide</span>
-            </Link>
+              <div className="flex items-start gap-3 p-2.5 rounded-xl bg-surface dark:bg-slate-800/80 border border-sand-200 dark:border-slate-700/80">
+                <CheckCircle2 className="w-4 h-4 text-safeGreen flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-primary dark:text-slate-200">Statutory Framework</p>
+                  <p className="text-[11px] text-textMuted dark:text-slate-400">Compliant with POCSO Act & IT Act 2000 protective mandates.</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* 2. Five Prominent Safety Gateways (Spaced Bento Grid) */}
-      <section className="space-y-6">
+      <section className="space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div>
             <span className="text-xs font-bold uppercase tracking-wider text-secondary-dark">
@@ -129,10 +172,10 @@ export const Home: React.FC = () => {
           <p className="text-sm text-textMuted">Confidential, encrypted & always free</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {/* Gateway 1: Learn & Protect */}
-          <article className="bg-surface rounded-2xl p-7 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
-            <div className="space-y-4">
+          <article className="bg-surface rounded-2xl p-6 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
+            <div className="space-y-3.5">
               <div className="w-12 h-12 rounded-xl bg-sand-200 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-surface transition-colors">
                 <School className="w-6 h-6" />
               </div>
@@ -146,7 +189,7 @@ export const Home: React.FC = () => {
                 Recognize cyberbullying, grooming, fake accounts, and online scams with interactive micro-lessons and real-world armor rules.
               </p>
             </div>
-            <div className="pt-6 mt-6 border-t border-sand-200 flex items-center justify-between">
+            <div className="pt-4 mt-5 border-t border-sand-200 dark:border-slate-800 flex items-center justify-between">
               <span className="text-xs text-textMuted font-medium">12 Interactive modules</span>
               <Link 
                 to="/learn"
@@ -159,8 +202,8 @@ export const Home: React.FC = () => {
           </article>
 
           {/* Gateway 2: Brave Stories */}
-          <article className="bg-surface rounded-2xl p-7 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
-            <div className="space-y-4">
+          <article className="bg-surface rounded-2xl p-6 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
+            <div className="space-y-3.5">
               <div className="w-12 h-12 rounded-xl bg-sand-200 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-surface transition-colors">
                 <BookOpen className="w-6 h-6" />
               </div>
@@ -174,7 +217,7 @@ export const Home: React.FC = () => {
                 Read how other young defenders navigated online adversity, share your journey anonymously, and help someone feel less alone.
               </p>
             </div>
-            <div className="pt-6 mt-6 border-t border-sand-200 flex items-center justify-between">
+            <div className="pt-4 mt-5 border-t border-sand-200 dark:border-slate-800 flex items-center justify-between">
               <span className="text-xs text-textMuted font-medium">100% Moderated & Safe</span>
               <Link 
                 to="/stories"
@@ -187,8 +230,8 @@ export const Home: React.FC = () => {
           </article>
 
           {/* Gateway 3: Guardian AI Assistant */}
-          <article className="bg-surface rounded-2xl p-7 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
-            <div className="space-y-4">
+          <article className="bg-surface rounded-2xl p-6 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
+            <div className="space-y-3.5">
               <div className="flex items-center justify-between">
                 <div className="w-12 h-12 rounded-xl bg-sand-200 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-surface transition-colors">
                   <Bot className="w-6 h-6" />
@@ -208,7 +251,7 @@ export const Home: React.FC = () => {
                 Trauma-informed guidance for online threats, blackmail, non-consensual media, or harassment in calm, step-by-step actions.
               </p>
             </div>
-            <div className="pt-6 mt-6 border-t border-sand-200 flex items-center justify-between">
+            <div className="pt-4 mt-5 border-t border-sand-200 dark:border-slate-800 flex items-center justify-between">
               <span className="text-xs text-textMuted font-medium">No account required</span>
               <Link 
                 to="/assistant"
@@ -221,13 +264,13 @@ export const Home: React.FC = () => {
           </article>
 
           {/* Gateway 4: Report Incident (Spans 2 columns on desktop) */}
-          <article className="bg-surface rounded-2xl p-7 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 md:col-span-2 flex flex-col justify-between group">
-            <div className="space-y-4">
+          <article className="bg-surface rounded-2xl p-6 sm:p-7 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 md:col-span-2 flex flex-col justify-between group">
+            <div className="space-y-3.5">
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-xl bg-rose-600 text-white flex items-center justify-center font-bold shadow-md">
-                  <AlertTriangle className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 rounded-xl bg-secondary text-primary flex items-center justify-center font-bold shadow-md">
+                  <AlertTriangle className="w-6 h-6 text-primary" />
                 </div>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-500/10 text-xs font-bold text-rose-600 dark:text-rose-400 border border-rose-500/30 uppercase tracking-wider">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container dark:bg-amber-950/50 text-xs font-bold text-secondary-dark dark:text-amber-400 border border-secondary/40 dark:border-amber-500/40 uppercase tracking-wider">
                   Confidential Legal & Protective Escalation
                 </span>
               </div>
@@ -239,7 +282,7 @@ export const Home: React.FC = () => {
                 <h3 className="text-xl sm:text-2xl font-bold text-primary mt-1 group-hover:text-secondary-dark transition-colors">
                   Report Incident
                 </h3>
-                <p className="text-sm text-textMuted leading-relaxed mt-1.5 max-w-2xl">
+                <p className="text-sm text-textMuted leading-relaxed mt-1.5">
                   Submit an encrypted, zero-knowledge incident report. Our AI risk engine categorizes emergency threats and routes them to certified child welfare officers and the National Cyber Crime Portal while preserving client-side privacy.
                 </p>
               </div>
@@ -257,7 +300,7 @@ export const Home: React.FC = () => {
               </div>
             </div>
 
-            <div className="pt-6 mt-6 border-t border-sand-200 flex items-center justify-between">
+            <div className="pt-4 mt-5 border-t border-sand-200 dark:border-slate-800 flex items-center justify-between">
               <span className="text-xs text-textMuted font-medium flex items-center gap-1.5">
                 <Lock className="w-3.5 h-3.5 text-safeGreen" />
                 <span>Option to remain 100% anonymous</span>
@@ -273,8 +316,8 @@ export const Home: React.FC = () => {
           </article>
 
           {/* Gateway 5: SafeConnect Verified Circles */}
-          <article className="bg-surface rounded-2xl p-7 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
-            <div className="space-y-4">
+          <article className="bg-surface rounded-2xl p-6 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
+            <div className="space-y-3.5">
               <div className="w-12 h-12 rounded-xl bg-sand-200 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-surface transition-colors">
                 <Users className="w-6 h-6" />
               </div>
@@ -288,7 +331,7 @@ export const Home: React.FC = () => {
                 Connect safely with verified school counselors, accredited child psychologists, and peer mentors in moderated spaces.
               </p>
             </div>
-            <div className="pt-6 mt-6 border-t border-sand-200 flex items-center justify-between">
+            <div className="pt-4 mt-5 border-t border-sand-200 dark:border-slate-800 flex items-center justify-between">
               <span className="text-xs text-textMuted font-medium">Vetted professionals</span>
               <Link 
                 to="/safeconnect"
@@ -303,8 +346,8 @@ export const Home: React.FC = () => {
       </section>
 
       {/* 3. Interactive "What Would You Do?" Scenario Simulator */}
-      <section className="bg-sand-200/80 rounded-2xl p-8 sm:p-12 border border-sand-300 relative overflow-hidden space-y-8">
-        <div className="max-w-4xl mx-auto space-y-6">
+      <section className="bg-sand-200/80 dark:bg-slate-900/60 rounded-2xl p-6 sm:p-8 border border-sand-300 dark:border-slate-800 relative overflow-hidden space-y-6">
+        <div className="max-w-4xl mx-auto space-y-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-primary text-secondary flex items-center justify-center shadow-warm-sm">
@@ -317,18 +360,18 @@ export const Home: React.FC = () => {
                 <h2 className="text-2xl font-bold text-primary">What Would You Do?</h2>
               </div>
             </div>
-            <span className="px-3 py-1 rounded-full bg-surface text-xs font-semibold text-textMuted border border-sand-300">
+            <span className="px-3 py-1 rounded-full bg-surface text-xs font-semibold text-textMuted border border-sand-300 dark:border-slate-700">
               Scenario 01 of 05 • Online Extortion
             </span>
           </div>
 
           {/* Scenario Problem Box */}
-          <div className="bg-surface p-6 sm:p-8 rounded-xl border border-sand-300 shadow-warm-sm space-y-2">
+          <div className="bg-surface dark:bg-slate-900 p-5 sm:p-6 rounded-xl border border-sand-300 dark:border-slate-800 shadow-warm-sm space-y-2">
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-6 h-6 text-secondary flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="text-base font-bold text-primary">Critical Digital Encounter</h3>
-                <p className="text-base sm:text-lg font-medium text-textDark mt-1 leading-relaxed">
+                <h3 className="text-base font-bold text-primary dark:text-slate-100">Critical Digital Encounter</h3>
+                <p className="text-base sm:text-lg font-medium text-textDark dark:text-slate-200 mt-1 leading-relaxed">
                   "Someone you met online in a gaming chat or social feed asks you for a private photo or threatens to share your pictures if you don't respond."
                 </p>
               </div>
@@ -336,19 +379,19 @@ export const Home: React.FC = () => {
           </div>
 
           {/* Choices Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
             {scenarioChoices.map((choice) => {
               const isSelected = selectedChoice === choice.id;
               return (
                 <button
                   key={choice.id}
                   onClick={() => setSelectedChoice(choice.id as any)}
-                  className={`text-left p-5 rounded-xl border transition-all flex items-start gap-4 ${
+                  className={`text-left p-4 sm:p-4.5 rounded-xl border transition-all flex items-start gap-3.5 ${
                     isSelected
                       ? choice.isSafe
                         ? 'bg-safeGreenContainer border-safeGreen ring-2 ring-safeGreen shadow-warm-sm'
                         : 'bg-errorContainer border-errorRed ring-2 ring-errorRed shadow-warm-sm'
-                      : 'bg-surface border-sand-300 hover:border-sand-400 hover:bg-sand-50'
+                      : 'bg-surface dark:bg-slate-900 border-sand-300 dark:border-slate-800 hover:border-sand-400 hover:bg-sand-50 dark:hover:bg-slate-800'
                   }`}
                 >
                   <span className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm flex-shrink-0 ${
@@ -356,13 +399,13 @@ export const Home: React.FC = () => {
                       ? 'bg-safeGreen text-white'
                       : isSelected && !choice.isSafe
                       ? 'bg-errorRed text-white'
-                      : 'bg-sand-200 text-primary'
+                      : 'bg-sand-200 dark:bg-slate-800 text-primary dark:text-slate-200'
                   }`}>
                     {choice.id}
                   </span>
-                  <div className="space-y-1">
-                    <p className="font-bold text-sm text-primary leading-tight">{choice.title}</p>
-                    <p className="text-xs text-textMuted leading-relaxed">{choice.subtitle}</p>
+                  <div className="space-y-0.5">
+                    <p className="font-bold text-sm text-primary dark:text-slate-100 leading-tight">{choice.title}</p>
+                    <p className="text-xs text-textMuted dark:text-slate-400 leading-relaxed">{choice.subtitle}</p>
                   </div>
                 </button>
               );
@@ -371,10 +414,10 @@ export const Home: React.FC = () => {
 
           {/* Dynamic Feedback Box */}
           {selectedChoice && (
-            <div className={`p-6 rounded-xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
+            <div className={`p-5 rounded-xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
               scenarioChoices.find(c => c.id === selectedChoice)?.isSafe
-                ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
-                : 'bg-red-50 border-red-300 text-red-950'
+                ? 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-800 text-emerald-950 dark:text-emerald-100'
+                : 'bg-red-50 dark:bg-red-950/50 border-red-300 dark:border-red-800 text-red-950 dark:text-red-100'
             }`}>
               <div className="flex items-start gap-3">
                 {scenarioChoices.find(c => c.id === selectedChoice)?.isSafe ? (
@@ -405,10 +448,10 @@ export const Home: React.FC = () => {
       </section>
 
       {/* 4. Daily Golden Rule & The 3 Bal Suraksha Pillars */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* Golden Rule Card */}
-        <div className="lg:col-span-5 bg-surface rounded-2xl p-7 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
-          <div className="space-y-4">
+        <div className="lg:col-span-5 bg-surface rounded-2xl p-6 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
+          <div className="space-y-3.5">
             <div className="flex items-center justify-between">
               <span className="px-3 py-1 rounded-full bg-secondary-container text-primary font-bold text-xs flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-secondary-dark" />
@@ -420,26 +463,26 @@ export const Home: React.FC = () => {
               </span>
             </div>
 
-            <blockquote className="text-base sm:text-lg font-bold text-primary leading-snug border-l-4 border-secondary pl-4 py-1.5 bg-sand-50/70 rounded-r-xl">
+            <blockquote className="text-base sm:text-lg font-bold text-primary leading-snug border-l-4 border-secondary pl-4 py-1.5 bg-sand-50/70 dark:bg-slate-800/60 rounded-r-xl">
               "Never share your OTP, passwords, school location, or private images with anyone online — even someone claiming to be a close gaming partner."
             </blockquote>
 
-            <div className="p-4 rounded-xl bg-sand-100 border border-sand-200 text-xs text-textDark leading-relaxed space-y-1.5">
+            <div className="p-3.5 rounded-xl bg-sand-100 dark:bg-slate-900 border border-sand-200 dark:border-slate-800 text-xs text-textDark dark:text-slate-200 leading-relaxed space-y-1.5">
               <div className="flex items-center gap-1.5 text-secondary-dark font-bold">
                 <ShieldCheck className="w-4 h-4 text-secondary-dark" />
                 <span>Why this rule matters</span>
               </div>
-              <p className="text-textMuted">
+              <p className="text-textMuted dark:text-slate-400">
                 Predators frequently spend weeks building trust and rapport before demanding credentials or compromising media. Keeping absolute digital boundaries shields your safety.
               </p>
             </div>
           </div>
 
-          <div className="pt-6 mt-6 border-t border-sand-200 flex items-center justify-between">
+          <div className="pt-4 mt-5 border-t border-sand-200 dark:border-slate-800 flex items-center justify-between">
             <span className="text-xs text-textMuted font-medium">CyberVigil Standard</span>
             <button
               onClick={handleCopyRule}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sand-100 hover:bg-sand-200 text-xs font-bold text-primary transition-all active:scale-95 border border-sand-300 shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sand-100 hover:bg-sand-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-primary dark:text-slate-200 transition-all active:scale-95 border border-sand-300 dark:border-slate-700 shadow-xs"
             >
               {copiedRule ? (
                 <>
@@ -457,8 +500,8 @@ export const Home: React.FC = () => {
         </div>
 
         {/* 3 Pillars */}
-        <div className="lg:col-span-7 bg-surface rounded-2xl p-7 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
-          <div className="space-y-4">
+        <div className="lg:col-span-7 bg-surface rounded-2xl p-6 border border-sand-300 hover:border-sand-400 shadow-warm-card hover:shadow-warm-elevated transition-all duration-200 flex flex-col justify-between group">
+          <div className="space-y-3.5">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-secondary-dark">
                 Protective Architecture
@@ -471,40 +514,40 @@ export const Home: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-              <div className="p-4 rounded-xl bg-sand-100 border border-sand-200 space-y-2 hover:border-sand-300 hover:bg-sand-50 transition-all">
-                <div className="w-8 h-8 rounded-lg bg-primary text-secondary flex items-center justify-center font-bold text-sm shadow-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-3.5 rounded-xl bg-sand-100 dark:bg-slate-900 border border-sand-200 dark:border-slate-800 space-y-1.5 hover:border-sand-300 hover:bg-sand-50 transition-all">
+                <div className="w-7 h-7 rounded-lg bg-primary text-secondary flex items-center justify-center font-bold text-xs shadow-xs">
                   1
                 </div>
-                <h4 className="font-bold text-xs sm:text-sm text-primary">Digital Guardrails</h4>
-                <p className="text-[11px] text-textMuted leading-relaxed">
+                <h4 className="font-bold text-xs sm:text-sm text-primary dark:text-slate-100">Digital Guardrails</h4>
+                <p className="text-[11px] text-textMuted dark:text-slate-400 leading-relaxed">
                   Zero-retention chat safety, automated scam screening, and proactive privacy alerts.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-sand-100 border border-sand-200 space-y-2 hover:border-sand-300 hover:bg-sand-50 transition-all">
-                <div className="w-8 h-8 rounded-lg bg-primary text-secondary flex items-center justify-center font-bold text-sm shadow-xs">
+              <div className="p-3.5 rounded-xl bg-sand-100 dark:bg-slate-900 border border-sand-200 dark:border-slate-800 space-y-1.5 hover:border-sand-300 hover:bg-sand-50 transition-all">
+                <div className="w-7 h-7 rounded-lg bg-primary text-secondary flex items-center justify-center font-bold text-xs shadow-xs">
                   2
                 </div>
-                <h4 className="font-bold text-xs sm:text-sm text-primary">Support Circles</h4>
-                <p className="text-[11px] text-textMuted leading-relaxed">
+                <h4 className="font-bold text-xs sm:text-sm text-primary dark:text-slate-100">Support Circles</h4>
+                <p className="text-[11px] text-textMuted dark:text-slate-400 leading-relaxed">
                   Accredited child psychologists, verified peer mentors, and school counseling integration.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-sand-100 border border-sand-200 space-y-2 hover:border-sand-300 hover:bg-sand-50 transition-all">
-                <div className="w-8 h-8 rounded-lg bg-primary text-secondary flex items-center justify-center font-bold text-sm shadow-xs">
+              <div className="p-3.5 rounded-xl bg-sand-100 dark:bg-slate-900 border border-sand-200 dark:border-slate-800 space-y-1.5 hover:border-sand-300 hover:bg-sand-50 transition-all">
+                <div className="w-7 h-7 rounded-lg bg-primary text-secondary flex items-center justify-center font-bold text-xs shadow-xs">
                   3
                 </div>
-                <h4 className="font-bold text-xs sm:text-sm text-primary">Direct Escalation</h4>
-                <p className="text-[11px] text-textMuted leading-relaxed">
+                <h4 className="font-bold text-xs sm:text-sm text-primary dark:text-slate-100">Direct Escalation</h4>
+                <p className="text-[11px] text-textMuted dark:text-slate-400 leading-relaxed">
                   One-tap dispatch to Childline 1098, cyber forensics nodal desks, and rapid response units.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="pt-6 mt-6 border-t border-sand-200 flex items-center justify-between text-xs">
+          <div className="pt-4 mt-5 border-t border-sand-200 dark:border-slate-800 flex items-center justify-between text-xs">
             <span className="text-textMuted font-medium flex items-center gap-1.5">
               <ShieldCheck className="w-4 h-4 text-safeGreen" />
               <span>POCSO Act & IT Act 2000 Statutory Compliance</span>
